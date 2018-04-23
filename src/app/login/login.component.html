@@ -1,0 +1,101 @@
+<div class="modal-header">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h5 class="modal-title">LOGIN</h5>
+        </div>
+        <div class="col">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div>Ingrese identificación</div>
+        </div>
+      </div>
+    </div>
+    </div>
+    <form class="" [formGroup]="loginForm" novalidate>
+  <div class="modal-body">
+    
+        <div class="form-group row" [ngClass]="{'has-error':!loginForm.controls['txEsc'].valid}">
+        <label for="txEsc" class="col-sm-4 col-form-label">Ingrese su Escritorio</label>
+        <div class="col-sm-8">
+        <div class="col-sm-4 pl-0">
+          <input type="number" class="form-control" id="txEsc" number value="" min=0 [min]="0" [max]="999" [(ngModel)]="loginModel.IdEscritorio" formControlName="txEsc" (ngModelChange)="onChanges($event)">
+          </div>
+          <div class="form-control-feedback" *ngIf="loginForm.controls['txEsc'].errors && (loginForm.controls['txEsc'].dirty || loginForm.controls['txEsc'].touched)">
+          <p class="alert alert-danger" *ngIf="loginForm.controls['txEsc'].hasError('number')">Escritorio debe ser solo números</p>
+            <p class="alert alert-danger" *ngIf="loginForm.controls['txEsc'].hasError('min')">Escritorio debe ser mayor a cero</p>
+            <p class="alert alert-danger" *ngIf="loginForm.controls['txEsc'].hasError('required')">Escritorio es requerido</p>
+            <p class="alert alert-danger" *ngIf="loginForm.controls['txEsc'].hasError('max')">Escritorio debe tener máximo 3 caracteres</p>
+            </div>
+        </div>
+      </div>
+      
+      <div class="form-group row" [ngClass]="{'has-error':!loginForm.controls['txUsr'].valid}" *ngIf="client.LoginWithUserPass">
+        <label for="txUsr" class="col-sm-4 col-form-label">Ingrese su USER</label>
+        <div class="col-sm-8">
+            <div class="col-sm-6 pl-0">
+                <input type="text" class="form-control" id="txUsr" value="" [(ngModel)]="loginModel.User" maxlength="15" formControlName="txUsr" (ngModelChange)="onChanges($event)">
+            </div>
+          
+        
+          <div class="form-control-feedback" *ngIf="loginForm.controls['txUsr'].errors && (loginForm.controls['txUsr'].dirty || loginForm.controls['txUsr'].touched)">
+          <p class="alert alert-danger" *ngIf="loginForm.controls['txUsr'].hasError('maxlength')">USER debe ser máximo 15 caracteres</p>
+          <p class="alert alert-danger" *ngIf="loginForm.controls['txUsr'].hasError('required')">USER es requerido</p>
+        </div>
+          
+        </div>
+      </div>
+        
+      
+      <div class="form-group row" [ngClass]="{'has-error':!loginForm.controls['txPsw'].valid}" *ngIf="client.LoginWithUserPass">
+        <label for="txPsw" class="col-sm-4 col-form-label">Ingrese su CLAVE</label>
+        <div class="col-sm-8">
+            <div class="col-sm-6 pl-0">
+          <input type="password" class="form-control" id="txPsw" size="10" [(ngModel)]="loginModel.Pass" maxlength="15" formControlName="txPsw" (ngModelChange)="onChanges($event)">
+          </div>
+          
+          <div class="form-control-feedback" *ngIf="loginForm.controls['txPsw'].errors && (loginForm.controls['txPsw'].dirty || loginForm.controls['txPsw'].touched)">
+          <p class="alert alert-danger" *ngIf="loginForm.controls['txPsw'].hasError('maxlength')">CLAVE debe ser máximo 15 caracteres</p>
+          <p class="alert alert-danger" *ngIf="loginForm.controls['txPsw'].hasError('required')">CLAVE es requerido</p>
+        </div>
+        </div>
+      </div>
+      
+      <div class="form-group row" *ngIf="settings.lastError.isError |async">
+        <div class="col">
+          <div class=" alert alert-danger text-center">
+              {{ settings.lastError.DescError }}
+          </div>
+            
+        </div>
+      </div>
+
+      <div class="form-group row" *ngIf="!client.LoginWithUserPass && settings.lastErrorMot.isError |async">
+          <div class="col">
+            <div class=" alert alert-danger text-center">
+                {{ settings.lastErrorMot.DescError }}
+            </div>
+              
+          </div>
+        </div>
+    
+  </div>
+  <div class="modal-footer">
+    <div class="container">
+      <div class="row flex-row justify-content-center">
+        <div class="col-md-3 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" (click)="loginBtn()" [disabled]="!loginForm.valid">Ingresar</button>
+        </div>
+        <div class="col-md-3 d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()">Cerrar</button>
+        </div>
+        <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
+          <div> [{{ settings.iTOw }}] </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>

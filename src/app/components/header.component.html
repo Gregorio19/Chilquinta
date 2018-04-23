@@ -1,0 +1,58 @@
+
+<header>
+    <div class="row">
+        <img class="logo img-responsive" src="./assets/img/total-pack-logo.jpg" alt="Total Pack" width="344" height="80">
+      <!--<ul class="nav navbar-nav w-100">
+        <li>
+          <a href="/" class="navbar-brand">
+            <img class="logo img-responsive" src="https://www.totalpack.cl/img/total-pack-logo-1472594199.jpg" alt="Total Pack" width="344" height="80"> </a>
+        </li>
+      </ul>-->
+    </div>
+    <div class="row navbar navbar-expand-lg navbar-light bg-light navbar-gradient">
+        <!--<a class="navbar-brand" href="#">Navbar</a>-->
+        <button class="navbar-toggler" type="button" (click)="isCollapsed = !isCollapsed" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      <div class="collapse navbar-collapse" [collapse]=isCollapsed>
+        <!--<button class="navbar-toggler d-lg-none" type="button" appmobilesidebartoggler=""> <span class="navbar-toggler-icon text-white"></span> </button>
+        <a class="navbar-brand" href="#" style="background: none;"></a>
+        <button class="navbar-toggler d-md-down-none" type="button" appsidebartoggler=""> <span class="navbar-toggler-icon text-white"></span> </button>
+-->
+        <ul class="navbar-nav text-left col-md-10">
+          <li class="nav-item pl-5">
+            <button class="nav-link text-white btn btn-outline-secondary"  id="btPAU" [disabled]="settings.btPAU.disable |async" (click)="fnAccion('PAUGET');"> <i class="icon-control-pause icons font-2xl d-block"></i> Pausa </button>
+          </li>
+          <li class="nav-item pl-5">
+            <button class="nav-link text-white btn btn-outline-secondary" id="btINI" [disabled]="settings.btINI.disable | async" (click)="fnAccion('INI');"> <i class="icon-control-play icons font-2xl d-block"></i> Inico Atención </button>
+          </li>
+          
+        </ul>        
+				<ul class="navbar-nav col-md-2" *ngIf="settings.isLogged |async; else login">
+          <li class="nav-item dropdown" dropdown placement="bottom right">
+            <a class="nav-link dropdown-toggle text-left pl-5 text-white" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false" dropdownToggle (click)="false"> 
+              <i class="icon-screen-desktop icon font-2xl d-block"></i> 
+              <span id="dEje" class="pr-3"> {{ settings.dEje.value | async }}  </span> 
+            </a>
+            <div class="dropdown-menu dropdown-menu-left" *dropdownMenu aria-labelledby="simple-dropdown">
+              <div class="dropdown-header text-center"> <strong>Acciones</strong> </div>
+              <button class="dropdown-item" [disabled]="settings.btINI.disable | async" (click)="fnAccion('INI');"><i class="fa fa-play-circle-o text-dark"></i> Inicio de atención</button>
+              <button class="dropdown-item" [disabled]="settings.btPAU.disable |async" (click)="fnAccion('PAUGET');"><i class="fa fa-pause-circle-o text-dark"></i> Pausa</button>
+              <div class="dropdown-header text-center"> <strong>Cuenta</strong> </div>
+              <button class="dropdown-item" (click)="fnAccion('LOG')" [innerHTML]="settings.btLOG.value | async"><i class="fa fa-lock text-dark"></i> Logoff</button>
+            </div>
+					</li>
+        </ul>
+
+        <ng-template #login >
+            <ul class="navbar-nav col-md-2">
+                <li class="nav-item pl-5">
+                    <button class="nav-link text-white btn btn-outline-secondary" (click)="fnAccion('LOG')"><i class="fa fa-user-circle-o font-2xl d-block"></i> Login</button>
+                </li>          
+            </ul>
+          
+        </ng-template>
+
+      </div>
+		</div>
+		</header>

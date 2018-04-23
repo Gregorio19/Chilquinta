@@ -1,0 +1,89 @@
+<div class="modal-header">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h5 class="modal-title">URGENCIA</h5>
+        </div>
+        <div class="col">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div>Seleccione Turno y Serie</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="modal-body">
+    <form class="" [formGroup]="TurnoySerieForm" novalidate>
+        <div [ngClass]="{'has-error':!TurnoySerieForm.controls['urgTur'].valid}"> 
+            <label for="urgTur" class="col-sm-4 col-form-label">Turno</label>
+            <div class="col-sm-3">
+              <input type="number" class="form-control" id="urgTur" size="2" 
+                (ngValue)="urgTur" placeholder="1"
+                formControlName="urgTur"
+                [(ngModel)]="model.urgTur"
+                (ngModelChange)="onChanges($event)"
+                [min]="0"
+                min="0"
+                [max]="999"
+                number
+                >
+              <p class="help-block">0 = sin Turno</p>              
+            </div>
+            <div class="form-control-feedback" *ngIf="TurnoySerieForm.controls['urgTur'].errors && (TurnoySerieForm.controls['urgTur'].dirty || TurnoySerieForm.controls['urgTur'].touched)">
+                <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('number')">Turno debe ser solo números</p>
+                  <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('min')">Turno debe ser mayor a cero</p>
+                  <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('max')">Turno debe tener máximo 3 caracteres</p>
+                  </div>
+                  </div>
+
+      <div class="col-sm-8" *ngFor="let serie of settings.Series | async">
+        <input type="radio" id="rbSer" [value]="serie.IdSerie" 
+          formControlName="rbSer"
+          [(ngModel)]="model.rbSer"
+          (ngModelChange)="onChanges($event)">
+        <label class="form-check-label" for="rbSer">
+            {{ serie.Serie }}
+          </label> 
+      </div>
+      <div class="form-group row" *ngIf="settings.lastError.isError  |async">
+          <div class="col">
+            <div class=" alert alert-danger text-center">
+                {{ settings.lastError.DescError }}
+            </div>
+              
+          </div>
+        </div>
+    </form>
+    </div>
+
+    <div class="modal-footer">
+        <div class="container">
+          <div class="row flex-row justify-content-center">
+            <div class="col-md-3 d-flex justify-content-end">
+              <button 
+                type="button" 
+                class="btn btn-primary"
+                (click)="openQuestion(Question)"
+                [disabled]="!TurnoySerieForm.valid">
+                Seleccionar</button>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()">Cerrar</button>
+            </div>
+            <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
+              <div> [{{ settings.iTOw }}] </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <ng-template #Question>
+          <div class="modal-body text-center">
+            <p>¿Desea atender Turno No Emitido?</p>
+            <button type="button" class="btn btn-default" (click)="confirm()" >Si</button>
+            <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
+          </div>
+        </ng-template>

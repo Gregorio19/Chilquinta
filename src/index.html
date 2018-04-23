@@ -2,13 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>Consultora2</title>
-  <base href="/">
+  <title>Consultora</title>
+  <base href="./">
 
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <link rel="shortcut icon" href="./assets/img/favicon.png">
+
+  <!-- Icons -->
+  <!--<link href="./assets/css/font-awesome.min.css" rel="stylesheet">
+  <link href="./assets/css/simple-line-icons.css" rel="stylesheet"> -->
 </head>
-<body>
-  <app-root></app-root>
+<body class="app header-fixed">
+  <!-- Enable bootstrap 4 theme -->
+  <script>window.__theme = 'bs4';</script>
+  
+  <app-root style="height: 100%">
+    <div class="loader">
+      <svg class="circular" viewBox="25 25 50 50">
+          <circle class="path" cx="50" cy="50" r="20" fill="none" stroke-width="2" stroke-miterlimit="10"/>
+      </svg>
+    </div>
+  </app-root>
+
 </body>
 </html>

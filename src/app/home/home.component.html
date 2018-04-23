@@ -1,0 +1,244 @@
+<!--
+<div class="pace  pace-inactive">
+    <div class="pace-progress" data-progress-text="100%" data-progress="99" style="transform: translate3d(100%, 0px, 0px);">
+      <div class="pace-progress-inner"></div>
+    </div>
+    <div class="pace-activity"></div>
+  </div>
+ 
+  <div class="app-body">-->
+    <!--<div class="sidebar">
+      <nav class="sidebar-nav">
+        <ul class="nav">
+          <li class="nav-title"> Cuenta </li>
+          <li class="nav-item">
+            <a href="index.html" class="nav-link"><i class="fa fa-lock text-white"></i> Logoff</a>
+          </li>
+          <li class="divider"></li>
+          <li class="nav-title"> Acciones </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-play-circle-o  text-white"></i> Inicio de atención</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-pause-circle-o text-white"></i> Pausa</a>
+          </li>
+          <li class="divider"></li>
+          <li class="nav-title"> Interacción </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-check text-white"></i> Finalizar atención</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-compress text-white"></i> Rellamado</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-check text-white"></i> Llegó</a>
+          </li>
+          <li class="nav-item">
+            <a href="#" class="nav-link"><i class="fa fa-bell text-white"></i> Excepción</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-ban text-white"></i> Anular</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#"><i class="fa fa-forward text-white"></i> Derivar</a>
+          </li>
+        </ul>
+      </nav>
+      <button class="sidebar-minimizer brand-minimizer text-white" type="button"></button>
+    </div>
+-->
+
+        <div class="animated fadeIn">
+          <div class="row">
+            <div class="col-sm-4 col-lg-3 mb-4 col-md-3">
+              <div class="card h-100 text-dark card-gradient-primary">
+                <div class="card-header text-center card-gradient-primary-header"> Estado de Oficina</div>
+                <div class="card-body pb-0">
+                  <h5 class="mb-0 text-center">Espera en oficina</h5>
+                  <div class="row justify-content-center">
+                    <div class="col-sm-auto col-auto"> <i class="fa fa-user"></i> <span id="dQEspO"  [innerHTML]="settings.dQEspO.value | async"></span> </div>
+                    <div class="col-sm-auto col-auto"> <i class="fa fa-clock-o"></i> <span id="dTEspO" class="font-weight-bold text-dark" [innerHTML]="settings.dTEspO.value |async" [class]="settings.dTEspO.class | async"></span> </div>
+                  </div>
+                  <br>
+                  <h5 class="mb-0 text-center">Espera en módulo</h5>
+                  <div class="row justify-content-center">
+                    <div class="col-sm-auto col-auto"> <i class="fa fa-user"></i> <span id="dQEspE" [innerHTML]="settings.dQEspE.value |async"></span> </div>
+                    <div class="col-sm-auto col-auto"> <i class="fa fa-clock-o"></i> <span id="dTEspE" class="font-weight-bold text-dark" [innerHTML]="settings.dTEspE.value |async" [class]="settings.dTEspE.class |async"></span> </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-12 col-sm-12 col-lg-9 mb-4 col-md-9">
+              <div class="card h-100 text-dark card-gradient-2 border-success" *ngIf="settings.pausa.show | async; else pausa">
+                <div class="card-header text-center card-gradient-2-header"> Atención </div>
+                <div class="card-body pb-0">
+                  <div class="row justify-content-center"> <span id="dSer" class="H4 text-dark" [innerHTML]="settings.dSer.value |async"></span> </div>
+                  <div class="row">
+                    <div class="col-md-4">
+                      <div class="row">
+                        <div class="col-sm-auto col-auto">
+                          <div class="text-dark h5" id="dEdo" [innerHTML]="dEdo" [innerHTML]="settings.dEdo.value |async">---</div>
+                        </div>
+                          
+                        <div class="col-sm-auto col-auto h2" *ngIf="letter"> 
+                          <div class="odometer odometer-theme-train-station">
+                          <div id="dLet" class="odometer-inside">
+                                  <span class="odometer-digit">
+                                    <span class="odometer-digit-spacer">8</span>
+                                    <span class="odometer-digit-inner">
+                                      <span class="odometer-ribbon">
+                                        <span class="odometer-ribbon-inner">
+                                          <span class="odometer-value h2" [innerHTML]="settings.dLet.value | async"></span>
+                                        </span>
+                                      </span>
+                                    </span>
+                                </span>                              
+                              </div>
+                        </div>
+                           <!--<span id="dTur" class="h5">37</span>--> 
+                           <!--<ng2-odometer 
+                                [number]="number" 
+                                [observable]="observable"
+                                [config]="config" class="h5" id="dTur"></ng2-odometer>-->
+                                <ng2-odometer id="dTur" class="h2" [number]="number" [config]="configOdo" [observable]="observable" ></ng2-odometer>
+                          </div>
+                      </div>
+                      <div class="row justify-content-center">
+                        <div class="col-sm-auto col-auto">
+                          <div class="float-left"> <i class="icon-user icons font-2xl d-block"> </i> </div>
+                        </div>
+                        <div class="col-sm-auto col-auto">
+                          <div class="float-right">
+                            <div class="campo" id="dCli" [innerHTML]="settings.dCli.value | async">&nbsp;</div>
+                            <div class="campo" id="dRut" [innerHTML]="settings.dRut.value | async">&nbsp;</div>
+                            <div class="campo" id="dFon" [innerHTML]="settings.dFon.value | async">&nbsp;</div>
+                            <div id="imgid" *ngIf="settings.imgid.show | async" class="btn btn-link" (click)="fnIDedit()"><i class="fa fa-plus-circle"></i> <span>Editar</span></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4">
+
+                        <div class="animakuz-container gradient-bg-dark" *ngIf="AnimationEsperando()">
+                            <div class="body wave">
+                              <div class="head">
+                                <div class="neck"></div>
+                              </div>
+                              <div class="torso">
+                                <div class="left-arm">
+                                  <div class="forearm"></div>
+                                </div>
+                          
+                                <div class="right-arm">
+                                  <div class="forearm"></div>   
+                                </div>
+                              </div>
+                              <div class="abdomen">
+                                <div class="left-foot">
+                                  <div class="lower-leg"></div>
+                                </div>
+                          
+                                <div class="right-foot">
+                                  <div class="lower-leg"></div>
+                                </div>
+                              </div>    
+                          
+                            </div>
+                          </div>
+
+                          <div class="animakuz-container gradient-bg-dark" *ngIf="AnimationLlamando()">
+                              <div class="body wave">
+                                <div class="head">
+                                  <div class="neck"></div>
+                                </div>
+                                <div class="torso">
+                                  <div class="left-arm animate">
+                                    <div class="forearm"></div>
+                                  </div>
+                            
+                                  <div class="right-arm">
+                                    <div class="forearm"></div>   
+                                  </div>
+                                </div>
+                                <div class="abdomen">
+                                  <div class="left-foot">
+                                    <div class="lower-leg"></div>
+                                  </div>
+                            
+                                  <div class="right-foot">
+                                    <div class="lower-leg"></div>
+                                  </div>
+                                </div>    
+                            
+                              </div>
+                            </div>
+
+
+                    </div>
+                    <div class="col-md-4">
+                      <div class="row justify-content-center">
+                        <div class="col-sm-auto col-auto">
+                          <div class="h5"> Cliente esperó </div>
+                          <div> <i class="fa fa-clock-o texto22"></i> 
+                            <span id="dTEsp" class="font-weight-bold" [class]="settings.dTEsp.class | async" [innerHTML]="settings.dTEsp.value | async"></span> 
+                          </div>
+                          <div id="dMsgEsp" class="text-danger font-weight-bold" [innerHTML]="settings.dMsgEsp.value | async" [class]="settings.dMsgEsp.class|async"></div>
+                          <div class="h5"> Tiempo atención </div>
+                          <div> <i class="fa fa-clock-o"></i> <span id="dTAte" class="font-weight-bold" [class]="settings.dTAte.class | async" [innerHTML]="settings.dTAte.value | async"> </span> </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <ng-template #pausa >
+                  <div class="card h-100 text-dark card-gradient-2 border-success" id="con_pausa">
+                    <div class="card-body">
+                        <div class="row justify-content-center">
+                            <div class="col-sm-auto col-auto">
+                              <h1 class="text-danger">PAUSA</h1>
+                              </div>
+                              </div>
+                    </div>
+                  </div>
+                </ng-template>
+            </div>
+          </div>
+          <div class="row">
+            <div class="mb-4 col-md-7 col-lg-5 col-sm-6">
+              <div class="card h-100 border-danger">
+                <div class="card-body">
+                  <div class="row px-1">
+                    <div class="col-sm-10 col-lg-12 col-md-12 col-xl-12 px-0 mx-0" *ngIf="settings.contenedorFin.show | async">
+                      <button type="button" class="btn btn-danger text-white btn-block btn3d" [disabled]="settings.btFIN.disable |async" (click)="fnAccion('FIN');"><i class="fa fa-check d-block"></i>&nbsp; Finalizar atención</button>
+                    </div>
+                    <div class="col-sm-4 col-md-6 col-lg-6 col-xl-6 px-0 mx-0" *ngIf="settings.contenedorLle.show | async">
+                      <button type="button" class="btn btn-primary text-white btn-block btn3d" [disabled]="settings.btRLL.disable |async"(click)="fnAccion('RLL');"><i class="fa fa-compress d-block"></i>&nbsp; Rellamado</button>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 pl-1 pr-0 mx-0" *ngIf="settings.contenedorLle.show | async">
+                      <button type="button" class="btn btn-success text-white btn-block btn3d" [disabled]="settings.btLLE.disable |async"(click)="fnAccion('LLE');"><i class="fa fa-check d-block"></i>&nbsp; Llegó</button>
+                    </div>
+                  </div>
+                  <div class="row pt-3 px-1">
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 px-0 mx-0">
+                      <button type="button" class="btn btn-danger text-white btn-block btn3d" [disabled]="settings.btURG.disable |async"(click)="fnAccion('URGSER');"><i class="fa fa-bell d-block"></i>&nbsp; Excepción</button>
+                      <!-- w-100 -->
+                    </div>
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 px-1 mx-0">
+                      <button type="button"  class="btn btn-warning text-white btn-block btn3d" [disabled]="settings.btNUL.disable |async"(click)="fnAccion('NUL');"><i class="fa fa-ban d-block"></i>&nbsp; Anular</button>
+                    </div>
+                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 px-0 mx-0">
+                      <button type="button" class="btn btn-default btn-block btn3d text-white" [disabled]="settings.btDRV.disable |async"(click)="fnAccion('DRVSER');"><i class="fa fa-forward d-block"></i>&nbsp; Derivar</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-6 col-lg-7 mb-4 col-md-5">
+              <div class="card h-100 border-warning">
+                <div class="card-body"> </div>
+              </div>
+            </div>
+          </div>
+        </div>
+  

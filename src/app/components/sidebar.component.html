@@ -1,0 +1,101 @@
+
+        <nav class="sidebar-nav">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="['/dashboard']"><i class="icon-speedometer"></i> Dashboard <span class="badge badge-info">NEW</span></a>
+                        </li>
+                        <li class="divider"></li>
+                        <li class="nav-title">
+                            Reportes
+                        </li>
+                        <li class="nav-item nav-dropdown" routerLinkActive="open" appNavDropdown>
+                            <a class="nav-link nav-dropdown-toggle" href="#" appNavDropdownToggle><i class="icon-puzzle"></i> Reportes Globales Agrupados</a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" routeLinkActive="active" [routerLink]="['/resumen-espera-agrupado/resumen-de-espera']"><i class="icon-puzzle"></i> Resumen de Espera</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Resumen de Atención</a>
+                                </li>              
+                            </ul>
+                        </li>
+                        <li class="nav-item nav-dropdown" routerLinkActive="open" appNavDropdown>
+                            <a class="nav-link nav-dropdown-toggle" href="#" appNavDropdownToggle><i class="icon-star"></i> Reportes Globales No Agrupados</a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/font-awesome']"><i class="icon-star"></i> Rango de Espera</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/simple-line-icons']"><i class="icon-star"></i> Rango de Atención</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/font-awesome']"><i class="icon-star"></i> Tendencia de Atenciones</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/simple-line-icons']"><i class="icon-star"></i> Carga de Trabajo por Hora</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/font-awesome']"><i class="icon-star"></i> Resumen de Espera</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/simple-line-icons']"><i class="icon-star"></i> Resumen de Atención</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/font-awesome']"><i class="icon-star"></i> Resumen Mensual</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/icons/simple-line-icons']"><i class="icon-star"></i> Ranking de Atenciones</a>
+                                </li>
+                            </ul>
+                        </li>
+    
+                    <!-- MENU REPORTES POR OFICINA -->
+                        <li class="nav-item nav-dropdown" routerLinkActive="open" appNavDropdown>
+                            <a class="nav-link nav-dropdown-toggle" href="#" appNavDropdownToggle><i class="icon-puzzle"></i> Reportes por Oficina</a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" routeLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Motivos de Pausa</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Resumen de Ejecutivo</a>
+                                </li>              
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Estado Diario de Ejecutivo</a>
+                                </li>              
+                            </ul>
+                        </li>
+                            
+                        <!-- REPORTES POR SERIE -->
+                        <li class="nav-item nav-dropdown" routerLinkActive="open" appNavDropdown>
+                            <a class="nav-link nav-dropdown-toggle" href="#" appNavDropdownToggle><i class="icon-puzzle"></i> Reportes por Serie</a>
+                            <ul class="nav-dropdown-items">
+                                <li class="nav-item">
+                                    <a class="nav-link" routeLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Producción</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Ranking de Ejecutivos</a>
+                                </li>              
+                                <li class="nav-item">
+                                    <a class="nav-link" routeLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Carga de Trabajo Diaria</a>
+                                </li>
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Resumen de Oficina</a>
+                                </li>              
+                                <li class="nav-item">
+                                    <a class="nav-link" routerLinkActive="active" [routerLink]="['/components/social-buttons']"><i class="icon-puzzle"></i> Motivos de Atención</a>
+                                </li>              
+                            </ul>
+                        </li>
+                        <li class="divider"></li>
+                        <!-- MENU OFICINAS -->
+                        <li class="nav-title">
+                            Oficinas
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="['/oficinas/zonas']"><i class="icon-speedometer"></i> Oficinas Zonas</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" routerLinkActive="active" [routerLink]="['/oficinas/estado-oficina']"><i class="icon-speedometer"></i>  Oficinas Resumen</a>
+                        </li>                        
+                    </ul>
+                </nav>

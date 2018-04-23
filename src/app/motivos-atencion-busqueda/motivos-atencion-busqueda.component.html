@@ -1,0 +1,105 @@
+
+        <div class="modal-header">
+            <div class="container">
+                <div class="row">
+                  <div class="col-auto">
+                    <h5 class="modal-title">Motivos de Atención</h5>
+                  </div>
+                  <div class="col">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
+                  </div>
+                </div>
+                <div class="row" *ngIf="motivoModel.Mot?.Motivo">
+                      > {{ motivoModel.Mot?.Motivo }}
+                </div>
+                <div class="row" *ngIf="motivoModel.SMot?.SubMotivo">
+                    > {{ motivoModel.SMot?.SubMotivo }}
+                </div>
+                <div class="row" *ngIf="motivoModel.SSMot?.SSubMotivo">
+                    > {{ motivoModel.SSMot?.SSubMotivo }} 
+                </div>
+                  
+                 
+              </div>
+        </div>
+        <div class="modal-body">
+                <div class="row">
+                    <div class="col" *ngIf="isVisibleTipoMateria()">
+                        <label for="tipoMateriaFilter">Tipo de Materia</label>
+                            <input
+                            type='text'                            
+                            class="form-control"
+                            id="tipoMateriaFilter"
+                            placeholder='Tipo de Materia'
+                            (keyup)='updateFilterTMateria($event)'
+                          />
+                    </div>
+                    <div class="col" *ngIf="isVisibleTemas()">
+                            <label for="temasFilter">Temas</label>
+                            <input
+                            type='text'           
+                            class="form-control"
+                            id="temasFilter"                 
+                            placeholder='Temas'
+                            (keyup)='updateFilterTemas($event)'
+                          />
+                        </div>
+                        <div class="col" *ngIf="isVisibleTramite()">
+                                <label for="temasFilter">Trámite</label>
+                                <input
+                                type='text'                  
+                                class="form-control"
+                                id="temasFilter"                           
+                                placeholder='Trámite'
+                                (keyup)='updateFilterTramite($event)'
+                              />
+                            </div>
+                </div>
+              
+
+            <ngx-datatable
+            #table
+            class='material fullscreen'
+            [rows]="rows"
+            [columns]="columns"
+            [columnMode]="'force'"
+            [headerHeight]="50"
+            [footerHeight]="50"
+            [rowHeight]="'auto'"
+            [limit]="5"
+            [messages]="messages"
+            [loadingIndicator]="loadingIndicator"
+            [selected]="selected"
+            [selectionType]="'single'"
+            (select)='onSelect($event)'>
+
+      
+          </ngx-datatable>
+
+          <div class="row" *ngIf="settings.lastErrorMot.isError | async">
+              <div class="col">
+                  <div class="alert alert-danger text-center">
+                      {{ settings.lastErrorMot.DescError }}
+                  </div>
+                    
+                </div>
+        </div>
+        </div>
+
+<div class="modal-footer">
+    <div class="container">
+        <div class="row flex-row justify-content-center">
+          <div class="col-md-3 d-flex justify-content-end">
+      
+              <button type="button" class="btn btn-primary" [disabled]="!selected.length" (click)="Enviar()">Enviar</button>
+          </div>
+          <div class="col-md-3 d-flex justify-content-end">
+              <button type="button" class="btn btn-secondary" (click)="bsModalRef.hide()">Salir</button>
+          </div>
+          <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
+              <div> [{{ settings.iTOw }}] </div>
+            </div>
+  </div>
+  </div>
+  </div>
+  

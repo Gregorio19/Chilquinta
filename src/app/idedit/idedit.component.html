@@ -1,0 +1,111 @@
+<div class="modal-header">
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h5 class="modal-title">CONFIRMA</h5>
+        </div>
+        <div class="col">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" [disabled]="client.IdEditarForzar" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div>Identificación del Cliente</div>
+        </div>
+      </div>
+    </div>
+    </div>
+    
+  <div class="modal-body">
+      <form class=""  [formGroup]="IdEditForm" novalidate>
+        <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txRut'].valid}">
+        <label for="txEsc" class="col-sm-4 col-form-label">Rut</label>
+        <div class="col-sm-8">
+            <div class="col-sm-4 pl-0">
+            <input type="text" class="form-control" id="txRut"            
+              [(ngModel)]="model.txRut" 
+              (ngModelChange)="onChanges($event)" 
+              formControlName="txRut"             
+              placeholder="111111-k"
+              autofocus
+              validateRut
+              required
+              minlength="9"
+              maxlength="10"
+            >
+            </div>
+            <div class="form-control-feedback" *ngIf="IdEditForm.controls['txRut'].errors && IdEditForm.controls['txRut'].touched">
+                <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('required')">El RUT es requerido</p>
+              <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('validateRut')">Formato del RUT no válido</p>
+                <p class="alert alert-danger" *ngIf="!IdEditForm.controls['txRut'].hasError('validateRut') && (IdEditForm.controls['txRut'].hasError('minlength') || IdEditForm.controls['txRut'].hasError('maxlength'))">RUT número de caracteres no válido</p>
+        </div>
+        </div>       
+      </div>
+      
+      <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txFon'].valid}">
+        <label for="txUsr" class="col-sm-4 col-form-label">Teléfono</label>
+        <div class="col-sm-8">
+            <div class="col-sm-4 pl-0">
+          <input type="text" 
+            class="form-control" 
+            id="txFon" 
+            [(ngModel)]="model.txFon" 
+            formControlName="txFon" 
+            (ngModelChange)="onChanges($event)"
+            number
+            [min]="getFonMin()"
+            [max]="getFonMax()"
+            [maxlength]="settings.CliInt == 'FALASACBOD' ? 10 : 9"
+            [placeholder]="getFonMin()"
+            >
+            </div>
+
+            <div class="form-control-feedback" *ngIf="IdEditForm.controls['txFon'].errors && IdEditForm.controls['txFon'].touched">
+                <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('required')">El Teléfono es requerido</p>
+                <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('maxlength')">El Teléfono debe tener 10 caracteres</p>
+                <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('max') || IdEditForm.controls['txFon'].hasError('min')">El Teléfono con mal formato</p>
+          </div>
+          
+        </div>
+      </div>
+
+      <div class="form-group row" *ngIf="client.IdEditarForzar">
+        <label for="txUsr" class="col-sm-4 col-form-label">Trámite de Terceros</label>
+        <div class="col-sm-8">
+          <input type="checkbox" 
+            class="form-control" 
+            id="txTer" 
+            [(ngModel)]="model.txTer" 
+            formControlName="txTer" 
+            (ngModelChange)="onChanges($event)"
+            >
+          
+        </div>
+        
+      </div>
+
+      <div class="form-group row" *ngIf="settings.lastError.isError |async">
+        <div class="col">
+          <div class=" alert alert-danger text-center">
+              {{ settings.lastError.DescError }}
+          </div>
+            
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer">
+    <div class="container">
+      <div class="row flex-row justify-content-center">
+        <div class="col-md-3 d-flex justify-content-end">
+            <button type="button" class="btn btn-primary" (click)="fnSet_ID()" [disabled]="!IdEditForm.valid || !isChange">Confirmar</button>
+        </div>
+        <div class="col-md-3 d-flex justify-content-end">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()" [disabled]="client.IdEditarForzar">Cerrar</button>
+        </div>
+        <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
+            <div> [{{ settings.iTOw }}] </div>
+        </div>
+      </div>
+    </div>
+  </div>
