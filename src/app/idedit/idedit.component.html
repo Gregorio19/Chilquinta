@@ -5,7 +5,7 @@
           <h5 class="modal-title">CONFIRMA</h5>
         </div>
         <div class="col">
-          <button type="button" class="close" data-dismiss="modal" aria-label="Close" [disabled]="client.IdEditarForzar" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close" [disabled]="enableClosed" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
         </div>
       </div>
       <div class="row">
@@ -18,7 +18,7 @@
     
   <div class="modal-body">
       <form class=""  [formGroup]="IdEditForm" novalidate>
-        <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txRut'].valid}">
+        <div class="form-group row" [ngClass]="{'has-error':!IsValidRut}">
         <label for="txEsc" class="col-sm-4 col-form-label">Rut</label>
         <div class="col-sm-8">
             <div class="col-sm-4 pl-0">
@@ -34,7 +34,7 @@
               maxlength="10"
             >
             </div>
-            <div class="form-control-feedback" *ngIf="IdEditForm.controls['txRut'].errors && IdEditForm.controls['txRut'].touched">
+            <div class="form-control-feedback" *ngIf="ConfirmaRut && IdEditForm.controls['txRut'].errors && IdEditForm.controls['txRut'].touched">
                 <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('required')">El RUT es requerido</p>
               <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('validateRut')">Formato del RUT no válido</p>
                 <p class="alert alert-danger" *ngIf="!IdEditForm.controls['txRut'].hasError('validateRut') && (IdEditForm.controls['txRut'].hasError('minlength') || IdEditForm.controls['txRut'].hasError('maxlength'))">RUT número de caracteres no válido</p>
@@ -42,11 +42,11 @@
         </div>       
       </div>
       
-      <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txFon'].valid}">
+      <div class="form-group row" [ngClass]="{'has-error':!IsValidFono}">
         <label for="txUsr" class="col-sm-4 col-form-label">Teléfono</label>
         <div class="col-sm-8">
-            <div class="col-sm-4 pl-0">
-          <input type="text" 
+            <div class="col-sm-4 pl-0" [ngSwitch]="ConfirmaFono">
+          <input type="text" *ngSwitchCase="true"
             class="form-control" 
             id="txFon" 
             [(ngModel)]="model.txFon" 
@@ -58,9 +58,18 @@
             [maxlength]="settings.CliInt == 'FALASACBOD' ? 10 : 9"
             [placeholder]="getFonMin()"
             >
+
+            <input type="text" *ngSwitchDefault
+            class="form-control" 
+            id="txFon" 
+            [(ngModel)]="model.txFon" 
+            formControlName="txFon" 
+            (ngModelChange)="onChanges($event)"
+            [placeholder]="getFonMin()"
+            >
             </div>
 
-            <div class="form-control-feedback" *ngIf="IdEditForm.controls['txFon'].errors && IdEditForm.controls['txFon'].touched">
+            <div class="form-control-feedback" *ngIf="ConfirmaFono && IdEditForm.controls['txFon'].errors && IdEditForm.controls['txFon'].touched">
                 <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('required')">El Teléfono es requerido</p>
                 <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('maxlength')">El Teléfono debe tener 10 caracteres</p>
                 <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('max') || IdEditForm.controls['txFon'].hasError('min')">El Teléfono con mal formato</p>
@@ -101,9 +110,9 @@
             <button type="button" class="btn btn-primary" (click)="fnSet_ID()" [disabled]="!IdEditForm.valid || !isChange">Confirmar</button>
         </div>
         <div class="col-md-3 d-flex justify-content-end">
-          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()" [disabled]="client.IdEditarForzar">Cerrar</button>
+          <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()" [disabled]="enableClosed">Cerrar</button>
         </div>
-        <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
+        <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
             <div> [{{ settings.iTOw }}] </div>
         </div>
       </div>

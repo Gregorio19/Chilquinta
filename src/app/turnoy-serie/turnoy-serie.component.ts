@@ -17,7 +17,7 @@ export class TurnoySerieComponent implements OnInit {
   TurnoySerieForm: FormGroup;
   model = new TurnoySerie();
 
-  private client: any;
+  client: any;
   
   constructor(
     private consService: ConsService,

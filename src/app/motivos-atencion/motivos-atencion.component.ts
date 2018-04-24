@@ -26,7 +26,7 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   public cierreAtencion: boolean = false;
   public busqueda: boolean = false;
   
-  private client: any;
+  client: any;
 
   private listMotivos: any[] = [];
   private _listsMotivos: any[] = [];

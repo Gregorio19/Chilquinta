@@ -46,7 +46,7 @@ export enum ActionEnum {
     ESPERANDO = "ESPERANDO",
     LLAMANDO = "LLAMANDO",
     ATENDIENDO = "ATENDIENDO",
-    UNKNOW = "",
+    UNKNOW = "UNKNOW",
     X = "x" 
   }
   

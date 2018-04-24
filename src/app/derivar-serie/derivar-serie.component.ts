@@ -15,6 +15,7 @@ import { AppConfig } from '../app.config';
 export class DerivarSerieComponent implements OnInit {
   derivarSerieForm: FormGroup;
   model = new DerivarSerie();
+  client: any;
   
   constructor(
     private consService: ConsService,
@@ -30,6 +31,8 @@ export class DerivarSerieComponent implements OnInit {
   }
   
   ngOnInit() {
+    this.client = this.config.get('clients')[this.config.get('clients').client];
+
     this.derivarSerieForm = this.fb.group({
       rbSer: ['', Validators.required],
       rbDrv: ['', [Validators.required]]

@@ -161,6 +161,7 @@ export class SettingsService {
     this.btDRV.disable.next(true);
     this.imgid.show.next(false);
     this.dTEsp.value.next("");
+    this.btEnc.disable.next(true);
 
     this.dTer.value.next("0");
 

@@ -29,6 +29,8 @@ export class ConsService extends WebsocketService {
 
     private bLlamaSet: Boolean = false;
     private client: any;
+    private bEncCurso: boolean = false;
+    private iTAte: number = 0;
     
     constructor(
         //private socket: WebsocketService,        
@@ -110,7 +112,7 @@ export class ConsService extends WebsocketService {
                     this.settings.isLogged.next(false);
                     this.cookieService.delete(this.sCookie);
                     this.fnAccion(AccEnum.LGI);
-                }*/
+                }*/                
 
                 switch(m.CodError) {
                     case 13022: //11522: 
@@ -127,7 +129,8 @@ export class ConsService extends WebsocketService {
                         this.settings.lastError.CodError = m.CodError;
                         this.settings.lastError.DescError = m.DescError;
                         this.settings.lastError.isError.next(true);
-                        
+                   
+                        this.settings.subacc = AccEnum.UNKNOW;
                         this.settings.iTOw = -1;
                         this.openModal(ModalEnum.ERROR);
                 }
@@ -213,7 +216,7 @@ export class ConsService extends WebsocketService {
                 case ActionEnum.SETIDC:
                     console.log("R : SETIDC");
                     this.closeModal(ModalEnum.IDEDIT);
-                    break;
+                    break;                
             }
             let dEdo: AccEnum = <AccEnum>AccEnum[this.settings.dEdo.value.getValue()];
             console.log("dEdo", this.settings.dEdo.value.getValue(), dEdo, this.settings.accion);
@@ -265,27 +268,29 @@ export class ConsService extends WebsocketService {
         }
         if (this.settings.sEscEdo == AccEnum.ATENDIENDO && 
         (this.settings.accion == AccEnum.FIN || 
-        (this.settings.accion == AccEnum.LGO || 
-        (this.settings.accion == AccEnum.PAUGET ||
-         (this.settings.accion == AccEnum.URGSER || 
-         this.settings.accion == AccEnum.DRVSER))))) {
+        this.settings.accion == AccEnum.LGO || 
+        this.settings.accion == AccEnum.PAUGET ||
+        this.settings.accion == AccEnum.URGSER || 
+         this.settings.accion == AccEnum.DRVSER)) {
             if (!this.settings.btEnc.disable.getValue()) {
                 //fnEnc_Start();
                 //fnEnc_Wait();                
                 this.settings.sEncAcc = accion;
                 return false;
             } else {
-                /*
+                
                 if (this.config.get('poll').EncOK && (this.settings.oEncQ.length > 0 && !this.settings.bEncFin)) {
                     //fnEnc_Wait();
                     this.settings.sEncAcc = accion;
                     return false;
                 } else {
                     if (accion != AccEnum.FIN) {
+                        console.log("fuck action switch", accion);
                         this.settings.subacc = accion;
                         this.settings.accion = AccEnum.FIN;
                     }
-                }*/
+                }
+                console.log("piko", this.settings.accion);
             }
         } else {
           if (this.settings.sEscEdo == AccEnum.LLAMANDO && this.settings.accion == AccEnum.PAUGET) {
@@ -372,7 +377,6 @@ export class ConsService extends WebsocketService {
         }
         switch(xhtml) {
           case AccEnum.LOGOFF:
-          console.log("fucking shift");
             this.loginModel = new LoginModel();
             this.settings.isLogged.next(false);
             this.settings.btINI.disable.next(true);
@@ -456,7 +460,8 @@ export class ConsService extends WebsocketService {
             this.settings.btLLE.disable.next(true);
             this.settings.btRLL.disable.next(true);
             this.settings.btNUL.disable.next(true);
-            this.settings.btURG.disable.next(false);
+            //this.settings.btURG.disable.next(false);
+            this.settings.btURG.disable.next(true);
 
             this.settings.btDRV.disable.next(parseInt(
                 this.settings.dTur.value.getValue()
@@ -545,11 +550,14 @@ export class ConsService extends WebsocketService {
             let diff:number = ((now.getTime() - this.settings.dAte.getTime()) / 1000) - this.settings.hiTDelta;
             this.s_2_hms(this.settings.dTAte, diff, parseInt(this.settings.hiTAteA));
         }
+        console.log("fuck estados", this.settings.sEscEdo, this.settings.subacc);
         if (this.settings.sEscEdo == AccEnum.ESPERANDO && this.settings.subacc != AccEnum.UNKNOW) {
             if (this.settings.subacc != AccEnum.X) {
+                console.log("fuck subacc", this.settings.subacc);
                 this.fnAccion(this.settings.subacc);
             }
         } else {
+            console.log("fuck nose", this.settings.dQEspE.value.getValue(), this.settings.iTOpido);
             if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0)) {
                 this.fnAccion(AccEnum.INI);
             } else {
@@ -564,6 +572,7 @@ export class ConsService extends WebsocketService {
                             this.fnAccion(AccEnum.NUL);
                         }
                 } else {
+                    console.log("show modal", this.settings.Modal.show);
                     if (!this.settings.Modal.show) {  
                         if (!(this.settings.iDT++ % 10)) {
                             this.fnAccion(AccEnum.EDS);
@@ -575,7 +584,9 @@ export class ConsService extends WebsocketService {
       if(this.settings.Modal.show && this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
           if(this.settings.iTOw-- == 0) {
               if(this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
-                this.closeModal(this.settings.Modal.self.getValue());
+                  if(this.client.UseTimeout) {
+                    this.closeModal(this.settings.Modal.self.getValue());
+                  }                
               }
                 this.settings.iTOw = this.config.get('socket').TOwin;
           }
@@ -648,7 +659,7 @@ export class ConsService extends WebsocketService {
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
 
-        this.send(proto.toJson(), this.settings.accion);   
+        this.send(JSON.stringify(proto), this.settings.accion);   
     }
 
     public AccEDS() {
@@ -664,7 +675,7 @@ export class ConsService extends WebsocketService {
           proto.Id = "1";
           proto.IdEscritorio = this.settings.hiEsc;
 
-          this.send(proto.toJson(), this.settings.accion);   
+          this.send(JSON.stringify(proto), this.settings.accion);   
           return true;
     }
 
@@ -696,6 +707,9 @@ export class ConsService extends WebsocketService {
     private AccFINTUR() {
         //this.settings.Modal.show.next(false);
         //this.closeModal(ModalEnum.GETMOTIVOS);
+
+        this.closeModal(this.settings.Modal.self.getValue());
+
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.FINTURNO;
         proto.ClienteInterno = this.settings.CliInt;
@@ -780,6 +794,7 @@ export class ConsService extends WebsocketService {
             return;
         }
 
+        this.settings.subacc = AccEnum.UNKNOW;
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.URGENCIA;
         proto.ClienteInterno = this.settings.CliInt;
@@ -811,6 +826,10 @@ export class ConsService extends WebsocketService {
         }
         if(this.settings.rbDrv.checked.getValue()) {
             ch = this.settings.rbDrv.value.getValue();
+        }
+        if (name == "0") {
+            this.settings.subacc = AccEnum.UNKNOW;
+            return false;
         }
         
         console.log("drvset ", name, ch);
@@ -1012,8 +1031,8 @@ export class ConsService extends WebsocketService {
 
     private FINTURNO(m) {
         //this.fnIDimd("N");
+        this.settings.subacc = AccEnum.UNKNOW;
         this.settings.data = new EmptyObservable();
-        this.closeModal(ModalEnum.GETMOTIVOS);
         this.settings.imgid.show.next(true);
         this.settings.imgid.disable.next(true);
         if (this.settings.CliInt == "FALASACBOD" && 
@@ -1186,7 +1205,10 @@ export class ConsService extends WebsocketService {
         this.settings.Modal.self.next(modal);
         this.settings.iTOw = -1;
 
-        this.settings.subacc = AccEnum.UNKNOW;
+        if(this.settings.subacc == AccEnum.X) {
+            this.settings.subacc = AccEnum.UNKNOW;
+        }
+        
     }
 
     public getIsLogged() : Observable<boolean> {

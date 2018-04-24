@@ -30,6 +30,8 @@ export class MotivosComponent implements OnInit {
 
   MotCierre: string = this.config.get('MotCierre');
   isError: boolean = false;
+
+  client: any;
     
   constructor(
     private consService: ConsService,
@@ -40,6 +42,8 @@ export class MotivosComponent implements OnInit {
   ) { }
   
   ngOnInit() {
+    this.client = this.config.get('clients')[this.config.get('clients').client];
+
     this.MotivosForm = this.fb.group({
       txMot: [null, Validators.compose([
           CustomValidators.number

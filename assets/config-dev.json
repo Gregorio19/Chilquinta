@@ -1,9 +1,9 @@
 {
-    "socket": {
+  "socket": {
     "url": "ws://172.16.32.151:8181/",
     "MotivosUrl": "ws://172.16.32.151:8190/",
-    "TOwin": 30,		
-    "TOenc": 10,		
+    "TOwin": 30,
+    "TOenc": 10,
     "ConfirmaID": "RN",
     "MotCierre": "S",
     "RutManMin": 1000000,
@@ -16,23 +16,23 @@
     "EncWidth": 800,
     "EncHeight": 480
   },
-  "clients": 
-    {
-      "client": "Default",
-      "Default": {
-        "MotivosExt": false,
-        "MotivosBusqueda": false,
-        "Motivos_QMax": 1,
-        "IdEditarForzar": false,
-        "LoginWithUserPass": true
-      },
-      
-      "Tesoreria": {
-        "MotivosExt": true,
-        "MotivosBusqueda": true,
-        "Motivos_QMax": 5,
-        "IdEditarForzar": true,
-        "LoginWithUserPass": false
-      }
+  "clients": {
+    "client": "Tesoreria",
+    "Default": {
+      "MotivosExt": false,
+      "MotivosBusqueda": false,
+      "Motivos_QMax": 1,
+      "IdEditarForzar": false,
+      "LoginWithUserPass": true,
+      "UseTimeout": true
+    },
+    "Tesoreria": {
+      "MotivosExt": true,
+      "MotivosBusqueda": true,
+      "Motivos_QMax": 3,
+      "IdEditarForzar": true,
+      "LoginWithUserPass": false,
+      "UseTimeout": false
     }
+  }
 }
