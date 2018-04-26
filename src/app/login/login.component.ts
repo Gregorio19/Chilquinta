@@ -105,7 +105,7 @@ export class LoginComponent implements OnInit  {
 
     this.consService.AccLGISET(this.loginModel);
 
-    this.consService.getIsLogged().subscribe(isLogged => {
+    /*this.consService.getIsLogged().subscribe(isLogged => {
       if(!isLogged && this.settings.lastError.CodError == "13022") {
           // launch get username & rut
           if(!this.client.LoginWithUserPass)
@@ -114,15 +114,13 @@ export class LoginComponent implements OnInit  {
               loginModel: this.loginModel
             }
             this.bsModalRef = this.modalService.show(ConfEjeComponent, { initialState });
-
-            
           }
         
       } else {
         // error
         
       }
-    });
+    });*/
     
   }
 

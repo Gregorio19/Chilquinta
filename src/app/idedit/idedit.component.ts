@@ -147,7 +147,7 @@ export class IdeditComponent implements OnInit {
     }
     this.consService.fnAccion(AccEnum.SID);
 
-    this.settings.lastError.isError.subscribe(isError => {
+    this.consService.IsError().subscribe(isError => {
       if (!isError) {
         this.bsModalRef.hide();
       }

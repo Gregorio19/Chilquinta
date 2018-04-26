@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, OnInit, TemplateRef, ContentChild } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
@@ -18,7 +18,11 @@ export class TurnoySerieComponent implements OnInit {
   model = new TurnoySerie();
 
   client: any;
-  
+  /*
+  @ContentChild(TemplateRef)
+  Question: TemplateRef<any>;
+  */
+
   constructor(
     private consService: ConsService,
     public settings: SettingsService,
@@ -27,34 +31,33 @@ export class TurnoySerieComponent implements OnInit {
     private modalService: BsModalService,
     private config: AppConfig
   ) { }
-  
+
   ngOnInit() {
     this.TurnoySerieForm = this.fb.group({
       rbSer: ['', Validators.required],
       urgTur: ['', [Validators.required, Validators.min(0)]]
-      });
+    });
 
-      this.model.urgTur = 0;
+    this.model.urgTur = 0;
 
-      this.client = this.config.get('clients')[this.config.get('clients').client];
+    this.client = this.config.get('clients')[this.config.get('clients').client];
   }
 
   closed(): void {
     this.bsModalRef.hide();
   }
 
-  fnAccion(accion: AccEnum) {    
-    this.settings.rbSer.checked.next(true); 
+  fnAccion(accion: AccEnum) {
+    this.settings.rbSer.checked.next(true);
     this.settings.rbSer.value.next(this.model.rbSer);
     this.settings.urgTur.value.next(this.model.urgTur.toString());
     this.consService.fnAccion(accion);
-    this.settings.lastError.isError.subscribe(isError => {
-      console.log("lasterror");
-      if(isError && !isError) {
+    this.consService.IsError().subscribe(isError => {
+      if (isError && !isError) {
         this.bsModalRef.hide();
       }
     });
-    
+
   }
 
   onChanges(val) {
@@ -69,19 +72,30 @@ export class TurnoySerieComponent implements OnInit {
 
   openQuestion(template: TemplateRef<any>) {
 
-    if(this.client.MotivosExt) {
-      if(!this.settings.lastError.isError.getValue()) {
+    if (this.client.MotivosExt) {
+      if (!this.client.ConsUrg) {
         this.bsModalRef.hide();
-      this.bsModalRef = this.modalService.show(template, {class:'modal-sm'})
+        if (this.model.urgTur == 0) {
+          this.bsModalRef = this.modalService.show(template, { class: 'modal-sm' })
+        } else {
+          this.confirm();
+        }
+      } else {
+        if (!this.settings.lastError.isError.getValue()) {
+          this.bsModalRef.hide();
+          this.confirm();
+        }
+
+
       }
-      
+
     } else {
-      if(!this.settings.lastError.isError.getValue()) {
+      if (!this.settings.lastError.isError.getValue()) {
         this.fnAccion(AccEnum.URGSET);
-        this.bsModalRef.hide();  
+        this.bsModalRef.hide();
       }
     }
-    
+
   }
 
   confirm() {

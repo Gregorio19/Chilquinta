@@ -69,7 +69,9 @@ export enum ActionEnum {
     GETMOTIVOS = "GETMOTIVOS",
     LOGIN = "LOGIN",
     IDEDIT = "IDEDIT",
-    ERROR = "ERROR"
+    ERROR = "ERROR",
+    MSGURGTURN = "MSGURGTURN",
+    CONFEJE = "CONFEJE"
   }
 
   export class tModalElement {

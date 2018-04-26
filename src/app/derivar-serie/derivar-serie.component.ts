@@ -16,7 +16,7 @@ export class DerivarSerieComponent implements OnInit {
   derivarSerieForm: FormGroup;
   model = new DerivarSerie();
   client: any;
-  
+
   constructor(
     private consService: ConsService,
     public settings: SettingsService,
@@ -29,14 +29,14 @@ export class DerivarSerieComponent implements OnInit {
   ngAfterViewInit() {
     this.cd.detectChanges();
   }
-  
+
   ngOnInit() {
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
     this.derivarSerieForm = this.fb.group({
       rbSer: ['', Validators.required],
       rbDrv: ['', [Validators.required]]
-      });
+    });
   }
 
   closed(): void {
@@ -44,20 +44,20 @@ export class DerivarSerieComponent implements OnInit {
   }
 
   fnAccion(accion: string) {
-    this.settings.rbSer.checked.next(true); 
+    this.settings.rbSer.checked.next(true);
     this.settings.rbDrv.checked.next(true);
     this.settings.rbSer.value.next(this.model.rbSer);
     this.settings.rbDrv.value.next(this.model.rbDrv);
 
     let acc: AccEnum = <AccEnum>AccEnum[accion];
-    console.log("fuck derivar", acc, accion);
     this.consService.fnAccion(acc);
-    this.settings.lastError.isError.subscribe(isError => {
+    this.bsModalRef.hide();
+    /*this.consService.IsError().subscribe(isError => {
       if(isError && !isError) {
         this.bsModalRef.hide();
       }
-    });
-    
+    });*/
+
   }
 
   onChanges(val) {
@@ -66,14 +66,14 @@ export class DerivarSerieComponent implements OnInit {
   }
 
   showRbSer(idSerie): boolean {
-    if(this.settings.hiIdSDRV != idSerie) {
+    if (this.settings.hiIdSDRV != idSerie) {
       return true;
     }
 
     return false;
   }
 
-  
+
 }
 
 export class DerivarSerie {

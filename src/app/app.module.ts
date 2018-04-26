@@ -48,11 +48,11 @@ import { NgSelectModule, NG_SELECT_DEFAULT_CONFIG  } from '@ng-select/ng-select'
 import { MotivosService } from './services/motivos.service';
 
 import { LoadingModule } from 'ngx-loading';
-import { ErrorComponent } from './error/error.component';
 import { LocationStrategy, PathLocationStrategy } from '@angular/common';
 import { ConfEjeComponent } from './conf-eje/conf-eje.component';
 import { P404Component } from './404/404.component';
 import { SimpleLayoutComponent } from './layouts/simple-layout.component';
+import { ModalMessageComponent } from './modal-message/modal-message.component';
 
 @NgModule({
   declarations: [
@@ -77,7 +77,7 @@ import { SimpleLayoutComponent } from './layouts/simple-layout.component';
     DerivarSerieComponent,
     MotivosAtencionComponent,
     MotivosAtencionBusquedaComponent,
-    ErrorComponent,
+    ModalMessageComponent,
     ConfEjeComponent,
     P404Component
   ],
@@ -131,7 +131,7 @@ import { SimpleLayoutComponent } from './layouts/simple-layout.component';
     MotivosComponent,    
     MotivosAtencionComponent,
     MotivosAtencionBusquedaComponent,
-    ErrorComponent,
+    ModalMessageComponent,
     P404Component,
     ConfEjeComponent
   ],
@@ -144,7 +144,7 @@ import { SimpleLayoutComponent } from './layouts/simple-layout.component';
     MotivosComponent,
     MotivosAtencionComponent,
     MotivosAtencionBusquedaComponent,
-    ErrorComponent,
+    ModalMessageComponent,
     ConfEjeComponent
   ]
 })

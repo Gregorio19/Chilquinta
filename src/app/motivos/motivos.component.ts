@@ -83,7 +83,7 @@ export class MotivosComponent implements OnInit {
       this.consService.fnAccion(AccEnum.FINTUR);
     }
     
-    this.settings.lastError.isError.subscribe(isError => {
+    this.consService.IsError().subscribe(isError => {
       if(isError && !isError) {
         this.bsModalRef.hide();
       }

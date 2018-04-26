@@ -355,8 +355,8 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   CierreAtencion() {
+    this.settings.cbMot = [];
     if(this.listMotivos.length > 0) {
-      this.settings.cbMot = [];
       this.listMotivos.forEach(s => {
         this.settings.cbMot.push(s);
       });
@@ -382,7 +382,7 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
       this.consService.fnAccion(AccEnum.FINTUR);
     }
     
-    this.settings.lastError.isError.subscribe(isError => {
+    this.consService.IsError().subscribe(isError => {
       if(!isError) {
         this.bsModalRef.hide(); 
       } else {

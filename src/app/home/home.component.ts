@@ -11,11 +11,12 @@ import { IdeditComponent } from '../idedit/idedit.component';
 import { MotivosComponent } from '../motivos/motivos.component';
 import { DerivarSerieComponent } from '../derivar-serie/derivar-serie.component';
 import { Observable } from 'rxjs/Observable';
-import { Observer } from 'rxjs';
+import { Observer, Subject, BehaviorSubject } from 'rxjs';
 import { MotivosService } from '../services/motivos.service';
 import { MotivosAtencionComponent } from '../motivos-atencion/motivos-atencion.component';
 import { AppConfig } from '../app.config';
-import { ErrorComponent } from '../error/error.component';
+import { ModalMessageComponent } from '../modal-message/modal-message.component';
+import { ConfEjeComponent } from '../conf-eje/conf-eje.component';
 
 @Component({
   selector: 'app-home',
@@ -46,10 +47,11 @@ export class HomeComponent implements OnInit {
     private modalService: BsModalService,
     private config: AppConfig
   ) {
-    /*
+
     this.modalService.onHide.subscribe((event: any) => {
       this.dialog = null;
-    });*/
+      this.consService.closeModal(this.settings.Modal.self.getValue());
+    });
 
     this.observable = new Observable<boolean>((observer: any) => this.observer = observer).share();
 
@@ -85,7 +87,7 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
 
-    this.settings.lastError.isError.subscribe(value => {
+    this.consService.IsError().subscribe(value => {
       if (value) {
 
         if (!this.dialog) {
@@ -103,6 +105,8 @@ export class HomeComponent implements OnInit {
         this.lastModal = modalEnum;
       }
 
+      let initialState = {};
+
       if (this.settings.Modal.show) {
         switch (modalEnum) {
           case ModalEnum.GETPAUSAS:
@@ -111,6 +115,14 @@ export class HomeComponent implements OnInit {
           case ModalEnum.LOGIN:
             this.dialog = this.modalService.show(LoginComponent);
             break;
+          case ModalEnum.CONFEJE:
+            if (!this.client.LoginWithUserPass) {
+              const initialState = {
+                loginModel: this.consService.loginModel
+              }
+              this.dialog = this.modalService.show(ConfEjeComponent, { initialState });
+            }
+            break;
           case ModalEnum.GETSERIES_URGSER:
             this.dialog = this.modalService.show(TurnoySerieComponent);
             break;
@@ -118,10 +130,10 @@ export class HomeComponent implements OnInit {
             this.dialog = this.modalService.show(DerivarSerieComponent);
             break;
           case ModalEnum.IDEDIT:
-          const initialState = {
-            enableClosed: true
-          };
-            this.dialog = this.modalService.show(IdeditComponent, {initialState});
+            initialState = {
+              enableClosed: true
+            };
+            this.dialog = this.modalService.show(IdeditComponent, { initialState });
             break;
           case ModalEnum.GETMOTIVOS:
             if (this.client.MotivosExt) {
@@ -131,14 +143,23 @@ export class HomeComponent implements OnInit {
             }
             break;
           case ModalEnum.ERROR:
-            if (!this.dialog || this.settings.lastError.CodError == "11599") {
-              if (this.settings.lastError.isError.getValue()) {
-                //this.dialog.hide();
-                this.dialog = this.modalService.show(ErrorComponent);
-              }
-
+            //let message: BehaviorSubject<string> = new BehaviorSubject<string>(this.settings.lastError.DescError);
+            initialState = {
+              title: "Error",
+              titleClass: "text-danger",
+              message: new BehaviorSubject<string>(this.settings.lastError.DescError) //message.asObservable()
             }
+            this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
             break;
+          case ModalEnum.MSGURGTURN:
+            initialState = {
+              title: "Alerta",
+              titleClass: "text-warning",
+              message: this.consService.GetMessage()
+            }
+            this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
+            break;
+
         }
       } else {
         console.log("close dialog", this.dialog, this.lastModal, modalEnum);
@@ -176,7 +197,7 @@ export class HomeComponent implements OnInit {
     const initialState = {
       enableClosed: false
     };
-    this.dialog = this.modalService.show(IdeditComponent, {initialState});
+    this.dialog = this.modalService.show(IdeditComponent, { initialState });
   }
 
   public AnimationEsperando() {

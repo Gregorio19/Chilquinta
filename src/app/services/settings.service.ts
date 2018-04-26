@@ -120,7 +120,6 @@ export class SettingsService {
   public urgTur: tElement = new tElement();
   public rbDrv: tElement = new tElement();
 
-  public fnIDedit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public fnPopOferta: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public Pausas: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
@@ -159,6 +158,7 @@ export class SettingsService {
     this.btRLL.disable.next(true);
     this.btNUL.disable.next(true);
     this.btDRV.disable.next(true);
+    this.btURG.disable.next(true);
     this.imgid.show.next(false);
     this.dTEsp.value.next("");
     this.btEnc.disable.next(true);
