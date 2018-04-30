@@ -238,7 +238,6 @@ export class MotivosService extends WebsocketService {
                     });
                 }
             }
-            console.log("fuck motivos length", Mot);
             if (Mot.length > 0) {
                 this.motivos.Mot = new BehaviorSubject<MotivosAtencion[]>(Mot);
             } else {

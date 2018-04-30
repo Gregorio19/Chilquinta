@@ -233,7 +233,6 @@ export class ConsService extends WebsocketService {
                     break;
             }
             let dEdo: AccEnum = <AccEnum>AccEnum[this.settings.dEdo.value.getValue()];
-            console.log("dEdo", this.settings.dEdo.value.getValue(), dEdo, this.settings.accion);
             if (dEdo != AccEnum.LOGOFF &&
                 (this.settings.accion != AccEnum.EDS && this.settings.accion != AccEnum.LGO)) {
                 this.fnAccion(AccEnum.EDS);
@@ -591,9 +590,7 @@ export class ConsService extends WebsocketService {
                         this.fnAccion(AccEnum.EDS);
                     }, 3000);
                 } else {
-                    console.log("show modal", this.settings.Modal.show);
                     if (!this.settings.Modal.show) {
-                        console.log("piko", this.settings.iDT);
                         if (!(this.settings.iDT++ % 10)) {
                             this.fnAccion(AccEnum.EDS);
                         }

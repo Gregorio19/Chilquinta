@@ -98,8 +98,8 @@ export class LoginComponent implements OnInit  {
     this.loginModel.ClienteInterno = "";
     this.loginModel.IdEscritorio = this.loginModel.IdEscritorio.toString();
     if(!this.client.LoginWithUserPass) {
-      //this.loginModel.User = this.settings.hiUsr;
-      this.loginModel.User = 'luiggino';
+      this.loginModel.User = this.settings.hiUsr;
+      //this.loginModel.User = 'luiggino';
       //this.loginModel.Pass = "1234";
     }
 

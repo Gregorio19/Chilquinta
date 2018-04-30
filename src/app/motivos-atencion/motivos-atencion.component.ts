@@ -75,33 +75,14 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
       SSSMot: [null]
     });
 
-/*    if (!this.MotivosService.isLogged) {
-      if (this.client.MotivosExt) {
-        console.log("fuck error motivos");
-        this.MotivosService.AccLGO(); //bugs websocketd doesn't disconnect
-        this.MotivosService.AccLGISET(this.consService.loginModel);
-        this.MotivosService.AccMotivos();
-
-        this.processMotivos();
-
-      }
-    } else {
-      this.processMotivos();
-    }*/
-
     this.MotivosService.processMotivos()
     this.motivos = this.MotivosService.GetMotivos();
-    if(this.motivos.Traf.length > 0) {
+    if (this.motivos.Traf.length > 0) {
       this.loadingSelect = false;
     }
 
     this._motivos.Mot = this.motivos.Mot.getValue();
     this._motivos.Traf = this.motivos.Traf;
-    /*
-    this.motivos.Mot = this.MotivosService.GetMotivos().Mot;
-    this.motivos.Traf = this.MotivosService.GetMotivos().Traf;
-    */
-
 
     this.settings.lastErrorMot.isError.subscribe(value => {
       this.isError = value;
@@ -113,185 +94,6 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
       }
     });
   }
-
-  /*
-  private processMotivos() {
-    this.MotivosService.GetMotivos().subscribe((value: any) => {
-      console.log("fuck value", value);
-      let Mot: Array<MotivosAtencion> = [];
-      for (let mot of value.Mot) {
-        let serieId = parseInt(this.settings.hiIdS);
-        let exists: boolean = mot.Series.some(x => x == serieId);
-        if (exists) {
-
-          Mot.push(mot);
-          //this.motivos.Mot.next(mot);
-
-          mot.SMot.map((sm) => {
-            sm.SSMot.map((ssm) => {
-              ssm.SSSMot.map((sssm) => {
-                if (sssm.fPreMot && sssm.PreMotAlias != "") {
-                  let Traf = new PreMotivo();
-                  Traf.fPreMot = sssm.fPreMot;
-                  Traf.PreMotAlias = sssm.PreMotAlias;
-                  Traf.Mot = mot;
-
-                  Traf.SMot = sm;
-                  Traf.SSMot = ssm;
-                  Traf.SSSMot = sssm;
-                  this.motivos.Traf.push(Traf);
-                }
-              })
-            })
-          });
-        }
-      }
-      console.log("fuck motivos", Mot);
-      if (Mot.length > 0) {
-        this.loadingSelect = false;
-        //this.motivos.Mot.next(Mot);
-        this.motivos.Mot = new BehaviorSubject<Array<MotivosAtencion>>(Mot);
-      } else {
-        /*this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";
-        this.settings.lastErrorMot.isError.next(true);
-        this.isError = true;
-        this.loadingSelect = false;
-      
-        this.nuevoMotivo = false;
-        this.cierreAtencion = false;
-        this.busqueda = false;
-        
-        this.bsModalRef.hide();
-        this.consService.fnAccion(AccEnum.FINTUR);
-        
-
-      }
-
-    }, err => {
-      console.log("", err);
-    });
-  }
-
-  */
-
-
-
-  /*
-    private _getPreMotivos(mot, sm, ssm, sssm): Promise<any> {
-      return new Promise<any>(resolve => {
-  
-        let Traf = new PreMotivo();
-        Traf.fPreMot = sssm.fPreMot;
-        Traf.PreMotAlias = sssm.PreMotAlias;
-        Traf.Mot = mot;
-  
-        Traf.SMot = sm;
-        Traf.SSMot = ssm;
-        Traf.SSSMot = sssm;
-  
-        resolve(Traf);
-      })
-    }
-  
-    private _getSSSubMotivos(mot, sm, ssm): Promise<any> {
-      return new Promise<any>(resolve => {
-        ssm.SSSMot.forEach(async (sssm) => {
-          if (sssm.fPreMot && sssm.PreMotAlias != "") {
-            this._getPreMotivos(mot, sm, ssm, sssm)
-              .then((Traf: PreMotivo) => {
-                resolve(Traf);
-              });
-          }
-        });
-      });
-    }
-  
-    private _getSSubMotivo(mot, sm): Promise<any> {
-      return new Promise<any>(resolve => {
-        sm.SSMot.forEach(async (ssm) => {
-          this._getSSSubMotivos(mot, sm, ssm)
-            .then((Traf: PreMotivo) => {
-  
-            })
-        });
-      });
-    }
-  */
-  /*
-    private async _getMotivos(value: any): Promise < any > {
-    return new Promise<any>(async resolve => {
-      let Mot: Array<MotivosAtencion> = [];
-      try {
-        let Motivos = await value.map(async (mot) => {
-          let serieId = parseInt(this.settings.hiIdS);
-          let exists: boolean = mot.Series.some(x => x == serieId);
-          if (exists) {
-            //this.motivos.Mot.next(mot);
-            //Mot.push(mot);
-            /*await mot.SMot.map(async (sm) => {
-              await sm.SSMot.map(async (ssm) => {
-                await ssm.SSSMot.map(async (sssm) => {
-                  if (sssm.fPreMot && sssm.PreMotAlias != "") {
-                    let Traf = new PreMotivo();
-                    Traf.fPreMot = sssm.fPreMot;
-                    Traf.PreMotAlias = sssm.PreMotAlias;
-                    Traf.Mot = mot;
-  
-                    Traf.SMot = sm;
-                    Traf.SSMot = ssm;
-                    Traf.SSSMot = sssm;
-                    this.motivos.Traf.push(Traf);
-                  }
-                })
-              })
-            });
-            return mot;
-          }
-        });
-        resolve(Motivos);
-      } catch (e) {
-        reject(e);
-      }
-  
-    });
-  
-  
-  
-    //for(let i =0 ; i < value.Mot.length; i ++) {
-    //          let mot = value.Mot[i];
-    /*await value.forEach(async (mot) => {
-      let serieId = parseInt(this.settings.hiIdS);
-      let exists: boolean = mot.Series.some(x => x == serieId);
-      if (exists) {
-        //this.motivos.Mot.push(mot);
-        Mot.push(mot);
-        await mot.SMot.forEach(async (sm) => {
-          await sm.SSMot.forEach(async (ssm) => {
-            await ssm.SSSMot.forEach(async (sssm) => {
-              if (sssm.fPreMot && sssm.PreMotAlias != "") {
-                let Traf = new PreMotivo();
-                Traf.fPreMot = sssm.fPreMot;
-                Traf.PreMotAlias = sssm.PreMotAlias;
-                Traf.Mot = mot;
-  
-                Traf.SMot = sm;
-                Traf.SSMot = ssm;
-                Traf.SSSMot = sssm;
-                this.motivos.Traf.push(Traf);
-              }
-            })
-          })
-        })
-      }
-    });*/
-  //}
-
-  /*
-    } catch(e) {
-      console.log(e);
-    }*/
-  //return Mot;
-  //}
 
   closed(): void {
     this.bsModalRef.hide();
@@ -307,29 +109,22 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
     this._motivos.Mot.forEach(mot => {
       if (mot.IdMotivo == value.IdMotivo) {
         this.motivoModel.Mot = mot;
-console.log("fuck mot", mot);
         this.motivoModel.Mot.SMot.forEach((t: SMotivosAtencion) => {
           t.SSMot.forEach((m: SSMotivosAtencion) => {
             m.SSSMot.forEach((s: SSSMotivosAtencion) => {
               if (t.IdSMot == value.IdSMot) {
                 this.motivoModel.SMot = t;
                 this.motivos.SMot = this.motivoModel.Mot.SMot;
-
-                console.log("fuck smot", t);
               }
 
               if (m.IdSSMot == value.IdSSMot) {
                 this.motivoModel.SSMot = m;
                 this.motivos.SSMot = this.motivoModel.SMot.SSMot;
-
-                console.log("fuck ssmot", m);
               }
 
               if (s.IdSSSMot == value.IdSSSMot) {
                 this.motivoModel.SSSMot = s
                 this.motivos.SSSMot = this.motivoModel.SSMot.SSSMot;
-
-                console.log("fuck sssmot", s);
               }
 
               //this.EnableButtons();
@@ -342,8 +137,6 @@ console.log("fuck mot", mot);
         });
       }
     });
-
-
 
   }
 
@@ -363,7 +156,6 @@ console.log("fuck mot", mot);
 
 
     if (this.motivoModel.Traf) {
-      console.log("fuck select", $event);
       this.selectItem($event.SSSMot);
     }
     //this.consService.clearError();
