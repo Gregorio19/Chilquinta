@@ -130,7 +130,6 @@ export class LoginComponent implements OnInit  {
 
   ngOnDestroy() {
     //this.consService.disconnect();
-    console.log("fuck login destroy");
     this.data.unsubscribe();
     //this.consService.getIsLogged().unsubscribe();
   }

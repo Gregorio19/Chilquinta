@@ -9,10 +9,11 @@ export class WebsocketService {
   private inputStream: QueueingSubject<string>
   public messages: Observable<string>
   public open: Observable<boolean>;
-  //protected settings: SettingsService = new SettingsService();
-
+  
   constructor(    
-  ) {}
+  ) {
+    console.clear();
+  }
 
   public connect(url: string) {
     if (this.messages)

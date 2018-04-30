@@ -133,7 +133,7 @@ export class SettingsService {
   public Fono: string;
   public FonoTmp: string;
 
-  public motivosStorage: BehaviorSubject<MotivoModel> = new BehaviorSubject<MotivoModel>(null);
+  public motivosStorage: BehaviorSubject<any> = new BehaviorSubject<any>(null);
 
   public _data: BehaviorSubject<any> = new BehaviorSubject<any>(null); //data user in components
   public data = this._data.asObservable();

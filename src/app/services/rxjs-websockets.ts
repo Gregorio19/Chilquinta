@@ -77,7 +77,6 @@ export default function connect(
 
     return () => {
       if (inputSubscription) {
-        console.log("wtf");
         inputSubscription.unsubscribe()
       }
         

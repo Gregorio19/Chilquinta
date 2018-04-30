@@ -4,7 +4,8 @@
     "MotivosUrl": "ws://172.16.32.151:8190/",
     "TOwin": 30,
     "TOenc": 10,
-    "ConfirmaID": "RN",
+    "ConfirmaID": "S",
+    "ConfirmaTipo": "R",
     "MotCierre": "S",
     "RutManMin": 1000000,
     "RutExcs": ""

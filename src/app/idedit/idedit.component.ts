@@ -170,11 +170,11 @@ export class IdeditComponent implements OnInit {
   }
 
   get ConfirmaRut(): boolean {
-    return (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("R") != -1);
+    return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("R") != -1);
   }
 
   get ConfirmaFono(): boolean {
-    return (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("F") != -1);
+    return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("F") != -1);
   }
 
   get IsValidRut(): boolean {

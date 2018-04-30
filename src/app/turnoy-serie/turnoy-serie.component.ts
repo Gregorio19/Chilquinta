@@ -22,12 +22,14 @@ export class TurnoySerieComponent implements OnInit {
   @ContentChild(TemplateRef)
   Question: TemplateRef<any>;
   */
+  
+  bsModalRefMsgBox: BsModalRef;
 
   constructor(
     private consService: ConsService,
     public settings: SettingsService,
-    public fb: FormBuilder,
     public bsModalRef: BsModalRef,
+    public fb: FormBuilder,    
     private modalService: BsModalService,
     private config: AppConfig
   ) { }
@@ -74,9 +76,8 @@ export class TurnoySerieComponent implements OnInit {
 
     if (this.client.MotivosExt) {
       if (!this.client.ConsUrg) {
-        this.bsModalRef.hide();
         if (this.model.urgTur == 0) {
-          this.bsModalRef = this.modalService.show(template, { class: 'modal-sm' })
+          this.bsModalRefMsgBox = this.modalService.show(template, { class: 'modal-sm' })
         } else {
           this.confirm();
         }
@@ -100,10 +101,11 @@ export class TurnoySerieComponent implements OnInit {
 
   confirm() {
     this.fnAccion(AccEnum.URGSET);
+    this.bsModalRefMsgBox.hide();
     this.bsModalRef.hide();
   }
 
   decline() {
-    this.bsModalRef.hide();
+    this.bsModalRefMsgBox.hide();
   }
 }

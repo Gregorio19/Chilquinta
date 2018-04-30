@@ -16,9 +16,7 @@ export class AppComponent implements OnDestroy, AfterViewInit {
   client: any;
 
   ngOnDestroy(): void {
-    console.log("fuck 1");
     this.consService.destroy();
-    console.log("fuck 2");
     this.MotivosService.destroy();
   }
   constructor(

@@ -131,9 +131,11 @@ export class ConsService extends WebsocketService {
                 if (!this.settings.Modal.show) {
                     this.openModal(ModalEnum.ERROR);
                 } else if (m.MsgType == ActionEnum.LOGIN) {
-                    if (m.CodError == "13022") {
+                    if (m.CodError == "13022" && !this.settings.Modal.show) {
                         this.openModal(ModalEnum.CONFEJE);
-                    } else {
+                    } else if(m.CodError == "14002") {
+
+                    }else {
                         this.settings.isLogged.next(false);
                         this.fnAccion(AccEnum.LGI);
                     }
@@ -283,7 +285,7 @@ export class ConsService extends WebsocketService {
                 this.settings.accion == AccEnum.PAUGET ||
                 this.settings.accion == AccEnum.URGSER))/* ||
                 this.settings.accion == AccEnum.DRVSER))*/ {
-                    console.log("fuck doesn't  work", this.settings.btEnc.disable.getValue());
+                    
             if (!this.settings.btEnc.disable.getValue()) {
                 //fnEnc_Start();
                 //fnEnc_Wait();                
@@ -297,12 +299,10 @@ export class ConsService extends WebsocketService {
                     return false;
                 } else {
                     if (accion != AccEnum.FIN) {
-                        console.log("fuck action switch", accion);
                         this.settings.subacc = accion;
                         this.settings.accion = AccEnum.FIN;
                     }
                 }
-                console.log("piko", this.settings.accion);
             }
         } else {
             if (this.settings.sEscEdo == AccEnum.LLAMANDO && this.settings.accion == AccEnum.PAUGET) {
@@ -311,13 +311,12 @@ export class ConsService extends WebsocketService {
             } else if (this.settings.sEscEdo == AccEnum.ATENDIENDO && 
                 (this.settings.accion == AccEnum.DRVSET))
             {
-                console.log("fuck action switch 2", accion);
                 this.settings.subacc = accion;
                 this.settings.accion = AccEnum.FIN;
             }
         }
 
-        this.settings.lastError = new MsgError();
+        //this.settings.lastError = new MsgError();
         console.log("accion: ", this.settings.accion);
         switch (this.settings.accion) {
             case AccEnum.EDB:
@@ -420,8 +419,6 @@ export class ConsService extends WebsocketService {
                 this.settings.dTEspO.value.next("");
                 this.settings.dTEspE.value.next("");
                 this.settings.barra_superior.value.next("barra_superior_gris");
-
-                console.log("fucking ");
                 break;
             case AccEnum.PAUSA:
                 this.settings.btINI.disable.next(false);
@@ -464,7 +461,8 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(false);
                 this.settings.btRLL.disable.next(false);
                 this.settings.btNUL.disable.next(false);
-                this.settings.btURG.disable.next(true);
+                //this.settings.btURG.disable.next(true);
+                this.settings.btURG.disable.next(false);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.barra_superior.value.next("barra_superior_verde");
@@ -568,14 +566,11 @@ export class ConsService extends WebsocketService {
             let diff: number = ((now.getTime() - this.settings.dAte.getTime()) / 1000) - this.settings.hiTDelta;
             this.s_2_hms(this.settings.dTAte, diff, parseInt(this.settings.hiTAteA));
         }
-        console.log("fuck estados", this.settings.sEscEdo, this.settings.subacc);
         if (this.settings.sEscEdo == AccEnum.ESPERANDO && this.settings.subacc != AccEnum.UNKNOW) {
             if (this.settings.subacc != AccEnum.X) {
-                console.log("fuck subacc", this.settings.subacc);
                 this.fnAccion(this.settings.subacc);
             }
         } else {
-            console.log("fuck nose", this.settings.dQEspE.value.getValue(), this.settings.iTOpido);
             if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0)) {
                 if(!this.settings.Modal.show) {
                     this.fnAccion(AccEnum.INI);
@@ -766,7 +761,7 @@ export class ConsService extends WebsocketService {
                 });
             });
         }
-        this.send(proto.FINTURtoJson(), this.settings.accion);
+        this.send(JSON.stringify(proto), this.settings.accion);
     }
 
     public AccURGSER() {
@@ -975,7 +970,7 @@ export class ConsService extends WebsocketService {
         this.settings.sEncRpt = "";
         this.settings.bEncFin = false;
         if (m.Estado != AccEnum.LOGOFF.toString()) {
-            this.settings.isLogged.next(true);
+            //this.settings.isLogged.next(true);
             this.fnAccion(AccEnum.EDS);
 
             return false;
@@ -1043,11 +1038,11 @@ export class ConsService extends WebsocketService {
 
     private GETMOTIVOS(m) {
         this.settings.hiIdSDRV = this.settings.hiIdS;
-        if (m.Motivos.length > 0) {
+        if (m.Motivos.length > 0 || this.client.ForceMotUrg) {
             this.settings.Motivos = new BehaviorSubject(m.Motivos);
 
-            this.openModal(ModalEnum.GETMOTIVOS);
-        } else {
+            this.openModal(ModalEnum.GETMOTIVOS);        
+        } else if(!this.client.MotivosExt) {
             this.fnAccion(AccEnum.FINTUR);
         }
     }
@@ -1079,7 +1074,6 @@ export class ConsService extends WebsocketService {
     }
 
     private DERIVOTURNO(m) {
-        console.log("fuck derivo turno", this.settings.sDrvAcc);
         this.settings.subacc = AccEnum.UNKNOW;
         if (this.settings.sDrvAcc == "U") {
             this.fnAccion(AccEnum.URGSER);
@@ -1190,13 +1184,11 @@ export class ConsService extends WebsocketService {
 
         }
         if (this.settings.bTurnoSet) {
-            this.settings.bTurnoSet = false;;
-            if (m.Rut == "") {
+            this.settings.bTurnoSet = false;
+            
+            if (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) {
                 this.openModal(ModalEnum.IDEDIT);
-            }
-
-
-            if (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("N") != -1) {
+            } else {
                 if (this.settings.bOfertaSet) {
                     this.settings.bOfertaSet = false;
                     if (this.settings.sOferta != "") {
@@ -1255,7 +1247,6 @@ export class ConsService extends WebsocketService {
     }
 
     public GetMessage(): Observable<any> {
-        console.log("fuck message", this.messageTurn.getValue());
         return this.messageTurn.asObservable();
     }
 }

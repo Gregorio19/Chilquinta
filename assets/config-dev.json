@@ -1,10 +1,11 @@
 {
-  "socket": {
+  "socket": {   
     "url": "ws://172.16.32.151:8181/",
     "MotivosUrl": "ws://172.16.32.151:8190/",
     "TOwin": 30,
     "TOenc": 10,
-    "ConfirmaID": "RN",
+    "ConfirmaID": "S",
+    "ConfirmaTipo": "RN",
     "MotCierre": "S",
     "RutManMin": 1000000,
     "RutExcs": ""
@@ -24,7 +25,8 @@
       "Motivos_QMax": 1,
       "IdEditarForzar": false,
       "LoginWithUserPass": true,
-      "UseTimeout": true
+      "UseTimeout": true,
+      "ForceMotUrg": false
     },
     "Tesoreria": {
       "MotivosExt": true,
@@ -32,7 +34,8 @@
       "Motivos_QMax": 3,
       "IdEditarForzar": true,
       "LoginWithUserPass": false,
-      "UseTimeout": false
+      "UseTimeout": false,
+      "ForceMotUrg": true
     }
   }
 }

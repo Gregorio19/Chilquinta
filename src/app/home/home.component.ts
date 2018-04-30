@@ -74,7 +74,7 @@ export class HomeComponent implements OnInit {
             this.MotivosService.AccLGISET(this.consService.loginModel);
             this.MotivosService.AccMotivos();
           } else {
-            this.MotivosService.AccLGO(); //bugs cannot closed session   
+            //this.MotivosService.AccLGO(); //bugs cannot closed session   
           }
         }
 
@@ -101,6 +101,9 @@ export class HomeComponent implements OnInit {
 
     this.settings.Modal.self.subscribe((modalEnum: ModalEnum) => {
       console.log("home modal", modalEnum);
+      if(modalEnum == null ) {
+        return;
+      }
       if (modalEnum != null) {
         this.lastModal = modalEnum;
       }
@@ -137,7 +140,14 @@ export class HomeComponent implements OnInit {
             break;
           case ModalEnum.GETMOTIVOS:
             if (this.client.MotivosExt) {
-              this.dialog = this.modalService.show(MotivosAtencionComponent);
+              this.MotivosService.processMotivos();
+              if(this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) 
+              {
+                this.dialog = this.modalService.show(MotivosAtencionComponent);
+              } else {
+                this.consService.fnAccion(AccEnum.FINTUR);
+              }
+              
             } else {
               this.dialog = this.modalService.show(MotivosComponent);
             }
