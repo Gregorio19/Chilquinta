@@ -76,10 +76,8 @@ export default function connect(
     }
 
     return () => {
-      if (inputSubscription) {
+      if (inputSubscription)
         inputSubscription.unsubscribe()
-      }
-        
 
       if (socket) {
         closed()
