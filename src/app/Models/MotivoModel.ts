@@ -1,4 +1,5 @@
-import { BehaviorSubject } from 'rxjs/Rx';
+import { BehaviorSubject, Subject } from 'rxjs/Rx';
+import { ObserveOnMessage } from 'rxjs/operators/observeOn';
 
 export class SSSMotivosAtencion {
     IdSSSMot: number;
@@ -17,7 +18,7 @@ export class SSSMotivosAtencion {
     SSubMotivo: string;
     SSSMot: Array<SSSMotivosAtencion>;
   
-    public SSMotivosAtencion() {
+    constructor() {
       this.SSSMot = new Array<SSSMotivosAtencion>();
     }
   }
@@ -28,7 +29,7 @@ export class SSSMotivosAtencion {
     SubMotivo: string;
     SSMot: Array<SSMotivosAtencion>;
   
-    public SMotivosAtencion() {
+    constructor() {
       this.SSMot = new Array<SSMotivosAtencion>();
     }
   }
@@ -39,7 +40,7 @@ export class SSSMotivosAtencion {
     Series: Array<number>;  
     SMot: Array<SMotivosAtencion>;
   
-    public MotivosAtencion() {
+    constructor() {
       this.SMot = new Array<SMotivosAtencion>();
     }
   }
@@ -70,7 +71,7 @@ export class SSSMotivosAtencion {
     SSMot: Array<SSMotivosAtencion>;
     SSSMot: Array<SSSMotivosAtencion>;*/
   
-    public MotivoModel() {
+    constructor() {
       this.Mot = new Array<MotivosAtencion>();
     }
   }
@@ -86,14 +87,14 @@ export class SSSMotivosAtencion {
   // model selected
   export class __MotivoModel {
     Traf: Array<PreMotivo>;
-    Mot: BehaviorSubject<Array<MotivosAtencion>>;
+    Mot: BehaviorSubject<MotivosAtencion[]>;
     SMot: Array<SMotivosAtencion>;
     SSMot: Array<SSMotivosAtencion>;
     SSSMot: Array<SSSMotivosAtencion>;
   
-    public __MotivoModel() {
+    constructor() {
       this.Traf = new Array<PreMotivo>();
-      //this.Mot = new BehaviorSubject<Array<MotivosAtencion>>(null);
+      this.Mot = new BehaviorSubject<MotivosAtencion[]>(null);
       this.SMot = new Array<SMotivosAtencion>();
       this.SSMot = new Array<SSMotivosAtencion>();
       this.SSSMot = new Array<SSSMotivosAtencion>();
