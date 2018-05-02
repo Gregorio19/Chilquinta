@@ -14,7 +14,7 @@ import { IntervalObservable } from 'rxjs/observable/IntervalObservable';
 import { TimerObservable } from 'rxjs/observable/TimerObservable';
 import { PushNotificationsService } from 'ng-push';
 import { AppConfig } from '../app.config';
-import { MotivoModel } from '../Models/MotivoModel';
+import { MotivoModel, MotivosAtencion, PreMotivo, __MotivoModel } from '../Models/MotivoModel';
 
 @Injectable()
 export class MotivosService extends WebsocketService {
@@ -26,6 +26,7 @@ export class MotivosService extends WebsocketService {
 
     private timer = TimerObservable.create(0, 1000);
     private timerSubscription: Subscription;
+    private motivos: __MotivoModel = new __MotivoModel();
 
     constructor(
         //private socket: WebsocketService,
@@ -35,7 +36,7 @@ export class MotivosService extends WebsocketService {
         super();
 
         this.client = this.config.get('clients')[this.config.get('clients').client];
-        
+
         this.start();
 
         // Timer
@@ -43,12 +44,12 @@ export class MotivosService extends WebsocketService {
     }
 
     private start() {
-        if(this.client.MotivosExt){
+        if (this.client.MotivosExt) {
             this.connect(this.config.get('socket').MotivosUrl);
-                        
-            this.open.subscribe((open: boolean)   => {
+
+            this.open.subscribe((open: boolean) => {
                 if (open) {
-                    console.log("2 connection open");                
+                    console.log("2 connection open");
                 }
 
             });
@@ -70,7 +71,7 @@ export class MotivosService extends WebsocketService {
 
                 this.clearError();
 
-                switch(m.MsgType) {
+                switch (m.MsgType) {
                     case ActionEnum.LOGIN:
                         console.log("R2 : LOGIN");
                         this.LOGIN(m);
@@ -86,54 +87,54 @@ export class MotivosService extends WebsocketService {
                     case ActionEnum.GETMOTIVOS:
                         console.log("R2 : GETMOTIVOS s");
                         this.GETMOTIVOS(m);
-                        break;                
-                }            
+                        break;
+                }
             },
-        error => {
-            this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";        
-            this.settings.lastErrorMot.isError.next(true);
-            
-            
-        });
+                error => {
+                    this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";
+                    this.settings.lastErrorMot.isError.next(true);
+
+
+                });
         }
     }
 
     clearError() {
-         // CLEAR error
-         this.settings.lastErrorMot.MsgType = null;
-         this.settings.lastErrorMot.CodError = null;
-         this.settings.lastErrorMot.DescError = null;
-         this.settings.lastErrorMot.isError.next(false);
+        // CLEAR error
+        this.settings.lastErrorMot.MsgType = null;
+        this.settings.lastErrorMot.CodError = null;
+        this.settings.lastErrorMot.DescError = null;
+        this.settings.lastErrorMot.isError.next(false);
     }
 
-    DoTimer(t) {   
-          
+    DoTimer(t) {
+
         //let defaultCenturyStart = moment();
         let mtime = 0;
         if (!this.open) {
-            if(this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
+            if (this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
                 this.open = null;
                 this.messages = null;
                 this.start();
             }
         }
     }
-   
-    
-      /**
-       * ACTION AFTER COMMAND
-       */
-   
+
+
+    /**
+     * ACTION AFTER COMMAND
+     */
+
     public AccLGISET(login: LoginModel) {
-        console.log("LOGIN 2"); 
+        console.log("LOGIN 2");
         //this.settings.hiEsc = login.IdEscritorio;
         //this.settings.hiUsr= login.User;
         // BUG si hay un error al refrescar aun asi gracias a esta cookie se logea
         // this.setCookie(login.IdEscritorio + "," + login.User);
 
-        this.send(login.toJson(), "Login");   
-        this.loginModel = login;  
-        
+        this.send(login.toJson(), "Login");
+        this.loginModel = login;
+
         return true;
     }
 
@@ -146,30 +147,31 @@ export class MotivosService extends WebsocketService {
     }
 
     public AccLGO() {
-        console.log("LGO 2"); 
+        console.log("LGO 2");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.LOGOFF;
         proto.ClienteInterno = this.settings.CliInt;
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
-        
-        this.send(proto.toJson(), "LGO");    
+
+        this.send(proto.toJson(), "LGO");
     }
 
     public AccMotivos() {
-        console.log("MOTIVOS 2"); 
+        console.log("MOTIVOS 2");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.GETMOTIVOS;
         proto.ClienteInterno = this.settings.CliInt;
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
 
-        this.send(proto.toJson(), "Motivos");   
+        this.send(proto.toJson(), "Motivos");
     }
 
-    
+
     public destroy() {
-        this.socketSubscription.unsubscribe();        
+        console.log("destroy motivos");
+        this.socketSubscription.unsubscribe();
     }
 
     /**
@@ -184,7 +186,7 @@ export class MotivosService extends WebsocketService {
             m.Encuestas,
             null,
             null
-          );*/ 
+          );*/
         this.isLogged = true;
     }
 
@@ -197,10 +199,55 @@ export class MotivosService extends WebsocketService {
         this.isLogged = false;
         this.clearError();
     }
-   
-    private GETMOTIVOS(m) {
-        this.settings.motivosStorage = new BehaviorSubject<MotivoModel>(m);         
-    }   
 
-    
+    private GETMOTIVOS(m) {
+        this.settings.motivosStorage.next(m);
+        this.processMotivos();
+    }
+
+    public GetMotivoStorage(): Observable<any> {
+        return this.settings.motivosStorage.asObservable();
+    }
+
+    public processMotivos() {
+        this.GetMotivoStorage().subscribe((value: any) => {
+            let Mot: Array<MotivosAtencion> = [];
+            this.motivos.Traf = [];
+            for (let mot of value.Mot) {
+                let serieId = parseInt(this.settings.hiIdS);
+                let exists: boolean = mot.Series.some(x => x == serieId);
+                if (exists) {
+                    Mot.push(mot);
+        
+                    mot.SMot.map((sm) => {
+                        sm.SSMot.map((ssm) => {
+                            ssm.SSSMot.map((sssm) => {
+                                if (sssm.fPreMot && sssm.PreMotAlias != "") {
+                                    let Traf = new PreMotivo();
+                                    Traf.fPreMot = sssm.fPreMot;
+                                    Traf.PreMotAlias = sssm.PreMotAlias;
+                                    Traf.Mot = mot;
+
+                                    Traf.SMot = sm;
+                                    Traf.SSMot = ssm;
+                                    Traf.SSSMot = sssm;
+                                    this.motivos.Traf.push(Traf);
+                                }
+                            })
+                        })
+                    });
+                }
+            }
+            if (Mot.length > 0) {
+                this.motivos.Mot = new BehaviorSubject<MotivosAtencion[]>(Mot);
+            } else {
+                this.motivos.Mot = new BehaviorSubject<MotivosAtencion[]>(null);
+            }
+        });
+    }
+
+
+    public GetMotivos() {
+        return this.motivos;
+    }
 }

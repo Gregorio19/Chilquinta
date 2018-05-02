@@ -5,7 +5,7 @@ export class ProtoModel extends BaseModel {
     public Motivos : any[];
     public Encuesta : any[];
     public IdPausa: string;
-    public IdSerie: string;
+    public IdSerie: number;
     public Turno: string;
     public Rut: string;
     public Fono: string;
@@ -52,13 +52,23 @@ export class ProtoModel extends BaseModel {
           });
     }
 
-    public DRVSETtoJson() {
+    public DRVSERtoJson() {
         return JSON.stringify({
             MsgType : ActionEnum.GETSERIES,
             ClienteInterno : this.ClienteInterno,
             Id : this.Id,
             IdEscritorio : this.IdEscritorio,
             //IdSerie : this.IdSerie
+          });
+    }
+
+    public DRVSETtoJson() {
+        return JSON.stringify({
+            MsgType : ActionEnum.DERIVOTURNO,
+            ClienteInterno : this.ClienteInterno,
+            Id : this.Id,
+            IdEscritorio : this.IdEscritorio,
+            IdSerie : this.IdSerie
           });
     }
 

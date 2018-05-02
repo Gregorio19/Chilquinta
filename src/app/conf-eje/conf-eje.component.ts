@@ -19,7 +19,7 @@ export class ConfEjeComponent implements OnInit {
   confEjeForm: FormGroup;
   model = new ConfEjeModel();
   isChange: boolean = false;
-  private client: any;
+  client: any;
   public loginModel: LoginModel;
    
   constructor(
@@ -32,6 +32,7 @@ export class ConfEjeComponent implements OnInit {
    }
 
   ngOnInit() {
+    this.client = this.config.get('clients')[this.config.get('clients').client];
 
     this.confEjeForm = this.fb.group({
         txRut: [null, Validators.compose([

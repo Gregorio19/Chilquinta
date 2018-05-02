@@ -22,9 +22,8 @@ export class HeaderComponent {
   constructor(
     private consService: ConsService,
     public settings: SettingsService    
-  ) {
-    
-    this.settings.isLogged.subscribe(value => {
+  ) {    
+    this.consService.getIsLogged().subscribe(value => {
     })
   }
 
