@@ -4,7 +4,6 @@ import { SettingsService } from '../services/settings.service';
 import { ConsService } from '../services/Cons.service';
 import { AccEnum } from '../Models/Enums';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { AppConfig } from '../app.config';
 
 @Component({
   selector: 'app-pausa',
@@ -15,20 +14,16 @@ import { AppConfig } from '../app.config';
 export class PausaComponent implements OnInit {
   pausaForm: FormGroup;
   rbPau: string='';
-  client: any;
    
   constructor(
     public settings: SettingsService,
     private consService: ConsService,    
     private fb: FormBuilder,
-    public bsModalRef: BsModalRef,
-    private config: AppConfig,
+    public bsModalRef: BsModalRef
   ) {    
    }
 
   ngOnInit() {
-    this.client = this.config.get('clients')[this.config.get('clients').client];
-
     this.pausaForm = this.fb.group({
       rbPau: [null, Validators.required]
       });
