@@ -73,7 +73,7 @@
             <div class="col-md-3 d-flex justify-content-end">
               <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()">Cerrar</button>
             </div>
-            <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+            <div class="col-md-6 d-inline-flex justify-content-end align-items-center">
               <div> [{{ settings.iTOw }}] </div>
             </div>
           </div>
@@ -81,9 +81,6 @@
       </div>
 
       <ng-template #Question>
-        <div class="modal-header">
-          <h2>Atención sin Turno</h2>
-        </div>
           <div class="modal-body text-center">
             <p>¿Desea atender Turno No Emitido?</p>
             <button type="button" class="btn btn-default" (click)="confirm()" >Si</button>
