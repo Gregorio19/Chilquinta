@@ -46,7 +46,7 @@ export enum ActionEnum {
     ESPERANDO = "ESPERANDO",
     LLAMANDO = "LLAMANDO",
     ATENDIENDO = "ATENDIENDO",
-    UNKNOW = "",
+    UNKNOW = "UNKNOW",
     X = "x" 
   }
   
@@ -69,7 +69,9 @@ export enum ActionEnum {
     GETMOTIVOS = "GETMOTIVOS",
     LOGIN = "LOGIN",
     IDEDIT = "IDEDIT",
-    ERROR = "ERROR"
+    ERROR = "ERROR",
+    MSGURGTURN = "MSGURGTURN",
+    CONFEJE = "CONFEJE"
   }
 
   export class tModalElement {
