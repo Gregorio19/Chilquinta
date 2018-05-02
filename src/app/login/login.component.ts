@@ -82,7 +82,7 @@ export class LoginComponent implements OnInit  {
       if(value) {
         this.consService.AccLGISET(this.loginModel);
 
-        this.settings.isLogged.subscribe(isLogged => {
+        this.consService.getIsLogged().subscribe(isLogged => {
           if(isLogged) {
             this.bsModalRef.hide();
           }
@@ -99,12 +99,13 @@ export class LoginComponent implements OnInit  {
     this.loginModel.IdEscritorio = this.loginModel.IdEscritorio.toString();
     if(!this.client.LoginWithUserPass) {
       this.loginModel.User = this.settings.hiUsr;
-      this.loginModel.Pass = "";
+      //this.loginModel.User = 'luiggino';
+      //this.loginModel.Pass = "1234";
     }
 
     this.consService.AccLGISET(this.loginModel);
 
-    this.settings.isLogged.subscribe(isLogged => {
+    /*this.consService.getIsLogged().subscribe(isLogged => {
       if(!isLogged && this.settings.lastError.CodError == "13022") {
           // launch get username & rut
           if(!this.client.LoginWithUserPass)
@@ -113,15 +114,13 @@ export class LoginComponent implements OnInit  {
               loginModel: this.loginModel
             }
             this.bsModalRef = this.modalService.show(ConfEjeComponent, { initialState });
-
-            
           }
         
       } else {
         // error
         
       }
-    });
+    });*/
     
   }
 
@@ -132,7 +131,7 @@ export class LoginComponent implements OnInit  {
   ngOnDestroy() {
     //this.consService.disconnect();
     this.data.unsubscribe();
-    this.settings.isLogged.unsubscribe();
+    //this.consService.getIsLogged().unsubscribe();
   }
 
   onChanges(val) {
