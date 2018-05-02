@@ -42,11 +42,12 @@ export class LoginComponent implements OnInit  {
     private changeDetection: ChangeDetectorRef
   ) {    
     this.loginModel = new LoginModel();
-
-    this.client = this.config.get('clients')[this.config.get('clients').client];
+    
   }
 
   ngOnInit() {    
+    this.client = this.config.get('clients')[this.config.get('clients').client];
+
     if(this.client.LoginWithUserPass) {
       this.loginForm = this.fb.group({
         txEsc: [null, Validators.compose([
