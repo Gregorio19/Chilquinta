@@ -33,7 +33,6 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
     selectedMessage: 'seleccionado'
   };
   
-  client: any;
 
   constructor(
     public bsModalRef: BsModalRef,
@@ -42,8 +41,6 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.client = this.config.get('clients')[this.config.get('clients').client];
-
     this.getRows();
     this.rowsTemp = this.rows;
   }

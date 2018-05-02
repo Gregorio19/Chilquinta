@@ -96,6 +96,8 @@ export class SettingsService {
   public dCli: tElement = new tElement();
   public dRut: tElement = new tElement();
   public dFon: tElement = new tElement();
+  public dNom: tElement = new tElement();
+  public dMail: tElement = new tElement();
   public dTer: tElement = new tElement();
   public dQEspO: tElement = new tElement();
   public dQEspE: tElement = new tElement();
@@ -120,6 +122,7 @@ export class SettingsService {
   public urgTur: tElement = new tElement();
   public rbDrv: tElement = new tElement();
 
+  public fnIDedit: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
   public fnPopOferta: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   public Pausas: BehaviorSubject<any[]> = new BehaviorSubject<any[]>(null);
@@ -131,9 +134,12 @@ export class SettingsService {
 
   public Rut: string;
   public Fono: string;
+  public NomCli: string;
+  public Mail: string;
+
   public FonoTmp: string;
 
-  public motivosStorage: BehaviorSubject<any> = new BehaviorSubject<any>(null);
+  public motivosStorage: BehaviorSubject<MotivoModel> = new BehaviorSubject<MotivoModel>(null);
 
   public _data: BehaviorSubject<any> = new BehaviorSubject<any>(null); //data user in components
   public data = this._data.asObservable();
@@ -158,10 +164,8 @@ export class SettingsService {
     this.btRLL.disable.next(true);
     this.btNUL.disable.next(true);
     this.btDRV.disable.next(true);
-    this.btURG.disable.next(true);
     this.imgid.show.next(false);
     this.dTEsp.value.next("");
-    this.btEnc.disable.next(true);
 
     this.dTer.value.next("0");
 

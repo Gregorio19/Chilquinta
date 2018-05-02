@@ -17,17 +17,12 @@
 </div>
 
 <div class="modal-body">
-    <div *ngIf="!(motivos.Mot | async)">
-        <ngx-loading [show]="lloading" [config]="{ backdropBorderRadius: '14px' }" style="height:100px;"></ngx-loading>
-    </div>
-    
-
-    <form [formGroup]="motivoForm" *ngIf="(motivos.Mot | async)">  
-
+    <form [formGroup]="motivoForm" *ngIf="(motivos.Mot | async); let Mot; else loading">  
+        
     <div class="row">
       <div class="col-md-6 form-group" > <label for="cmbTraF">Tramites Frecuentes</label> 
         
-        <ng-select [items]="motivos.Traf"
+        <ng-select [items]="motivos?.Traf"
            bindLabel="PreMotAlias"
            bindValue="fPreMot"
            id="cmbTraF"
@@ -44,12 +39,12 @@
       </div>
     </div>
     <div class="row">
-      <div class="col-md-6"> <label for="cmbMot">Materia <span id="MotCasos" *ngIf="(motivos.Mot | async)?.length > 0">
-          ({{ (motivos.Mot | async )?.length }} casos) 
+      <div class="col-md-6"> <label for="cmbMot">Materia <span id="MotCasos" *ngIf="motivos?.Mot?.length > 0">
+          ({{ motivos?.Mot?.length }} casos) 
       </span>
         </label> 
           <select class="form-control" id="cmbMot" size="5" formControlName="Mot" [(ngModel)]="motivoModel.Mot" #m (change)="motivoChange(m.value)">
-            <option *ngFor="let item of (motivos.Mot | async)" [ngValue]="item">{{ item.Motivo }}</option>
+            <option *ngFor="let item of motivos.Mot | async" [ngValue]="item">{{ item.Motivo }}</option>
       </select> </div>
       <div class="col-md-6"> 
         <label for="cmbSMot">Tipo Materia <span id="SMotCasos" *ngIf="motivos?.SMot?.length > 0">
@@ -98,13 +93,16 @@
           </div>
   
 
-  <div class="col-md-auto d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+  <div class="col-md-auto d-inline-flex justify-content-end align-items-center">
       <div> [{{ settings.iTOw }}] </div>
     </div>
 </div>
 </div>
 </div>
 
+<ng-template #loading>
+  <ngx-loading [show]="lloading" [config]="{ backdropBorderRadius: '14px' }"></ngx-loading>
+</ng-template>
 
 <ng-template #Error>
     <div class="form-group row" *ngIf="settings.lastErrorMot.isError | async">
