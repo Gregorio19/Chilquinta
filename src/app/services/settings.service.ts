@@ -94,8 +94,10 @@ export class SettingsService {
   public dLet: tElement = new tElement();
   public dTur: tElement = new tElement();
   public dCli: tElement = new tElement();
-  public dRut: tElement = new tElement();
+  public dRut: tElement = new tElement();  
   public dFon: tElement = new tElement();
+  public dNom: tElement = new tElement();
+  public dMail: tElement = new tElement();  
   public dTer: tElement = new tElement();
   public dQEspO: tElement = new tElement();
   public dQEspE: tElement = new tElement();

@@ -133,9 +133,9 @@ export class ConsService extends WebsocketService {
                 } else if (m.MsgType == ActionEnum.LOGIN) {
                     if (m.CodError == "13022" && !this.settings.Modal.show) {
                         this.openModal(ModalEnum.CONFEJE);
-                    } else if(m.CodError == "14002") {
+                    } else if (m.CodError == "14002") {
 
-                    }else {
+                    } else {
                         this.settings.isLogged.next(false);
                         this.fnAccion(AccEnum.LGI);
                     }
@@ -284,7 +284,7 @@ export class ConsService extends WebsocketService {
                 this.settings.accion == AccEnum.PAUGET ||
                 this.settings.accion == AccEnum.URGSER))/* ||
                 this.settings.accion == AccEnum.DRVSER))*/ {
-                    
+
             if (!this.settings.btEnc.disable.getValue()) {
                 //fnEnc_Start();
                 //fnEnc_Wait();                
@@ -307,9 +307,8 @@ export class ConsService extends WebsocketService {
             if (this.settings.sEscEdo == AccEnum.LLAMANDO && this.settings.accion == AccEnum.PAUGET) {
                 this.settings.subacc = accion;
                 this.settings.accion = AccEnum.NUL;
-            } else if (this.settings.sEscEdo == AccEnum.ATENDIENDO && 
-                (this.settings.accion == AccEnum.DRVSET))
-            {
+            } else if (this.settings.sEscEdo == AccEnum.ATENDIENDO &&
+                (this.settings.accion == AccEnum.DRVSET)) {
                 this.settings.subacc = accion;
                 this.settings.accion = AccEnum.FIN;
             }
@@ -571,10 +570,10 @@ export class ConsService extends WebsocketService {
             }
         } else {
             if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0)) {
-                if(!this.settings.Modal.show) {
+                if (!this.settings.Modal.show) {
                     this.fnAccion(AccEnum.INI);
                 }
-                
+
             } else {
                 if (this.settings.sEscEdo == AccEnum.LLAMANDO) {
                     //this.settings.dMsgEsp.style.color = "red";
@@ -585,7 +584,7 @@ export class ConsService extends WebsocketService {
                     this.settings.dMsgEsp.value.next("Anulaci&oacute;n en " + this.settings.iTOw + " [seg]");
                     if (this.settings.iTOw-- == 0) {
                         this.fnAccion(AccEnum.NUL);
-                    } 
+                    }
                     setTimeout(() => {
                         this.fnAccion(AccEnum.EDS);
                     }, 3000);
@@ -1038,8 +1037,8 @@ export class ConsService extends WebsocketService {
         if (m.Motivos.length > 0 || this.client.ForceMotUrg) {
             this.settings.Motivos = new BehaviorSubject(m.Motivos);
 
-            this.openModal(ModalEnum.GETMOTIVOS);        
-        } else if(!this.client.MotivosExt) {
+            this.openModal(ModalEnum.GETMOTIVOS);
+        } else if (!this.client.MotivosExt) {
             this.fnAccion(AccEnum.FINTUR);
         }
     }
@@ -1142,14 +1141,22 @@ export class ConsService extends WebsocketService {
         this.settings.dTur.value.next(m.Turno);
         this.settings.dRut.value.next(m.Rut);
         let fono = m.Fono.split(',');
+        let Nombre
+        let Mail
         if (fono.length > 0) {
             this.settings.dTer.value.next(fono[1]);
+            Mail = fono[2];
+            Nombre = fono[1];
             fono = fono[0];
         } else {
             fono = m.Fono;
         }
+        //        this.settings.dCli.value.next(m.Cliente);
         this.settings.dFon.value.next(fono);
-        this.settings.dCli.value.next(m.Cliente);
+        this.settings.dCli.value.next(Nombre);
+        this.settings.dNom.value.next(Nombre);
+        this.settings.dMail.value.next(Mail);
+
 
         if (m.Estado == "ATENDIENDO") {
             this.settings.imgid.show.next(true);
@@ -1182,7 +1189,7 @@ export class ConsService extends WebsocketService {
         }
         if (this.settings.bTurnoSet) {
             this.settings.bTurnoSet = false;
-            
+
             if (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) {
                 this.openModal(ModalEnum.IDEDIT);
             } else {

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
-import { BsModalRef } from 'ngx-bootstrap';
+import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { AccEnum, tElement } from '../Models/Enums';
 import { environment } from '../../environments/environment';
 import { AppConfig } from '../app.config';
@@ -13,7 +13,8 @@ import { CustomValidators } from 'ng2-validation';
   templateUrl: './motivos.component.html',
   styleUrls: ['./motivos.component.scss']
 })
-export class MotivosComponent implements OnInit {
+export class MotivosComponent implements OnInit, OnDestroy {
+  
   MotivosForm: FormGroup;
   rows: any[] = [];
   selected = [];
@@ -28,7 +29,7 @@ export class MotivosComponent implements OnInit {
     selectedMessage: 'seleccionado'
   };
 
-  MotCierre: string = this.config.get('MotCierre');
+  MotCierre: string = this.config.get('socket')['MotCierre'];
   isError: boolean = false;
 
   client: any;
@@ -37,6 +38,8 @@ export class MotivosComponent implements OnInit {
     private consService: ConsService,
     public settings: SettingsService,
     public bsModalRef: BsModalRef,
+    public bsModalRefModal: BsModalRef,
+    private modalService: BsModalService,
     private config: AppConfig,
     public fb: FormBuilder,
   ) { }
@@ -67,9 +70,13 @@ export class MotivosComponent implements OnInit {
 
   closed(): void {
     this.bsModalRef.hide();
+    if(this.bsModalRefModal) {
+      this.bsModalRefModal.hide();
+    }
   }
 
-  fnAccion() {
+  fnAccion() {   
+
     this.settings.cbMot = [];
     this.selected.forEach(s => {
       let elem = {
@@ -79,16 +86,18 @@ export class MotivosComponent implements OnInit {
       this.settings.cbMot.push(elem);
     });
 
-    if(this.settings.cbMot.length > 0) {
-      this.consService.fnAccion(AccEnum.FINTUR);
-    }
-    
+    this.consService.fnAccion(AccEnum.FINTUR);
+        
     this.consService.IsError().subscribe(isError => {
       if(isError && !isError) {
         this.bsModalRef.hide();
+        if(this.bsModalRefModal) {
+          this.bsModalRefModal.hide();
+        }
       }
     });
     
+    this.bsModalRef.hide();
   }
 
   onChanges(val) {
@@ -123,6 +132,37 @@ export class MotivosComponent implements OnInit {
 
   Clear() {
     this.isError = false;
+  }
+
+  openModal(template: TemplateRef<any>, templateForceMot: TemplateRef<any>) {
+    if(this.MotCierre == 'S') {
+      if(this.rows.length == 0) {
+        this.bsModalRefModal = this.modalService.show(templateForceMot, {class: 'modal-sm'});
+      } else {
+        this.fnAccion();    
+      }
+      
+    } else {
+      this.bsModalRefModal = this.modalService.show(template, {class: 'modal-sm'});
+    }    
+  }
+
+  confirm() {
+    this.bsModalRefModal.hide();
+    this.fnAccion();
+  }
+
+  decline() {
+    this.bsModalRefModal.hide();
+  }
+
+  ngOnDestroy(): void {
+    this.bsModalRefModal.hide();
+  }
+
+  confirmMotForce() {
+    
+    this.bsModalRefModal.hide();
   }
 
 }

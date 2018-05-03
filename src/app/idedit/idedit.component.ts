@@ -41,6 +41,14 @@ export class IdeditComponent implements OnInit {
       this.model.txFon = this.settings.dFon.value.getValue();
     }
 
+    if (this.settings.dNom.value.getValue() && this.settings.dNom.value.getValue() != "") {
+      this.model.txNom = this.settings.dNom.value.getValue();
+    }
+
+    if (this.settings.dMail.value.getValue() && this.settings.dMail.value.getValue() != "") {
+      this.model.txMail = this.settings.dMail.value.getValue();
+    }
+
     if (this.client.IdEditarForzar) {
       if (this.settings.dTer.value.getValue() && this.settings.dTer.value.getValue() != "") {
         this.model.txTer = (this.settings.dTer.value.getValue() == '1' ? true : false);
@@ -49,77 +57,50 @@ export class IdeditComponent implements OnInit {
 
     this.createEditForm();
 
-
-
   }
 
   createEditForm() {
-    if (this.client.IdEditarForzar) {
-      if (this.ConfirmaRut && this.ConfirmaFono) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null, Validators.compose([
-            Validators.required,
-            RutValidator.check
-          ])],
-          txFon: [null, Validators.compose([
-            Validators.required,
-            CustomValidators.number
-          ])],
-          txTer: [null]
-        });
-      } else if (this.ConfirmaRut) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null, Validators.compose([
-            Validators.required,
-            RutValidator.check
-          ])],
-          txFon: [null],
-          txTer: [null]
-        });
-      } else if (this.ConfirmaFono) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null],
-          txFon: [null, Validators.compose([
-            Validators.required,
-            CustomValidators.number
-          ])],
-          txTer: [null]
-        });
-      }
+    let valida = {};
 
-
+    if (this.ConfirmaRut) {
+      valida["txRut"] = [null, Validators.compose([
+        Validators.required,
+        RutValidator.check
+      ])];
     } else {
-      if (this.ConfirmaRut && this.ConfirmaFono) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null, Validators.compose([
-            Validators.required,
-            RutValidator.check
-          ])],
-          txFon: [null, Validators.compose([
-            Validators.required,
-            CustomValidators.number
-          ])]
-        });
-      } else if (this.ConfirmaRut) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null, Validators.compose([
-            Validators.required,
-            RutValidator.check
-          ])],
-          txFon: [null]
-        });
-      } else if (this.ConfirmaFono) {
-        this.IdEditForm = this.fb.group({
-          txRut: [null],
-          txFon: [null, Validators.compose([
-            Validators.required,
-            CustomValidators.number
-          ])]
-        });
-      }
-
-
+      valida["txRut"] = [null];
     }
+
+    if (this.ConfirmaFono) {
+      valida["txFon"] = [null, Validators.compose([
+        Validators.required,
+        CustomValidators.number
+      ])];
+    } else {
+      valida["txFon"] = [null];
+    }
+    if (this.ConfirmaNom) {
+      valida["txNom"] = [null, Validators.compose([
+        Validators.required
+      ])];
+    } else {
+      valida["txNom"] = [null];
+    }
+
+    if (this.ConfirmaMail) {
+      valida["txMail"] = [null, Validators.compose([
+        Validators.required,
+        CustomValidators.email
+      ])];
+    } else {
+      valida["txMail"] = [null];
+    }
+
+    if (this.client.IdEditarForzar) {
+      valida["txTer"] = [null];
+    }
+
+    this.IdEditForm = this.fb.group(valida);
 
   }
 
@@ -136,14 +117,12 @@ export class IdeditComponent implements OnInit {
     return (this.settings.CliInt == 'FALASACBOD' ? 5000000000 : 910000000);
   }
 
-
-
   fnSet_ID() {
     this.settings.Rut = this.model.txRut;
     if (this.client.IdEditarForzar) {
       this.settings.FonoTmp = this.model.txFon + "," + (this.model.txTer ? "1" : "0");
     } else {
-      this.settings.FonoTmp = this.model.txFon;
+      this.settings.FonoTmp = this.model.txFon + "," + this.model.txNom + "," + this.model.txMail;
     }
     this.consService.fnAccion(AccEnum.SID);
 
@@ -169,12 +148,28 @@ export class IdeditComponent implements OnInit {
     return this.IdEditForm.get('txFon');
   }
 
+  get txNom() {
+    return this.IdEditForm.get('txNom');
+  }
+
+  get txMail() {
+    return this.IdEditForm.get('txMail');
+  }
+
   get ConfirmaRut(): boolean {
     return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("R") != -1);
   }
 
   get ConfirmaFono(): boolean {
     return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("F") != -1);
+  }
+
+  get ConfirmaNom(): boolean {
+    return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("N") != -1);
+  }
+
+  get ConfirmaMail(): boolean {
+    return (this.config.get('socket').ConfirmaTipo.toUpperCase().indexOf("M") != -1);
   }
 
   get IsValidRut(): boolean {
@@ -196,4 +191,6 @@ export class IdEditModel {
   txRut: string = "";
   txFon: string = "";
   txTer: boolean;
+  txNom: string;
+  txMail: string;
 }
