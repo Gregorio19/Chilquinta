@@ -48,10 +48,13 @@ export class HomeComponent implements OnInit {
     private config: AppConfig
   ) {
 
+    
     this.modalService.onHide.subscribe((event: any) => {
-      this.dialog = null;
-      this.consService.closeModal(this.settings.Modal.self.getValue());
+      console.log("fuck onhide", event, this.settings.Modal.self.getValue());
+    //  this.dialog = null;
+//      this.consService.closeModal(this.settings.Modal.self.getValue());
     });
+    
 
     this.observable = new Observable<boolean>((observer: any) => this.observer = observer).share();
 
@@ -157,7 +160,8 @@ export class HomeComponent implements OnInit {
             initialState = {
               title: "Error",
               titleClass: "text-danger",
-              message: new BehaviorSubject<string>(this.settings.lastError.DescError) //message.asObservable()
+              message: new BehaviorSubject<string>(this.settings.lastError.DescError),
+              Dgltype: ModalEnum.ERROR
             }
             this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
             break;
@@ -165,7 +169,8 @@ export class HomeComponent implements OnInit {
             initialState = {
               title: "Alerta",
               titleClass: "text-warning",
-              message: this.consService.GetMessage()
+              message: this.consService.GetMessage(),
+              Dgltype: ModalEnum.MSGURGTURN
             }
             this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
             break;

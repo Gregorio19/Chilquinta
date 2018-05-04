@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
 import { BsModalRef } from 'ngx-bootstrap';
-import { AccEnum } from '../Models/Enums';
+import { AccEnum, ModalEnum } from '../Models/Enums';
 import { RutValidator } from '../validators/rut-validator.directive';
 import { AppConfig } from '../app.config';
 import { CustomValidators } from 'ng2-validation';
@@ -79,7 +79,7 @@ export class IdeditComponent implements OnInit {
     } else {
       valida["txFon"] = [null];
     }
-    if (this.ConfirmaNom) {
+    if (this.EnableNom && this.ConfirmaNom) {
       valida["txNom"] = [null, Validators.compose([
         Validators.required
       ])];
@@ -87,7 +87,7 @@ export class IdeditComponent implements OnInit {
       valida["txNom"] = [null];
     }
 
-    if (this.ConfirmaMail) {
+    if (this.EnableMail && this.ConfirmaMail) {
       valida["txMail"] = [null, Validators.compose([
         Validators.required,
         CustomValidators.email
@@ -105,7 +105,8 @@ export class IdeditComponent implements OnInit {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.IDEDIT);
 
   }
 
@@ -122,15 +123,22 @@ export class IdeditComponent implements OnInit {
     if (this.client.IdEditarForzar) {
       this.settings.FonoTmp = this.model.txFon + "," + (this.model.txTer ? "1" : "0");
     } else {
-      this.settings.FonoTmp = this.model.txFon + "," + this.model.txNom + "," + this.model.txMail;
+      this.settings.FonoTmp = this.model.txFon;
+      if(this.EnableNom) {
+        this.settings.FonoTmp += "," + this.model.txNom;
+      }
+      if (this.EnableMail) {
+        this.settings.FonoTmp += "," + this.model.txMail;
+      }
     }
     this.consService.fnAccion(AccEnum.SID);
 
-    this.consService.IsError().subscribe(isError => {
+    /*this.consService.IsError().subscribe(isError => {
       if (!isError) {
-        this.bsModalRef.hide();
+        //this.bsModalRef.hide();
+        this.closed();
       }
-    })
+    })*/
   }
 
   onChanges(val) {
@@ -177,6 +185,14 @@ export class IdeditComponent implements OnInit {
       return this.IdEditForm.controls['txRut'].valid;
     }
     return false;
+  }
+
+  get EnableNom(): boolean {
+    return this.client["IdEdit"].some(x => x == 'txNom');
+  }
+
+  get EnableMail(): boolean {
+    return this.client["IdEdit"].some(x => x == 'txMail');
   }
 
   get IsValidFono(): boolean {

@@ -169,6 +169,8 @@ export class SettingsService {
 
     this.iTOcnx = 0;
     this.iTOpido = 0;
+
+    this.Modal.show = false;
    }
 
 }

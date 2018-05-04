@@ -5,7 +5,7 @@ import { Subscription, ISubscription } from 'rxjs/Subscription'
 import { IfObservable } from 'rxjs/observable/IfObservable';
 import { Observable } from 'rxjs/Observable';
 import { LoginModel } from '../Models/LoginModel';
-import { ActionEnum } from '../Models/Enums';
+import { ActionEnum, ModalEnum } from '../Models/Enums';
 import { SettingsService } from '../services/settings.service';
 import { Action } from 'rxjs/scheduler/Action';
 import { ConsService } from '../services/Cons.service';
@@ -23,7 +23,7 @@ import { ConfEjeComponent } from '../conf-eje/conf-eje.component';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit  {
+export class LoginComponent implements OnInit {
   public loginModel: LoginModel;
   loginForm: FormGroup;
 
@@ -40,22 +40,22 @@ export class LoginComponent implements OnInit  {
     public MotivosService: MotivosService,
     private modalService: BsModalService,
     private changeDetection: ChangeDetectorRef
-  ) {    
+  ) {
     this.loginModel = new LoginModel();
-    
+
   }
 
-  ngOnInit() {    
+  ngOnInit() {
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
-    if(this.client.LoginWithUserPass) {
+    if (this.client.LoginWithUserPass) {
       this.loginForm = this.fb.group({
         txEsc: [null, Validators.compose([
-            Validators.required,
-            Validators.minLength(0), 
-            Validators.maxLength(3),
-            CustomValidators.number
-          ])
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(3),
+          CustomValidators.number
+        ])
         ],
         txUsr: [null, Validators.compose([
           Validators.required,
@@ -65,32 +65,33 @@ export class LoginComponent implements OnInit  {
           Validators.required,
           Validators.maxLength(15)
         ])
-      ]
-      });  
+        ]
+      });
     } else {
       this.loginForm = this.fb.group({
         txEsc: [null, Validators.compose([
-            Validators.required,
-            Validators.minLength(0), 
-            Validators.maxLength(3),
-            CustomValidators.number
-          ])
+          Validators.required,
+          Validators.minLength(0),
+          Validators.maxLength(3),
+          CustomValidators.number
+        ])
         ],
       });
     }
 
-    this.data = this.settings.data.subscribe(value  => {
-      if(value) {
+    this.data = this.settings.data.subscribe(value => {
+      if (value) {
         this.consService.AccLGISET(this.loginModel);
 
         this.consService.getIsLogged().subscribe(isLogged => {
-          if(isLogged) {
-            this.bsModalRef.hide();
+          if (isLogged) {
+            //this.bsModalRef.hide();
+            this.closed();
           }
         });
       }
     });
-    
+
   }
 
   loginBtn() {
@@ -98,10 +99,15 @@ export class LoginComponent implements OnInit  {
     this.loginModel.MsgType = ActionEnum.LOGIN;
     this.loginModel.ClienteInterno = "";
     this.loginModel.IdEscritorio = this.loginModel.IdEscritorio.toString();
-    if(!this.client.LoginWithUserPass) {
-      this.loginModel.User = this.settings.hiUsr;
-      //this.loginModel.User = 'luiggino';
-      //this.loginModel.Pass = "1234";
+    if (!this.client.LoginWithUserPass) {
+      if (this.config.get('clients').client == "Tesoreria") {
+        this.loginModel.User = 'luiggino';
+        this.loginModel.Pass = "1234";
+      } else {
+        this.loginModel.User = this.settings.hiUsr;
+      }
+
+
     }
 
     this.consService.AccLGISET(this.loginModel);
@@ -122,11 +128,12 @@ export class LoginComponent implements OnInit  {
         
       }
     });*/
-    
+
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.LOGIN);
   }
 
   ngOnDestroy() {

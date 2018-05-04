@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
 import { BsModalRef } from 'ngx-bootstrap';
-import { AccEnum } from '../Models/Enums';
+import { AccEnum, ModalEnum } from '../Models/Enums';
 import { AppConfig } from '../app.config';
 
 @Component({
@@ -40,7 +40,8 @@ export class DerivarSerieComponent implements OnInit {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.GETSERIES_DRVSER);
   }
 
   fnAccion(accion: string) {
@@ -51,7 +52,8 @@ export class DerivarSerieComponent implements OnInit {
 
     let acc: AccEnum = <AccEnum>AccEnum[accion];
     this.consService.fnAccion(acc);
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.closed();
     /*this.consService.IsError().subscribe(isError => {
       if(isError && !isError) {
         this.bsModalRef.hide();

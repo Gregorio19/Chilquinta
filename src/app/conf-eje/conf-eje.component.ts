@@ -8,6 +8,7 @@ import { RutValidator } from '../validators/rut-validator.directive';
 import { CustomValidators } from 'ng2-validation';
 import { LoginModel } from '../Models/LoginModel';
 import { BehaviorSubject } from 'rxjs';
+import { ModalEnum } from '../Models/Enums';
 
 @Component({
   selector: 'app-conf-eje',
@@ -23,6 +24,7 @@ export class ConfEjeComponent implements OnInit {
   public loginModel: LoginModel;
    
   constructor(
+    private consService: ConsService,
     public settings: SettingsService,
     private fb: FormBuilder,
     public bsModalRef: BsModalRef,
@@ -47,7 +49,8 @@ export class ConfEjeComponent implements OnInit {
    }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.CONFEJE);
   }
   
 
@@ -61,7 +64,8 @@ export class ConfEjeComponent implements OnInit {
     this.settings._data.next(this.loginModel);
     this.changeDetection.markForCheck();
 
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.closed();
     
   }
 

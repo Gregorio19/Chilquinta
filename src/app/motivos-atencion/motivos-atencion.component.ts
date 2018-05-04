@@ -96,8 +96,9 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
-    this.bsModalRef = null;
+    //this.bsModalRef.hide();
+    //this.bsModalRef = null;
+    this.consService.closeModal(ModalEnum.GETMOTIVOS);
   }
 
   selectItem(value) {
@@ -332,7 +333,8 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
 
     this.consService.IsError().subscribe(isError => {
       if (!isError) {
-        this.bsModalRef.hide();
+        //this.bsModalRef.hide();
+        this.closed();
       } else {
         this.isError = isError;
         this.DescError = this.settings.lastError.DescError;

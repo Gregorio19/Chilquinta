@@ -33,6 +33,8 @@ export class ConsService extends WebsocketService {
     private bEncCurso: boolean = false;
     private iTAte: number = 0;
 
+    private enableUrg: boolean = true;
+
     private messageTurn: BehaviorSubject<string> = new BehaviorSubject<string>("");
 
     constructor(
@@ -232,12 +234,15 @@ export class ConsService extends WebsocketService {
                     this.closeModal(ModalEnum.IDEDIT);
                     break;
             }
-            let dEdo: AccEnum = <AccEnum>AccEnum[this.settings.dEdo.value.getValue()];
-            if (dEdo != AccEnum.LOGOFF &&
-                (this.settings.accion != AccEnum.EDS && this.settings.accion != AccEnum.LGO)) {
-                this.fnAccion(AccEnum.EDS);
+            if (!this.settings.Modal.show) {
+                let dEdo: AccEnum = <AccEnum>AccEnum[this.settings.dEdo.value.getValue()];
+                if (dEdo != AccEnum.LOGOFF &&
+                    (this.settings.accion != AccEnum.EDS && this.settings.accion != AccEnum.LGO)) {
+                    this.fnAccion(AccEnum.EDS);
+                }
+                this.fnView(dEdo);
             }
-            this.fnView(dEdo);
+
         },
             error => {
                 // LAUNCH error
@@ -260,7 +265,7 @@ export class ConsService extends WebsocketService {
         this.settings.lastError.DescError = null;
         this.settings.lastError.isError.next(false);
 
-        this.settings.lastError = new MsgError();
+        //this.settings.lastError = new MsgError();
     }
 
     public fnAccion(accion: AccEnum, ...args: any[]) {
@@ -400,7 +405,9 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                this.settings.btURG.disable.next(true);
+                if(this.enableUrg) {
+                    this.settings.btURG.disable.next(true);
+                }                
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.dOfi.value.next("");
@@ -459,8 +466,13 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(false);
                 this.settings.btRLL.disable.next(false);
                 this.settings.btNUL.disable.next(false);
-                //this.settings.btURG.disable.next(true);
-                this.settings.btURG.disable.next(false);
+
+                if (this.client.ForceMotUrg) {
+                    this.settings.btURG.disable.next(false);
+                } else if(this.enableUrg) {
+                    this.settings.btURG.disable.next(true);
+                }
+
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.barra_superior.value.next("barra_superior_verde");
@@ -474,8 +486,13 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                //this.settings.btURG.disable.next(false);
-                this.settings.btURG.disable.next(true);
+
+                if (this.client.ForceMotUrg) {
+                    this.settings.btURG.disable.next(false);
+                } else if(this.enableUrg){
+                    this.settings.btURG.disable.next(true);
+                }
+
 
                 this.settings.btDRV.disable.next(parseInt(
                     this.settings.dTur.value.getValue()
@@ -538,7 +555,7 @@ export class ConsService extends WebsocketService {
             }
         }
 
-        if (this.settings.iTOpido > 0) {
+        if (this.settings.iTOpido > 0 && !this.client.UseTimeout) {
             this.settings.iTOpido--;
         }
         if (!this.settings.bCnxOK || this.settings.sEscEdo == AccEnum.LOGOFF) {
@@ -565,7 +582,7 @@ export class ConsService extends WebsocketService {
             this.s_2_hms(this.settings.dTAte, diff, parseInt(this.settings.hiTAteA));
         }
         if (this.settings.sEscEdo == AccEnum.ESPERANDO && this.settings.subacc != AccEnum.UNKNOW) {
-            if (this.settings.subacc != AccEnum.X) {
+            if (this.settings.subacc != AccEnum.X && !this.settings.Modal.show) {
                 this.fnAccion(this.settings.subacc);
             }
         } else {
@@ -582,11 +599,14 @@ export class ConsService extends WebsocketService {
                         this.settings.iTOw = parseInt(this.settings.hiTEspC);
                     }
                     this.settings.dMsgEsp.value.next("Anulaci&oacute;n en " + this.settings.iTOw + " [seg]");
-                    if (this.settings.iTOw-- == 0) {
+                    if (this.settings.iTOw-- == 0 && this.client.UseTimeout) {
                         this.fnAccion(AccEnum.NUL);
                     }
                     setTimeout(() => {
-                        this.fnAccion(AccEnum.EDS);
+                        if (!this.settings.Modal.show) {
+                            this.fnAccion(AccEnum.EDS);
+                        }
+
                     }, 3000);
                 } else {
                     if (!this.settings.Modal.show) {
@@ -923,6 +943,14 @@ export class ConsService extends WebsocketService {
 
         // SAVE SESSION
         //this.setCookie(this.settings.hiEsc + "," + this.settings.hiUsr);
+
+        //set enableUrg
+        //this.enableUrg = m.Urg;
+        if(this.enableUrg) { //first moment
+            this.settings.btURG.disable.next(true);
+        } else {
+            this.settings.btURG.disable.next(false);
+        }
 
         this.fnView(AccEnum.PAUSA);
         this.fnAccion(AccEnum.EDB);

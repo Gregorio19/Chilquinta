@@ -18,6 +18,7 @@ export class ModalMessageComponent implements OnInit {
   titleClass: string = "";
   isClose: boolean = true;
   message: Observable<string> = new Observable<string>();
+  Dgltype: ModalEnum = null;
 
   constructor(
     public consService: ConsService,
@@ -39,6 +40,12 @@ export class ModalMessageComponent implements OnInit {
     });*/
   }
 
+  closed() {
+    if (this.Dgltype) {
+      this.consService.closeModal(this.Dgltype);
+    }
+
+  }
 
 
 }

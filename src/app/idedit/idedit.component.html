@@ -5,7 +5,7 @@
         <h5 class="modal-title">CONFIRMA</h5>
       </div>
       <div class="col">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close" [disabled]="enableClosed" (click)="bsModalRef.hide()">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close" [disabled]="enableClosed" (click)="closed()">
           <span aria-hidden="true">×</span>
         </button>
       </div>
@@ -56,7 +56,7 @@
       </div>
     </div>
 
-    <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txNom'].valid}">
+    <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txNom'].valid}" *ngIf="EnableNom">
       <label for="txUsr" class="col-sm-4 col-form-label">Nombre del Cliente</label>
       <div class="col-sm-8">
         <div class="col-sm-8 pl-0">
@@ -70,7 +70,7 @@
       </div>
     </div>
 
-    <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txMail'].valid}">
+    <div class="form-group row" [ngClass]="{'has-error':!IdEditForm.controls['txMail'].valid}" *ngIf="EnableMail">
       <label for="txUsr" class="col-sm-4 col-form-label">Correo del Cliente</label>
       <div class="col-sm-8">
         <div class="col-sm-8 pl-0">
@@ -110,7 +110,7 @@
         <button type="button" class="btn btn-primary" (click)="fnSet_ID()" [disabled]="!IdEditForm.valid">Confirmar</button>
       </div>
       <div class="col-md-3 d-flex justify-content-end">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()" [disabled]="enableClosed">Cerrar</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closed()" [disabled]="enableClosed">Cerrar</button>
       </div>
       <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
         <div> [{{ settings.iTOw }}] </div>

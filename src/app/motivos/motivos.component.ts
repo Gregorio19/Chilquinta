@@ -2,7 +2,7 @@ import { Component, OnInit, TemplateRef, OnDestroy } from '@angular/core';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { AccEnum, tElement } from '../Models/Enums';
+import { AccEnum, tElement, ModalEnum } from '../Models/Enums';
 import { environment } from '../../environments/environment';
 import { AppConfig } from '../app.config';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
@@ -69,10 +69,11 @@ export class MotivosComponent implements OnInit, OnDestroy {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
     if(this.bsModalRefModal) {
       this.bsModalRefModal.hide();
     }
+    this.consService.closeModal(ModalEnum.GETMOTIVOS);
   }
 
   fnAccion() {   
@@ -89,15 +90,17 @@ export class MotivosComponent implements OnInit, OnDestroy {
     this.consService.fnAccion(AccEnum.FINTUR);
         
     this.consService.IsError().subscribe(isError => {
-      if(isError && !isError) {
-        this.bsModalRef.hide();
+      if(!isError) {
+        /*this.bsModalRef.hide();
         if(this.bsModalRefModal) {
           this.bsModalRefModal.hide();
-        }
+        }*/
+        this.closed();
       }
     });
     
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    //this.closed();
   }
 
   onChanges(val) {

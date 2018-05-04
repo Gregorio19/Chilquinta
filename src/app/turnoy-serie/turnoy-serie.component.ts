@@ -3,7 +3,7 @@ import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
-import { AccEnum } from '../Models/Enums';
+import { AccEnum, ModalEnum } from '../Models/Enums';
 import { TurnoySerie } from '../Models/TurnoySerie';
 import { AppConfig } from '../app.config';
 
@@ -46,7 +46,8 @@ export class TurnoySerieComponent implements OnInit {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.GETSERIES_URGSER);
   }
 
   fnAccion(accion: AccEnum) {
@@ -55,8 +56,9 @@ export class TurnoySerieComponent implements OnInit {
     this.settings.urgTur.value.next(this.model.urgTur.toString());
     this.consService.fnAccion(accion);
     this.consService.IsError().subscribe(isError => {
-      if (isError && !isError) {
-        this.bsModalRef.hide();
+      if (!isError) {
+        //this.bsModalRef.hide();
+        this.closed();
       }
     });
 
@@ -83,7 +85,7 @@ export class TurnoySerieComponent implements OnInit {
         }
       } else {
         if (!this.settings.lastError.isError.getValue()) {
-          this.bsModalRef.hide();
+          //this.bsModalRef.hide();
           this.confirm();
         }
 
@@ -92,8 +94,10 @@ export class TurnoySerieComponent implements OnInit {
 
     } else {
       if (!this.settings.lastError.isError.getValue()) {
-        this.fnAccion(AccEnum.URGSET);
-        this.bsModalRef.hide();
+        //this.fnAccion(AccEnum.URGSET);
+        //this.bsModalRef.hide();
+        //this.closed();
+        this.confirm();
       }
     }
 
@@ -101,8 +105,12 @@ export class TurnoySerieComponent implements OnInit {
 
   confirm() {
     this.fnAccion(AccEnum.URGSET);
-    this.bsModalRefMsgBox.hide();
-    this.bsModalRef.hide();
+    if(this.bsModalRefMsgBox) {
+      this.bsModalRefMsgBox.hide();
+    }
+    
+    //this.bsModalRef.hide();
+    this.closed();
   }
 
   decline() {

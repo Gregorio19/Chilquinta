@@ -2,7 +2,7 @@ import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, Validators, FormControl, NgForm, FormBuilder } from '@angular/forms';
 import { SettingsService } from '../services/settings.service';
 import { ConsService } from '../services/Cons.service';
-import { AccEnum } from '../Models/Enums';
+import { AccEnum, ModalEnum } from '../Models/Enums';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { AppConfig } from '../app.config';
 
@@ -35,7 +35,8 @@ export class PausaComponent implements OnInit {
   }
 
   closed(): void {
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.consService.closeModal(ModalEnum.GETPAUSAS);
   }
 
   fnAccion(accion: string) {
@@ -44,7 +45,8 @@ export class PausaComponent implements OnInit {
 
     let acc: AccEnum = <AccEnum>AccEnum[accion];
     this.consService.fnAccion(acc);
-    this.bsModalRef.hide();
+    //this.bsModalRef.hide();
+    this.closed();
   }
 
   onChanges(val) {
