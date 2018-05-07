@@ -23,8 +23,7 @@ export class HeaderComponent {
     private consService: ConsService,
     public settings: SettingsService    
   ) {    
-    this.consService.getIsLogged().subscribe(value => {
-    })
+    
   }
 
   fnAccion(accion: string) {

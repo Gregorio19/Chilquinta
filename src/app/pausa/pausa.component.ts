@@ -3,7 +3,6 @@ import { FormGroup, Validators, FormControl, NgForm, FormBuilder } from '@angula
 import { SettingsService } from '../services/settings.service';
 import { ConsService } from '../services/Cons.service';
 import { AccEnum, ModalEnum } from '../Models/Enums';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { AppConfig } from '../app.config';
 
 @Component({
@@ -14,38 +13,35 @@ import { AppConfig } from '../app.config';
 
 export class PausaComponent implements OnInit {
   pausaForm: FormGroup;
-  rbPau: string='';
+  rbPau: string = '';
   client: any;
-   
+
   constructor(
     public settings: SettingsService,
-    private consService: ConsService,    
+    private consService: ConsService,
     private fb: FormBuilder,
-    public bsModalRef: BsModalRef,
     private config: AppConfig,
-  ) {    
-   }
+  ) {
+  }
 
   ngOnInit() {
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
     this.pausaForm = this.fb.group({
       rbPau: [null, Validators.required]
-      });
+    });
   }
 
   closed(): void {
-    //this.bsModalRef.hide();
     this.consService.closeModal(ModalEnum.GETPAUSAS);
   }
 
   fnAccion(accion: string) {
-    this.settings.rbPau.checked.next(true); 
-    this.settings.rbPau.value.next(this.rbPau);    
+    this.settings.rbPau.checked.next(true);
+    this.settings.rbPau.value.next(this.rbPau);
 
     let acc: AccEnum = <AccEnum>AccEnum[accion];
     this.consService.fnAccion(acc);
-    //this.bsModalRef.hide();
     this.closed();
   }
 

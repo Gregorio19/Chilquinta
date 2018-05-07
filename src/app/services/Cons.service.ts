@@ -65,6 +65,7 @@ export class ConsService extends WebsocketService {
     }
 
     private start() {
+        console.log("start again");
         this.settings.init();
 
         this.connect(this.config.get('socket').url);
@@ -102,6 +103,8 @@ export class ConsService extends WebsocketService {
                 }
             } else {
                 this.settings.iTOcnx = 2;
+
+                //this.restart();
             }
 
         });
@@ -111,13 +114,14 @@ export class ConsService extends WebsocketService {
             console.log("rsp = %s", message);
             if (m.CodError != "0") {
                 //this.settings.iTOcnx = 2;
-                /*
-                if(m.CodError == 13022) {
+
+                if (m.CodError == 13022 && m.DescError == "Error en Login") {
                     this.loginModel = new LoginModel();
                     this.settings.isLogged.next(false);
                     this.cookieService.delete(this.sCookie);
                     this.fnAccion(AccEnum.LGI);
-                }*/
+                    return;
+                }
 
                 this.settings.accion = AccEnum.UNKNOW;
                 this.settings.subacc = AccEnum.UNKNOW;
@@ -135,18 +139,19 @@ export class ConsService extends WebsocketService {
                 } else if (m.MsgType == ActionEnum.LOGIN) {
                     if (m.CodError == "13022" && !this.settings.Modal.show) {
                         this.openModal(ModalEnum.CONFEJE);
-                    } else if (m.CodError == "14002") {
-
                     } else {
                         this.settings.isLogged.next(false);
-                        this.fnAccion(AccEnum.LGI);
+                        if (!this.settings.Modal.show) {
+                            this.fnAccion(AccEnum.LGI);
+                        }
+
                     }
 
-                } else if (m.MsgType == ActionEnum.URGENCIA) {
+                } /*else if (m.MsgType == ActionEnum.URGENCIA) {
                     this.messageTurn.next(m.DescError);
                     this.closeModal(this.settings.Modal.self.getValue());
                     this.openModal(ModalEnum.MSGURGTURN);
-                }
+                }*/
 
                 return;
             }
@@ -244,12 +249,17 @@ export class ConsService extends WebsocketService {
             }
 
         },
-            error => {
+            (error) => {
                 // LAUNCH error
                 /*this.settings.lastError.MsgType = m.MsgType;
                 this.settings.lastError.CodError = m.CodError;
                 this.settings.lastError.DescError = m.DescError;*/
-                this.settings.lastError.isError.next(true);
+                this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";
+                this.settings.lastErrorMot.isError.next(true);
+
+                if(!this.open) {
+                    this.restart();
+                }
 
             });
 
@@ -405,9 +415,9 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                if(this.enableUrg) {
+                if (this.enableUrg) {
                     this.settings.btURG.disable.next(true);
-                }                
+                }
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.dOfi.value.next("");
@@ -469,7 +479,7 @@ export class ConsService extends WebsocketService {
 
                 if (this.client.ForceMotUrg) {
                     this.settings.btURG.disable.next(false);
-                } else if(this.enableUrg) {
+                } else if (this.enableUrg) {
                     this.settings.btURG.disable.next(true);
                 }
 
@@ -489,7 +499,7 @@ export class ConsService extends WebsocketService {
 
                 if (this.client.ForceMotUrg) {
                     this.settings.btURG.disable.next(false);
-                } else if(this.enableUrg){
+                } else if (this.enableUrg) {
                     this.settings.btURG.disable.next(true);
                 }
 
@@ -538,22 +548,26 @@ export class ConsService extends WebsocketService {
         this.settings.btLOG.class.next(xhtml == AccEnum.LOGOFF ? "login-boton" : "logoff-boton");
     }
 
+    restart() {
+        console.log("re connection");
+        this.open = null;
+        this.messages = null;
+        this.start();
+    }
+
     /**
      * TIMER
      */
 
     DoTimer(t) {
-
         //let defaultCenturyStart = moment();
         let now = new Date();
 
-        if (!this.open) {
+        /*if (!this.open.getValue()) {
             if (this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
-                this.open = null;
-                this.messages = null;
-                this.start();
+                this.restart();
             }
-        }
+        }*/
 
         if (this.settings.iTOpido > 0 && !this.client.UseTimeout) {
             this.settings.iTOpido--;
@@ -606,7 +620,6 @@ export class ConsService extends WebsocketService {
                         if (!this.settings.Modal.show) {
                             this.fnAccion(AccEnum.EDS);
                         }
-
                     }, 3000);
                 } else {
                     if (!this.settings.Modal.show) {
@@ -623,6 +636,7 @@ export class ConsService extends WebsocketService {
 
                 if (this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
                     if (this.client.UseTimeout) {
+                        console.log("1");
                         this.closeModal(this.settings.Modal.self.getValue());
                     } else {
                         this.settings.iTOw = -1;
@@ -753,6 +767,7 @@ export class ConsService extends WebsocketService {
         //this.settings.Modal.show.next(false);
         //this.closeModal(ModalEnum.GETMOTIVOS);
 
+        console.log("2");
         this.closeModal(this.settings.Modal.self.getValue());
 
         let proto = new ProtoModel();
@@ -809,7 +824,7 @@ export class ConsService extends WebsocketService {
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
 
-        this.send(proto.toJson(), this.settings.accion);
+        this.send(JSON.stringify(proto), this.settings.accion);
     }
 
     public AccRLL() {
@@ -864,6 +879,7 @@ export class ConsService extends WebsocketService {
 
     public AccDRVSET(name: string, ch: string) {
         //this.settings.Modal.show = false;
+        console.log("3");
         this.closeModal(this.settings.Modal.self.getValue());
 
         if (this.settings.rbSer.checked.getValue()) {
@@ -908,7 +924,6 @@ export class ConsService extends WebsocketService {
     }
 
     public destroy() {
-        console.log("cons destroy");
         this.timerSubscription.unsubscribe();
         this.socketSubscription.unsubscribe();
     }
@@ -946,7 +961,7 @@ export class ConsService extends WebsocketService {
 
         //set enableUrg
         //this.enableUrg = m.Urg;
-        if(this.enableUrg) { //first moment
+        if (this.enableUrg) { //first moment
             this.settings.btURG.disable.next(true);
         } else {
             this.settings.btURG.disable.next(false);
@@ -1085,6 +1100,7 @@ export class ConsService extends WebsocketService {
     private FINTURNO(m) {
         //this.fnIDimd("N");
         //this.settings.subacc = AccEnum.UNKNOW;
+        console.log("4");
         this.closeModal(this.settings.Modal.self.getValue());
         this.settings.data = new EmptyObservable();
         this.settings.imgid.show.next(true);
@@ -1176,14 +1192,20 @@ export class ConsService extends WebsocketService {
             Mail = fono[2];
             Nombre = fono[1];
             fono = fono[0];
+
+            if (Nombre != 0) {
+                this.settings.dCli.value.next(Nombre);
+                this.settings.dNom.value.next(Nombre);
+            }
+
+            this.settings.dMail.value.next(Mail);
         } else {
             fono = m.Fono;
+
+            this.settings.dCli.value.next(m.Cliente);
         }
-        //        this.settings.dCli.value.next(m.Cliente);
+
         this.settings.dFon.value.next(fono);
-        this.settings.dCli.value.next(Nombre);
-        this.settings.dNom.value.next(Nombre);
-        this.settings.dMail.value.next(Mail);
 
 
         if (m.Estado == "ATENDIENDO") {
@@ -1249,6 +1271,10 @@ export class ConsService extends WebsocketService {
 
     public openModal(modal: ModalEnum) {
         console.log("open modal", modal);
+        if (this.settings.Modal.show) {
+            console.log("is open");
+            return;
+        }
         this.settings.Modal.show = true;
         this.settings.Modal.self.next(modal);
         this.settings.iTOw = this.config.get('socket').TOwin;
@@ -1257,6 +1283,12 @@ export class ConsService extends WebsocketService {
 
     public closeModal(modal: ModalEnum) {
         console.log("close modal", modal);
+
+        if (!this.settings.Modal.show) {
+            console.log("close modal false");
+            return;
+        }
+
         this.settings.Modal.show = false;
 
         this.settings.iTOw = -1;
@@ -1267,11 +1299,14 @@ export class ConsService extends WebsocketService {
         }
 
         this.settings.Modal.self.next(modal);
-
     }
 
     public getIsLogged(): Observable<boolean> {
         return this.settings.isLogged.asObservable();
+    }
+
+    public get IsLogged(): boolean {
+        return this.settings.isLogged.getValue();
     }
 
     public IsError(): Observable<boolean> {

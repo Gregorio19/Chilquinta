@@ -16,7 +16,7 @@ import { CookieService } from 'ngx-cookie-service';
 import { ConsService } from './services/Cons.service';
 import { PausaComponent } from './pausa/pausa.component';
 
-import { ModalModule, TabsModule, BsDropdownModule, CollapseModule } from 'ngx-bootstrap';
+import { TabsModule, BsDropdownModule, CollapseModule } from 'ngx-bootstrap';
 
 import { BreadcrumbsComponent } from './shared/breadcrumb.component';
 import { NAV_DROPDOWN_DIRECTIVES } from './shared/nav-dropdown.directive';
@@ -54,6 +54,8 @@ import { P404Component } from './404/404.component';
 import { SimpleLayoutComponent } from './layouts/simple-layout.component';
 import { ModalMessageComponent } from './modal-message/modal-message.component';
 
+import {MatDialogModule, MatIconModule, MatButtonModule, MatCardModule, MatDividerModule, MAT_DIALOG_DEFAULT_OPTIONS, MatTooltipModule} from "@angular/material";
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -88,7 +90,6 @@ import { ModalMessageComponent } from './modal-message/modal-message.component';
     HttpClientModule,
     AppRoutingModule,
     BrowserAnimationsModule,
-    ModalModule.forRoot(),
     CollapseModule.forRoot(), 
     BsDropdownModule.forRoot(),    
     TabsModule.forRoot(),
@@ -97,7 +98,13 @@ import { ModalMessageComponent } from './modal-message/modal-message.component';
     PushNotificationsModule,
     Ng2OdometerModule.forRoot(),
     NgSelectModule,
-    LoadingModule
+    LoadingModule,
+    MatCardModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatDividerModule,
+    MatTooltipModule    
   ],
   providers: [
     AppConfig,
@@ -118,7 +125,8 @@ import { ModalMessageComponent } from './modal-message/modal-message.component';
           notFoundText: 'No hay Tramites frecuentes',
           loadingText: "Cargando..."
       }
-    }
+    },
+    {provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: {disableClose: true}}
   ],
   bootstrap: [AppComponent],
   exports: [

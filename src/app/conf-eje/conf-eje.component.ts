@@ -1,4 +1,4 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { SettingsService } from '../services/settings.service';
 import { ConsService } from '../services/Cons.service';
@@ -9,6 +9,7 @@ import { CustomValidators } from 'ng2-validation';
 import { LoginModel } from '../Models/LoginModel';
 import { BehaviorSubject } from 'rxjs';
 import { ModalEnum } from '../Models/Enums';
+import { MAT_DIALOG_DATA } from '@angular/material';
 
 @Component({
   selector: 'app-conf-eje',
@@ -16,7 +17,6 @@ import { ModalEnum } from '../Models/Enums';
   styleUrls: ['./conf-eje.component.scss']
 })
 export class ConfEjeComponent implements OnInit {
-
   confEjeForm: FormGroup;
   model = new ConfEjeModel();
   isChange: boolean = false;
@@ -27,10 +27,11 @@ export class ConfEjeComponent implements OnInit {
     private consService: ConsService,
     public settings: SettingsService,
     private fb: FormBuilder,
-    public bsModalRef: BsModalRef,
     private config: AppConfig,
-    private changeDetection: ChangeDetectorRef
+    private changeDetection: ChangeDetectorRef,
+    @Inject(MAT_DIALOG_DATA) data
   ) {    
+    this.loginModel = data.loginModel;
    }
 
   ngOnInit() {
@@ -49,7 +50,6 @@ export class ConfEjeComponent implements OnInit {
    }
 
   closed(): void {
-    //this.bsModalRef.hide();
     this.consService.closeModal(ModalEnum.CONFEJE);
   }
   
@@ -64,7 +64,6 @@ export class ConfEjeComponent implements OnInit {
     this.settings._data.next(this.loginModel);
     this.changeDetection.markForCheck();
 
-    //this.bsModalRef.hide();
     this.closed();
     
   }

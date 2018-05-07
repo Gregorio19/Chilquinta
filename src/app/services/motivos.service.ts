@@ -93,7 +93,7 @@ export class MotivosService extends WebsocketService {
                 error => {
                     this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";
                     this.settings.lastErrorMot.isError.next(true);
-
+                    
 
                 });
         }
@@ -110,6 +110,7 @@ export class MotivosService extends WebsocketService {
     DoTimer(t) {
 
         //let defaultCenturyStart = moment();
+        /*
         let mtime = 0;
         if (!this.open) {
             if (this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
@@ -118,6 +119,7 @@ export class MotivosService extends WebsocketService {
                 this.start();
             }
         }
+        */
     }
 
 
@@ -210,6 +212,8 @@ export class MotivosService extends WebsocketService {
     }
 
     public processMotivos() {
+        this.motivos = new __MotivoModel();
+        
         this.GetMotivoStorage().subscribe((value: any) => {
             let Mot: Array<MotivosAtencion> = [];
             this.motivos.Traf = [];

@@ -35,10 +35,8 @@ export class LoginComponent implements OnInit {
     public consService: ConsService,
     public settings: SettingsService,
     public fb: FormBuilder,
-    public bsModalRef: BsModalRef,
     private config: AppConfig,
     public MotivosService: MotivosService,
-    private modalService: BsModalService,
     private changeDetection: ChangeDetectorRef
   ) {
     this.loginModel = new LoginModel();
@@ -83,12 +81,9 @@ export class LoginComponent implements OnInit {
       if (value) {
         this.consService.AccLGISET(this.loginModel);
 
-        this.consService.getIsLogged().subscribe(isLogged => {
-          if (isLogged) {
-            //this.bsModalRef.hide();
-            this.closed();
-          }
-        });
+        if (this.consService.IsLogged) {
+          this.closed();
+        }
       }
     });
 
@@ -111,35 +106,14 @@ export class LoginComponent implements OnInit {
     }
 
     this.consService.AccLGISET(this.loginModel);
-
-    /*this.consService.getIsLogged().subscribe(isLogged => {
-      if(!isLogged && this.settings.lastError.CodError == "13022") {
-          // launch get username & rut
-          if(!this.client.LoginWithUserPass)
-          {
-            const initialState = {
-              loginModel: this.loginModel
-            }
-            this.bsModalRef = this.modalService.show(ConfEjeComponent, { initialState });
-          }
-        
-      } else {
-        // error
-        
-      }
-    });*/
-
   }
 
   closed(): void {
-    //this.bsModalRef.hide();
     this.consService.closeModal(ModalEnum.LOGIN);
   }
 
   ngOnDestroy() {
-    //this.consService.disconnect();
     this.data.unsubscribe();
-    //this.consService.getIsLogged().unsubscribe();
   }
 
   onChanges(val) {

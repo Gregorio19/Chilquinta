@@ -1,12 +1,13 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
-import { BsModalRef } from 'ngx-bootstrap';
 import { AccEnum, ModalEnum } from '../Models/Enums';
 import { RutValidator } from '../validators/rut-validator.directive';
 import { AppConfig } from '../app.config';
 import { CustomValidators } from 'ng2-validation';
+import { MAT_DIALOG_DATA } from '@angular/material';
+import { Subject, BehaviorSubject } from 'rxjs';
 
 
 @Component({
@@ -20,15 +21,16 @@ export class IdeditComponent implements OnInit {
   isChange: boolean = false;
   public client: any;
 
-  enableClosed: boolean;
+  enableClosed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
 
   constructor(
     public settings: SettingsService,
     private consService: ConsService,
     private fb: FormBuilder,
-    public bsModalRef: BsModalRef,
-    private config: AppConfig
+    private config: AppConfig,
+    @Inject(MAT_DIALOG_DATA) data
   ) {
+    this.enableClosed.next(data.enableClosed);
   }
 
   ngOnInit() {
@@ -105,9 +107,7 @@ export class IdeditComponent implements OnInit {
   }
 
   closed(): void {
-    //this.bsModalRef.hide();
     this.consService.closeModal(ModalEnum.IDEDIT);
-
   }
 
   getFonMax() {
@@ -124,7 +124,7 @@ export class IdeditComponent implements OnInit {
       this.settings.FonoTmp = this.model.txFon + "," + (this.model.txTer ? "1" : "0");
     } else {
       this.settings.FonoTmp = this.model.txFon;
-      if(this.EnableNom) {
+      if (this.EnableNom) {
         this.settings.FonoTmp += "," + this.model.txNom;
       }
       if (this.EnableMail) {
@@ -133,12 +133,6 @@ export class IdeditComponent implements OnInit {
     }
     this.consService.fnAccion(AccEnum.SID);
 
-    /*this.consService.IsError().subscribe(isError => {
-      if (!isError) {
-        //this.bsModalRef.hide();
-        this.closed();
-      }
-    })*/
   }
 
   onChanges(val) {

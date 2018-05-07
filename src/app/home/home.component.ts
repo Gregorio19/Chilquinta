@@ -7,7 +7,7 @@ import { PausaComponent } from '../pausa/pausa.component';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { LoginComponent } from '../login/login.component';
 import { TurnoySerieComponent } from '../turnoy-serie/turnoy-serie.component';
-import { IdeditComponent } from '../idedit/idedit.component';
+import { IdeditComponent, IdEditModel } from '../idedit/idedit.component';
 import { MotivosComponent } from '../motivos/motivos.component';
 import { DerivarSerieComponent } from '../derivar-serie/derivar-serie.component';
 import { Observable } from 'rxjs/Observable';
@@ -17,6 +17,7 @@ import { MotivosAtencionComponent } from '../motivos-atencion/motivos-atencion.c
 import { AppConfig } from '../app.config';
 import { ModalMessageComponent } from '../modal-message/modal-message.component';
 import { ConfEjeComponent } from '../conf-eje/conf-eje.component';
+import { MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-home',
@@ -24,7 +25,8 @@ import { ConfEjeComponent } from '../conf-eje/conf-eje.component';
   styleUrls: ['./home.component.css']
 })
 export class HomeComponent implements OnInit {
-  public dialog: BsModalRef = null;
+  //public dialog: BsModalRef = null;
+  public dialogRef: MatDialogRef<any>;
   public letter: boolean = false;
 
   public number: number = 0;
@@ -44,17 +46,10 @@ export class HomeComponent implements OnInit {
     public MotivosService: MotivosService,
     public settings: SettingsService,
     private router: Router,
-    private modalService: BsModalService,
-    private config: AppConfig
+    //private modalService: BsModalService,
+    private config: AppConfig,
+    public dialog: MatDialog
   ) {
-
-    
-    this.modalService.onHide.subscribe((event: any) => {
-      console.log("fuck onhide", event, this.settings.Modal.self.getValue());
-    //  this.dialog = null;
-//      this.consService.closeModal(this.settings.Modal.self.getValue());
-    });
-    
 
     this.observable = new Observable<boolean>((observer: any) => this.observer = observer).share();
 
@@ -104,66 +99,85 @@ export class HomeComponent implements OnInit {
 
     this.settings.Modal.self.subscribe((modalEnum: ModalEnum) => {
       console.log("home modal", modalEnum);
-      if(modalEnum == null ) {
+      if (modalEnum == null) {
         return;
-      }
-      if (modalEnum != null) {
-        this.lastModal = modalEnum;
       }
 
       let initialState = {};
 
       if (this.settings.Modal.show) {
+        
         switch (modalEnum) {
           case ModalEnum.GETPAUSAS:
-            this.dialog = this.modalService.show(PausaComponent);
+
+            this.dialogRef = this.dialog.open(PausaComponent, { width: '480px' })
+
             break;
           case ModalEnum.LOGIN:
-            this.dialog = this.modalService.show(LoginComponent);
+            //
+            this.dialogRef = this.dialog.open(LoginComponent, {
+              width: '480px'
+            })
+            //
             break;
           case ModalEnum.CONFEJE:
             if (!this.client.LoginWithUserPass) {
               const initialState = {
                 loginModel: this.consService.loginModel
               }
-              this.dialog = this.modalService.show(ConfEjeComponent, { initialState });
+
+              this.dialogRef = this.dialog.open(ConfEjeComponent, { data: initialState })
+
             }
             break;
           case ModalEnum.GETSERIES_URGSER:
-            this.dialog = this.modalService.show(TurnoySerieComponent);
+            //
+            this.dialogRef = this.dialog.open(TurnoySerieComponent, { width: '480px' })
+            //
             break;
           case ModalEnum.GETSERIES_DRVSER:
-            this.dialog = this.modalService.show(DerivarSerieComponent);
+
+            this.dialogRef = this.dialog.open(DerivarSerieComponent, { width: '480px' })
+
             break;
           case ModalEnum.IDEDIT:
             initialState = {
-              enableClosed: true
+              enableClosed: (this.lastModal == ModalEnum.GETSERIES_URGSER ? false : true)
             };
-            this.dialog = this.modalService.show(IdeditComponent, { initialState });
+
+            this.dialogRef = this.dialog.open(IdeditComponent, {
+              width: '480px',
+              data: initialState
+            })
+            //
             break;
           case ModalEnum.GETMOTIVOS:
             if (this.client.MotivosExt) {
               this.MotivosService.processMotivos();
-              if(this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) 
-              {
-                this.dialog = this.modalService.show(MotivosAtencionComponent);
+              if (this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) {
+
+                this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '530px' })
+
               } else {
                 this.consService.fnAccion(AccEnum.FINTUR);
               }
-              
+
             } else {
-              this.dialog = this.modalService.show(MotivosComponent);
+
+              this.dialogRef = this.dialog.open(MotivosComponent)
+
             }
             break;
           case ModalEnum.ERROR:
-            //let message: BehaviorSubject<string> = new BehaviorSubject<string>(this.settings.lastError.DescError);
             initialState = {
               title: "Error",
               titleClass: "text-danger",
               message: new BehaviorSubject<string>(this.settings.lastError.DescError),
               Dgltype: ModalEnum.ERROR
             }
-            this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
+            
+            this.dialogRef = this.dialog.open(ModalMessageComponent, { width: '480px', data: initialState })
+
             break;
           case ModalEnum.MSGURGTURN:
             initialState = {
@@ -172,19 +186,29 @@ export class HomeComponent implements OnInit {
               message: this.consService.GetMessage(),
               Dgltype: ModalEnum.MSGURGTURN
             }
-            this.dialog = this.modalService.show(ModalMessageComponent, { initialState });
+
+            this.dialogRef = this.dialog.open(ModalMessageComponent, { width: '480px', data: initialState })
+
             break;
 
         }
-      } else {
-        console.log("close dialog", this.dialog, this.lastModal, modalEnum);
-        // close dialog
-        if (this.dialog) {
-          this.dialog.hide();
-          this.dialog = null;
-        }
+        /*
+        this.dialogRef.afterClosed().subscribe(result => {
+          console.log("close dialog event", result, modalEnum);
+          //this.dialogRef = null;
+        })*/
 
+      } else {
+        console.log("close dialog", this.lastModal, modalEnum, this.dialogRef);
+        if (this.dialogRef) {
+          //this.dialogRef.close(modalEnum);
+          this.dialog.closeAll();
+          this.dialogRef = null;
+        }
       }
+
+      this.lastModal = modalEnum;
+
     });
 
 
@@ -209,10 +233,7 @@ export class HomeComponent implements OnInit {
   }
 
   public fnIDedit() {
-    const initialState = {
-      enableClosed: false
-    };
-    this.dialog = this.modalService.show(IdeditComponent, { initialState });
+    this.consService.openModal(ModalEnum.IDEDIT);
   }
 
   public AnimationEsperando() {
@@ -233,4 +254,63 @@ export class HomeComponent implements OnInit {
   }
 
 
+  get msgDerivar(): string {
+    let msg = "";
+    if(this.settings.btDRV.disable.getValue()) {
+      msg = "Derivar esta deshabilitada";
+    } else {
+      //msg = "Derivar";
+    }
+    return msg;
+  }
+
+  get msgAnular(): string {
+    let msg = "";
+    if(this.settings.btNUL.disable.getValue()) {
+      msg = "Anular esta deshabilitado";
+    } else {
+      //msg = "Anular";
+    }
+    return msg;
+  }
+
+  get msgUrgencia(): string {
+    let msg = "";
+    if(this.settings.btURG.disable.getValue()) {
+      msg = "Urgencia esta deshabilitada";
+    } else {
+      //msg = "Urgencia";
+    }
+    return msg;
+  }
+
+  get msgLLego(): string {
+    let msg = "";
+    if(this.settings.btLLE.disable.getValue()) {
+      msg = "Llegó esta deshabilitado";
+    } else {
+      //msg = "Llegó";
+    }
+    return msg;
+  }
+
+  get msgRellamado(): string {
+    let msg = "";
+    if(this.settings.btRLL.disable.getValue()) {
+      msg = "Rellamado esta deshabilitado";
+    } else {
+      //msg = "Rellamado";
+    }
+    return msg;
+  }
+
+  get msgFinalizarAtencion(): string {
+    let msg = "";
+    if(this.settings.btFIN.disable.getValue()) {
+      msg = "Finalizar atención esta deshabilitada";
+    } else {
+      //msg = "Finalizar atención";
+    }
+    return msg;
+  }
 }

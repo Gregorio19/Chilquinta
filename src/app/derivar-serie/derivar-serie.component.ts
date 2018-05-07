@@ -2,7 +2,6 @@ import { Component, OnInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { ConsService } from '../services/Cons.service';
 import { SettingsService } from '../services/settings.service';
-import { BsModalRef } from 'ngx-bootstrap';
 import { AccEnum, ModalEnum } from '../Models/Enums';
 import { AppConfig } from '../app.config';
 
@@ -21,10 +20,11 @@ export class DerivarSerieComponent implements OnInit {
     private consService: ConsService,
     public settings: SettingsService,
     public fb: FormBuilder,
-    public bsModalRef: BsModalRef,
     private cd: ChangeDetectorRef,
     private config: AppConfig
-  ) { }
+  ) {
+
+  }
 
   ngAfterViewInit() {
     this.cd.detectChanges();
@@ -34,13 +34,14 @@ export class DerivarSerieComponent implements OnInit {
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
     this.derivarSerieForm = this.fb.group({
-      rbSer: ['', Validators.required],
-      rbDrv: ['', [Validators.required]]
+      rbSer: [null, Validators.required],
+      rbDrv: [null, [Validators.required]]
     });
+
+    this.model.rbDrv = 'N';
   }
 
   closed(): void {
-    //this.bsModalRef.hide();
     this.consService.closeModal(ModalEnum.GETSERIES_DRVSER);
   }
 
@@ -52,13 +53,7 @@ export class DerivarSerieComponent implements OnInit {
 
     let acc: AccEnum = <AccEnum>AccEnum[accion];
     this.consService.fnAccion(acc);
-    //this.bsModalRef.hide();
     this.closed();
-    /*this.consService.IsError().subscribe(isError => {
-      if(isError && !isError) {
-        this.bsModalRef.hide();
-      }
-    });*/
 
   }
 
@@ -71,10 +66,8 @@ export class DerivarSerieComponent implements OnInit {
     if (this.settings.hiIdSDRV != idSerie) {
       return true;
     }
-
     return false;
   }
-
 
 }
 

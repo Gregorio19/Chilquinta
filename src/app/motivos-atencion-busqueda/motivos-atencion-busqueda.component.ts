@@ -1,10 +1,10 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { BsModalRef } from 'ngx-bootstrap';
+import { Component, OnInit, ViewChild, Inject } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import { DatatableComponent } from '@swimlane/ngx-datatable';
 import { AppConfig } from '../app.config';
 import { __MotivoModel, _MotivoModel, SSMotivosAtencion, SSSMotivosAtencion, SMotivosAtencion } from '../Models/MotivoModel';
 import { ISubscription } from 'rxjs/Subscription';
+import { MAT_DIALOG_DATA, MatDialog, MatDialogRef } from '@angular/material';
 
 @Component({
   selector: 'app-motivos-atencion-busqueda',
@@ -13,16 +13,16 @@ import { ISubscription } from 'rxjs/Subscription';
 })
 export class MotivosAtencionBusquedaComponent implements OnInit {
   @ViewChild(DatatableComponent) table: DatatableComponent;
-  
+
   title: string;
   //_motivos: _MotivoModel; // motivos desde gateway
   motivos: __MotivoModel; // motivos cargados con selected
   motivoModel: _MotivoModel; // motivos del form
   columns = [];
   rows: any[] = [];
-  rowsTemp:any[] = [];
+  rowsTemp: any[] = [];
   selected = [];
-  loadingIndicator: boolean = true; 
+  loadingIndicator: boolean = true;
   messages = {
     // Message to show when array is presented
     // but contains no values
@@ -32,14 +32,18 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
     totalMessage: 'total',
     selectedMessage: 'seleccionado'
   };
-  
+
   client: any;
 
   constructor(
-    public bsModalRef: BsModalRef,
     public settings: SettingsService,
-    private config: AppConfig
-  ) { }
+    private config: AppConfig,
+    @Inject(MAT_DIALOG_DATA) data,
+    public dialogRef: MatDialogRef<MotivosAtencionBusquedaComponent>
+  ) {
+    this.motivoModel = data.motivoModel;
+    this.motivos = data.motivos;
+  }
 
   ngOnInit() {
     this.client = this.config.get('clients')[this.config.get('clients').client];
@@ -49,7 +53,7 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
   }
 
   getRows() {
-    if(this.motivoModel.SSMot) {
+    if (this.motivoModel.SSMot) {
       this.motivoModel.SSMot.SSSMot.forEach(s => {
         let t = this.motivoModel.SMot;
         let m = this.motivoModel.SSMot;
@@ -64,12 +68,12 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
       this.columns.push({
         prop: 'Tramites'
       });
-      setTimeout(() => { this.loadingIndicator = false; }, 1500); 
-      
-    } else if(this.motivoModel.SMot) {      
+      setTimeout(() => { this.loadingIndicator = false; }, 1500);
+
+    } else if (this.motivoModel.SMot) {
       this.motivos.SSMot.forEach((m: SSMotivosAtencion) => {
         let t = this.motivoModel.SMot;
-        m.SSSMot.forEach((s:SSSMotivosAtencion) => {
+        m.SSSMot.forEach((s: SSSMotivosAtencion) => {
           this.rows.push({
             "IdMotivo": this.motivoModel.Mot.IdMotivo,
             "IdSMot": t.IdSMot,
@@ -77,69 +81,46 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
             "IdSSSMot": s.IdSSSMot,
             "Temas": m.SSubMotivo,
             "Tramites": s.SSSubMotivo
-          });  
+          });
         });
-          
-        
+
+
       });
       this.columns.push(
-        {prop: "Temas"},
-        {prop: 'Tramites'}
+        { prop: "Temas" },
+        { prop: 'Tramites' }
       );
-      setTimeout(() => { this.loadingIndicator = false; }, 1500); 
-    } else if(this.motivoModel.Mot) {
-        this.motivoModel.Mot.SMot.forEach((t: SMotivosAtencion) => {
-          t.SSMot.forEach((m: SSMotivosAtencion) => {
-            m.SSSMot.forEach((s: SSSMotivosAtencion) => {
-              this.rows.push({
-                "IdMotivo": this.motivoModel.Mot.IdMotivo,
-                "IdSMot": t.IdSMot,
-                "IdSSMot": m.IdSSMot,
-                "IdSSSMot": s.IdSSSMot,
-                "TipoMateria": t.SubMotivo,
-                "Temas": m.SSubMotivo,
-                "Tramites": s.SSSubMotivo
-              });
+      setTimeout(() => { this.loadingIndicator = false; }, 1500);
+    } else if (this.motivoModel.Mot) {
+      this.motivoModel.Mot.SMot.forEach((t: SMotivosAtencion) => {
+        t.SSMot.forEach((m: SSMotivosAtencion) => {
+          m.SSSMot.forEach((s: SSSMotivosAtencion) => {
+            this.rows.push({
+              "IdMotivo": this.motivoModel.Mot.IdMotivo,
+              "IdSMot": t.IdSMot,
+              "IdSSMot": m.IdSSMot,
+              "IdSSSMot": s.IdSSSMot,
+              "TipoMateria": t.SubMotivo,
+              "Temas": m.SSubMotivo,
+              "Tramites": s.SSSubMotivo
             });
           });
-          
-        })
+        });
+
+      })
 
       this.columns.push(
-        {prop: "TipoMateria", name: "Tipo Materia"},
-        {prop: "Temas"},
-        {prop: 'Tramites'}
+        { prop: "TipoMateria", name: "Tipo Materia" },
+        { prop: "Temas" },
+        { prop: 'Tramites' }
       );
-      setTimeout(() => { this.loadingIndicator = false; }, 1500); 
+      setTimeout(() => { this.loadingIndicator = false; }, 1500);
     }
   }
 
-  /*
-  private getSSMot(t:SMotivosAtencion):SSMotivosAtencion {
-    for(let i = 0; i < this._motivos.SSMot.length; i++) {
-      let m = this._motivos.SSMot[i];
-      
-        if(t.IdSMot == m.IdSMot) {
-          return m;
-        }
-      }
-      return null;
-  }
-  private getSSSMot(m:SSMotivosAtencion):SSSMotivosAtencion {
-      for(let i = 0; i < this._motivos.SSSMot.length; i++) {
-        let s = this._motivos.SSSMot[i];
-        if(m.IdSSMot == s.IdSSMot) {
-          return s;
-        }
-      }
-      return null;
-  }
-  */
-
-
-
   closed(): void {
-    this.bsModalRef.hide();
+    this.dialogRef.close();
+    
   }
 
   onChanges(val) {
@@ -154,24 +135,20 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
   onSelect({ selected }) {
     this.settings.iTOw = this.config.get('socket').TOwin;
 
-    if(typeof selected === 'undefined') {
+    if (typeof selected === 'undefined') {
       return;
     }
     this.selected.splice(0, this.selected.length);
-    this.selected.push(...selected);  
-  } 
+    this.selected.push(...selected);
+  }
 
   onActivate(event) {
-    
+
   }
 
   Enviar() {
-    if(this.selected.length > 0 ) {
-      this.settings._data.next(this.selected[0]);
-      
-    }
-    this.bsModalRef.hide();
-    
+    this.dialogRef.close(this.selected[0]);
+
   }
 
   updateFilterTMateria(event) {
@@ -202,7 +179,7 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
 
   updateFilterTramite(event) {
     this.settings.iTOw = this.config.get('socket').TOwin;
-    
+
     const val = event.target.value.toLowerCase();
 
     const temp = this.rowsTemp.filter((d) => {
@@ -213,26 +190,23 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
     this.table.offset = 0;
   }
 
-  isVisibleTipoMateria():boolean {
-    if(this.motivoModel.Mot && 
-    (!this.motivoModel.SMot && !this.motivoModel.SSMot))
-    {
+  isVisibleTipoMateria(): boolean {
+    if (this.motivoModel.Mot &&
+      (!this.motivoModel.SMot && !this.motivoModel.SSMot)) {
       return true;
     }
     return false;
   }
 
   isVisibleTemas(): boolean {
-    if(!this.motivoModel.SSMot)
-    {
+    if (!this.motivoModel.SSMot) {
       return true;
     }
     return false;
   }
-  
+
   isVisibleTramite(): boolean {
-    if(!this.motivoModel.SSMot)
-    {
+    if (!this.motivoModel.SSMot) {
       return true;
     }
     return false;

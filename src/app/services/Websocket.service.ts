@@ -3,12 +3,13 @@ import { QueueingSubject } from 'queueing-subject'
 import { Observable } from 'rxjs/Observable'
 import websocketConnect from './rxjs-websockets'
 import 'rxjs/add/operator/share'
+import { BehaviorSubject } from 'rxjs';
 
 //@Injectable()
 export class WebsocketService {
   private inputStream: QueueingSubject<string>
   public messages: Observable<string>
-  public open: Observable<boolean>;
+  public open: BehaviorSubject<boolean>;
   
   constructor(    
   ) {
@@ -30,6 +31,7 @@ export class WebsocketService {
       url,
       this.inputStream = new QueueingSubject<string>()
     );
+
     this.messages = messages.share();
     this.open = open;
     this.messages.share();

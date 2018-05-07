@@ -1,19 +1,19 @@
-import { Component, OnInit, ElementRef, ViewChild, SimpleChanges, OnChanges, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild, SimpleChanges, OnChanges, OnDestroy, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { SettingsService } from '../services/settings.service';
 import { ConsService } from '../services/Cons.service';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap';
 import { AccEnum, ModalEnum } from '../Models/Enums';
 import { MotivosAtencionBusquedaComponent } from '../motivos-atencion-busqueda/motivos-atencion-busqueda.component';
 import { MotivosService } from '../services/motivos.service';
 import { AppConfig } from '../app.config';
 import { BehaviorSubject } from 'rxjs/BehaviorSubject';
 import { __MotivoModel, MotivoModel, _MotivoModel, MotivosAtencion, PreMotivo, SMotivosAtencion, SSMotivosAtencion, SSSMotivosAtencion } from '../Models/MotivoModel';
-import { ISubscription } from 'rxjs/Subscription';
+import { ISubscription, Subscription } from 'rxjs/Subscription';
 import { Subject } from 'rxjs';
 import { Observable } from 'rxjs/Observable';
 import { resolve } from 'url';
 import { reject } from 'q';
+import { MatDialog } from '@angular/material';
 
 @Component({
   selector: 'app-motivos-atencion',
@@ -43,30 +43,34 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   public isInternalError: boolean = false;
   public DescError: string = "";
 
-  data: ISubscription;
+  //data: ISubscription;
+  private isErrorSub: Subscription;
+
+  private dialogRef;
 
   constructor(
     public settings: SettingsService,
     private consService: ConsService,
     private fb: FormBuilder,
-    public bsModalRef: BsModalRef,
-    private modalService: BsModalService,
     public MotivosService: MotivosService,
-    private config: AppConfig
+    private config: AppConfig,
+    private dialog: MatDialog,
+    private changeDetectorRefs: ChangeDetectorRef
   ) {
     this.client = this.config.get('clients')[this.config.get('clients').client];
     //this.motivos.Mot = new BehaviorSubject<Array<MotivosAtencion>>(null);
     //this.motivos.Traf = new Array<PreMotivo>();
 
+  }
+
+  ngOnInit() {
     this._motivos.Mot = [];
 
     this.motivoModel.Mot = new MotivosAtencion();
     this.motivoModel.SMot = new SMotivosAtencion();
     this.motivoModel.SSMot = new SSMotivosAtencion();
     this.motivoModel.SSSMot = new SSSMotivosAtencion();
-  }
 
-  ngOnInit() {
     this.motivoForm = this.fb.group({
       cmbTraf: [null, Validators.required],
       Mot: [null],
@@ -84,20 +88,20 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
     this._motivos.Mot = this.motivos.Mot.getValue();
     this._motivos.Traf = this.motivos.Traf;
 
-    this.settings.lastErrorMot.isError.subscribe(value => {
-      this.isError = value;
-    });
 
-    this.data = this.settings.data.subscribe(value => {
-      if (value) {
-        this.selectItem(value);
-      }
-    });
+    this.changeDetectorRefs.detectChanges();
   }
 
   closed(): void {
-    //this.bsModalRef.hide();
-    //this.bsModalRef = null;
+    if (this.isErrorSub) {
+      this.isErrorSub.unsubscribe();
+    }
+    /*if (this.data) {
+      this.data.unsubscribe();
+    }*/
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
     this.consService.closeModal(ModalEnum.GETMOTIVOS);
   }
 
@@ -113,26 +117,28 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
         this.motivoModel.Mot.SMot.forEach((t: SMotivosAtencion) => {
           t.SSMot.forEach((m: SSMotivosAtencion) => {
             m.SSSMot.forEach((s: SSSMotivosAtencion) => {
-              if (t.IdSMot == value.IdSMot) {
+              if (t.IdSMot == value.IdSMot &&
+                m.IdSSMot == value.IdSSMot &&
+                s.IdSSSMot == value.IdSSSMot) {
+
                 this.motivoModel.SMot = t;
                 this.motivos.SMot = this.motivoModel.Mot.SMot;
-              }
 
-              if (m.IdSSMot == value.IdSSMot) {
                 this.motivoModel.SSMot = m;
                 this.motivos.SSMot = this.motivoModel.SMot.SSMot;
-              }
 
-              if (s.IdSSSMot == value.IdSSSMot) {
                 this.motivoModel.SSSMot = s
                 this.motivos.SSSMot = this.motivoModel.SSMot.SSSMot;
-              }
 
-              //this.EnableButtons();
-              this.busqueda = false;
-              this.nuevoMotivo = true;
-              this.cierreAtencion = true;
-              return;
+                //this.EnableButtons();
+                this.busqueda = false;
+                this.nuevoMotivo = true;
+                this.cierreAtencion = true;
+
+                this.changeDetectorRefs.detectChanges();
+
+                return;
+              }
             });
           });
         });
@@ -248,8 +254,12 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
       motivoModel: this.motivoModel,
       motivos: this.motivos
     }
-    this.bsModalRef = this.modalService.show(MotivosAtencionBusquedaComponent, { initialState });
-
+    this.dialogRef = this.dialog.open(MotivosAtencionBusquedaComponent, { data: initialState })
+      .afterClosed().subscribe(value => {
+        if (value) {
+          this.selectItem(value);
+        }
+      });
 
   }
 
@@ -331,9 +341,8 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
       this.consService.fnAccion(AccEnum.FINTUR);
     }
 
-    this.consService.IsError().subscribe(isError => {
+    this.isErrorSub = this.consService.IsError().subscribe(isError => {
       if (!isError) {
-        //this.bsModalRef.hide();
         this.closed();
       } else {
         this.isError = isError;
@@ -343,9 +352,11 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    console.log("motivos ondestroy");
-    this.data.unsubscribe();
-
+    //this.data.unsubscribe();
+    if(this.isErrorSub) {
+      this.isErrorSub.unsubscribe();
+    }
+    
   }
 
 }

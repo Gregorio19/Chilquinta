@@ -154,7 +154,8 @@ module.exports = {
       "./src\\scss\\style.scss",
       "./node_modules\\flag-icon-css\\css\\flag-icon.css",
       "./node_modules\\font-awesome\\css\\font-awesome.css",
-      "./node_modules\\simple-line-icons\\css\\simple-line-icons.css"
+      "./node_modules\\simple-line-icons\\css\\simple-line-icons.css",
+      "./assets\\fonts\\material-icons\\material-icons.css"
     ]
   },
   "output": {
@@ -190,7 +191,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.css$/,
         "use": [
@@ -212,7 +214,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.scss$|\.sass$/,
         "use": [
@@ -242,7 +245,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.less$/,
         "use": [
@@ -270,7 +274,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.styl$/,
         "use": [
@@ -299,7 +304,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.css$/,
         "use": [
@@ -322,7 +328,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.scss$|\.sass$/,
         "use": [
@@ -353,7 +360,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.less$/,
         "use": [
@@ -382,7 +390,8 @@ module.exports = {
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
           path.join(process.cwd(), "node_modules\\font-awesome\\css\\font-awesome.css"),
-          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css")
+          path.join(process.cwd(), "node_modules\\simple-line-icons\\css\\simple-line-icons.css"),
+          path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.styl$/,
         "use": [

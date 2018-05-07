@@ -5,7 +5,7 @@ import { BehaviorSubject } from 'rxjs/BehaviorSubject'
 export interface Connection {
   connectionStatus: Observable<number>,
   messages: Observable<string>,
-  open: Observable<boolean>
+  open: BehaviorSubject<boolean>
 }
 
 export interface IWebSocket {
@@ -25,24 +25,24 @@ export default function connect(
   url: string,
   input: Subscribable<string>,
   protocols?: string | string[],
-  websocketFactory: WebSocketFactory = defaultWebsocketFactory,
+  websocketFactory: WebSocketFactory = defaultWebsocketFactory
 ): Connection {
   const connectionStatus = new BehaviorSubject<number>(0)
   const open = new BehaviorSubject<boolean>(false);
 
   const messages = new Observable<string>(observer => {
     let socket = null;
-    try{
-       socket = websocketFactory(url, protocols)
-    } catch(e) {
+    try {
+      socket = websocketFactory(url, protocols)
+    } catch (e) {
       observer.error(e);
     }
-    
+
     let inputSubscription: AnonymousSubscription
 
     //let open = false
     const closed = () => {
-      if (! open.getValue())
+      if (!open.getValue())
         return
 
       connectionStatus.next(connectionStatus.getValue() - 1)
@@ -79,7 +79,7 @@ export default function connect(
       if (inputSubscription) {
         inputSubscription.unsubscribe()
       }
-        
+
 
       if (socket) {
         closed()

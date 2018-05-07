@@ -1,133 +1,62 @@
-
-      <div class="modal-header">
-        <div class="container">
-        <div class="row">
-          <div class="col">
-            <h5 class="modal-title">PAUSA</h5> 
-          </div>
-          <div class="col">
-            <button type="button" class="close" data-dismiss="modal" aria-label="Close" (click)="bsModalRef.hide()"> <span aria-hidden="true">×</span> </button>
-          </div>
-        </div>
-        <div class="row">
-          <div class="col">
-            <div>Seleccione Motivo</div>  
-          </div>
-          
-        </div>
+<div class="container">
+  <div class="row">
+    <div class="col-10">
+      <div class="row">
+        <h5 mat-dialog-title class="mb-0">PAUSA</h5>
       </div>
-      
+      <div class="row">
+        <div>Seleccione Motivo</div>
+      </div>
+
     </div>
-    <div class="modal-body">
-      <div>
-        Pausas<br>
-        <form [formGroup]="pausaForm">
-            <div class="col-sm-8" *ngFor="let pausa of settings.Pausas | async">
-              <input type="radio" id="rbPau" [value]="pausa.IdPausa" 
-                formControlName="rbPau"
-                [(ngModel)]="rbPau"
-                (ngModelChange)="onChanges($event)"> 
-              <label class="form-check-label" for="rbPau">
-                  {{ pausa.Pausa }}
-                </label> 
-            </div>
-            <div *ngIf="!pausaForm.get('rbPau').valid && pausaForm.get('rbPau').touched"
-              class="alert alert-danger">
-              Debe seleccionar un<br>Motivo de Pausa !
+    <div class="col-2">
+      <button mat-icon-button (click)="closed()" class="float-right">
+        <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content class="mt-3">
+  <div>
+    Pausas
+    <br>
+    <form [formGroup]="pausaForm">
+      <div class="col-sm-8" *ngFor="let pausa of settings.Pausas | async">
+        <input type="radio" id="rbPau" [value]="pausa.IdPausa" formControlName="rbPau" [(ngModel)]="rbPau" (ngModelChange)="onChanges($event)">
+        <label class="form-check-label" for="rbPau">
+          {{ pausa.Pausa }}
+        </label>
+      </div>
+      <div *ngIf="!pausaForm.get('rbPau').valid && pausaForm.get('rbPau').touched" class="alert alert-danger">
+        Debe seleccionar un
+        <br>Motivo de Pausa !
+      </div>
+
+      <div class="form-group row" *ngIf="settings.lastError.isError  |async">
+        <div class="col">
+          <div class=" alert alert-danger text-center">
+            {{ settings.lastError.DescError }}
           </div>
 
-          <div class="form-group row" *ngIf="settings.lastError.isError  |async">
-              <div class="col">
-                <div class=" alert alert-danger text-center">
-                    {{ settings.lastError.DescError }}
-                </div>
-                  
-              </div>
-            </div>
-          </form>
-      </div>
-      
-    </div>
-    <div class="modal-footer">
-      <div class="container">
-        <div class="row flex-row justify-content-center">
-          <div class="col-md-3 d-flex justify-content-end">
-            <button 
-              type="button" 
-              class="btn btn-primary"
-              (click)="fnAccion('PAUSET')"
-              [disabled]="!pausaForm.valid">
-              Seleccionar</button>
-          </div>
-          <div class="col-md-3 d-flex justify-content-end">
-            <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="bsModalRef.hide()">Cerrar</button>
-          </div>
-          <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
-            <div> [{{ settings.iTOw }}] </div>
-          </div>
         </div>
       </div>
-    </div>
-<!--
-
-<div id="container">
-
-  
-  <div class="row">      
-    <div class="col">
-      <div class="alert alert-info">
-          <button class="close" (click)="closed()"  data-dismiss="alert" aria-label="Close"><i class="material-icons">close</i></button>
-          <span>PAUSA</span>
-      </div>
-    </div>
-        
-    </div>
-    <div class="row">
-      <div class="col-md-auto col-sm-auto col-md-offset-auto col-sm-offset-auto border border-primary">
-        
-    <div class="card">
-        <div class="card-header">            
-           
-          <div class="card-text">
-             <p>Seleccione Motivo</p>
-          </div>
-        </div>
-    <form [formGroup]="PausaForm">  
-        <div class="card-form">
-          <div class="form-row">
-            <mat-radio-group         
-              formControlName="rbPau"
-              [(ngModel)]="rbPau"
-              >
-              <div class="form-row" *ngFor="let pausa of settings.Pausas | async" >
-                  <mat-radio-button                                   
-                  [value]="pausa.IdPausa"                
-                  required 
-                  >
-                  {{ pausa.Pausa }}
-                </mat-radio-button>
-              </div>              
-            </mat-radio-group>
-            <mat-error>  
-                <span *ngIf="!PausaForm.get('rbPau').valid && PausaForm.get('rbPau').touched">Debe seleccionar un<br>Motivo de Pausa !</span>  
-            </mat-error>  
-          </div>          
-        <div class="card-footer">
-          <div class="form-row text-center">
-            <div class="col-12">
-              <button                 
-                  mat-raised-button 
-                  color="accent" 
-                  (click)="fnAccion('PAUSET')"
-                  [disabled]="!PausaForm.valid">
-                  Seleccionar</button>
-                </div>
-              </div>
-        </div>  
-        </div>      
     </form>
   </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <mat-divider></mat-divider>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-4 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="primary" (click)="fnAccion('PAUSET')" [disabled]="!pausaForm.valid">
+          Seleccionar</button>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button"mat-raised-button color="warn" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-5 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
   </div>
-  </div>
-  </div>
--->
+</mat-dialog-actions>
