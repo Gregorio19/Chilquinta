@@ -614,8 +614,8 @@ export class ConsService extends WebsocketService {
                     if (this.settings.iTOw < 0) {
                         this.settings.iTOw = parseInt(this.settings.hiTEspC);
                     }
-                    this.settings.dMsgEsp.value.next("Anulaci&oacute;n en " + this.settings.iTOw + " [seg]");
-                    if (this.settings.iTOw-- == 0 && this.client.UseTimeout) {
+                    this.settings.dMsgEsp.value.next("Anulación en " + this.settings.iTOw + " [seg]");
+                    if (this.settings.iTOw-- == 0) {
                         this.fnAccion(AccEnum.NUL);
                     }
                     setTimeout(() => {
@@ -638,7 +638,6 @@ export class ConsService extends WebsocketService {
 
                 if (this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
                     if (this.client.UseTimeout) {
-                        console.log("1");
                         this.closeModal(this.settings.Modal.self.getValue());
                     } else {
                         this.settings.iTOw = -1;
