@@ -116,11 +116,13 @@ export class ConsService extends WebsocketService {
                 //this.settings.iTOcnx = 2;
 
                 if (m.CodError == 13022 && m.DescError == "Error en Login") {
-                    this.loginModel = new LoginModel();
-                    this.settings.isLogged.next(false);
-                    this.cookieService.delete(this.sCookie);
-                    this.fnAccion(AccEnum.LGI);
-                    return;
+                    if (this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
+                        this.loginModel = new LoginModel();
+                        this.settings.isLogged.next(false);
+                        this.cookieService.delete(this.sCookie);
+                        this.fnAccion(AccEnum.LGI);
+                        return;     
+                    }           
                 }
 
                 this.settings.accion = AccEnum.UNKNOW;
@@ -139,7 +141,7 @@ export class ConsService extends WebsocketService {
                 } else if (m.MsgType == ActionEnum.LOGIN) {
                     if (m.CodError == "13022" && !this.settings.Modal.show) {
                         this.openModal(ModalEnum.CONFEJE);
-                    } else {
+                    } else if (this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
                         this.settings.isLogged.next(false);
                         if (!this.settings.Modal.show) {
                             this.fnAccion(AccEnum.LGI);
@@ -257,7 +259,7 @@ export class ConsService extends WebsocketService {
                 this.settings.lastErrorMot.DescError = "Error comunicación con el servidor";
                 this.settings.lastErrorMot.isError.next(true);
 
-                if(!this.open) {
+                if (!this.open) {
                     this.restart();
                 }
 

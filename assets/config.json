@@ -1,7 +1,7 @@
 {
   "socket": {   
-    "url": "ws://172.16.32.5:8181/",
-    "MotivosUrl": "ws://172.16.32.151:8190/",
+    "url": "ws://192.168.33.1:8181/",
+    "MotivosUrl": "ws://192.168.33.1:8190/",
     "TOwin": 30,
     "TOenc": 10,
     "ConfirmaID": "S",
@@ -18,7 +18,7 @@
     "EncHeight": 480
   },
   "clients": {
-    "client": "Chilquinta",
+    "client": "Tesoreria",
     "Default": {
       "MotivosExt": false,
       "MotivosBusqueda": false,
@@ -26,7 +26,8 @@
       "IdEditarForzar": false,
       "LoginWithUserPass": true,
       "UseTimeout": true,
-      "ForceMotUrg": false
+      "ForceMotUrg": false,
+      "IdEdit": []
     },
     "Tesoreria": {
       "MotivosExt": true,
@@ -35,7 +36,8 @@
       "IdEditarForzar": true,
       "LoginWithUserPass": false,
       "UseTimeout": false,
-      "ForceMotUrg": true
+      "ForceMotUrg": true,
+      "IdEdit": []
     },
     "Chilquinta": {
       "MotivosExt": false,
@@ -44,7 +46,8 @@
       "IdEditarForzar": false,
       "LoginWithUserPass": true,
       "UseTimeout": true,
-      "ForceMotUrg": false
+      "ForceMotUrg": false,
+      "IdEdit": ["txNom","txMail"]
     }
   }
 }

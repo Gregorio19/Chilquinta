@@ -4,21 +4,25 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const ProgressPlugin = require('webpack/lib/ProgressPlugin');
 const CircularDependencyPlugin = require('circular-dependency-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const rxPaths = require('rxjs/_esm5/path-mapping');
 const autoprefixer = require('autoprefixer');
 const postcssUrl = require('postcss-url');
 const postcssImports = require('postcss-import');
 
-const { NoEmitOnErrorsPlugin, SourceMapDevToolPlugin, NamedModulesPlugin } = require('webpack');
-const { NamedLazyChunksWebpackPlugin, BaseHrefWebpackPlugin, PostcssCliResources } = require('@angular/cli/plugins/webpack');
-const { CommonsChunkPlugin } = require('webpack').optimize;
+const { NoEmitOnErrorsPlugin, EnvironmentPlugin, HashedModuleIdsPlugin } = require('webpack');
+const { BaseHrefWebpackPlugin, SuppressExtractedTextChunksWebpackPlugin, CleanCssWebpackPlugin, BundleBudgetPlugin, PostcssCliResources } = require('@angular/cli/plugins/webpack');
+const { CommonsChunkPlugin, ModuleConcatenationPlugin } = require('webpack').optimize;
+const { LicenseWebpackPlugin } = require('license-webpack-plugin');
+const { PurifyPlugin } = require('@angular-devkit/build-optimizer');
 const { AngularCompilerPlugin } = require('@ngtools/webpack');
 
 const nodeModules = path.join(process.cwd(), 'node_modules');
 const realNodeModules = fs.realpathSync(nodeModules);
 const genDirNodeModules = path.join(process.cwd(), 'src', '$$_gendir', 'node_modules');
 const entryPoints = ["inline","polyfills","sw-register","styles","vendor","main"];
-const hashFormat = {"chunk":"","extract":"","file":".[hash:20]","script":""};
+const hashFormat = {"chunk":".[chunkhash:20]","extract":".[contenthash:20]","file":".[hash:20]","script":".[hash:20]"};
 const baseHref = "";
 const deployUrl = "";
 const projectRoot = process.cwd();
@@ -160,8 +164,8 @@ module.exports = {
   },
   "output": {
     "path": path.join(process.cwd(), "dist"),
-    "filename": "[name].bundle.js",
-    "chunkFilename": "[id].chunk.js",
+    "filename": "[name].[chunkhash:20].bundle.js",
+    "chunkFilename": "[id].[chunkhash:20].chunk.js",
     "crossOriginLoading": false
   },
   "module": {
@@ -187,6 +191,23 @@ module.exports = {
         }
       },
       {
+        "test": /\.js$/,
+        "use": [
+          {
+            "loader": "cache-loader",
+            "options": {
+              "cacheDirectory": "d:\\Proyectos\\Turnos\\Soft-V24\\Local\\Consultora\\Consultora2\\node_modules\\@angular-devkit\\build-optimizer\\src\\.cache"
+            }
+          },
+          {
+            "loader": "@angular-devkit/build-optimizer/webpack-loader",
+            "options": {
+              "sourceMap": false
+            }
+          }
+        ]
+      },
+      {
         "exclude": [
           path.join(process.cwd(), "src\\scss\\style.scss"),
           path.join(process.cwd(), "node_modules\\flag-icon-css\\css\\flag-icon.css"),
@@ -204,7 +225,7 @@ module.exports = {
             "options": {
               "ident": "embedded",
               "plugins": postcssPlugins,
-              "sourceMap": true
+              "sourceMap": false
             }
           }
         ]
@@ -227,13 +248,13 @@ module.exports = {
             "options": {
               "ident": "embedded",
               "plugins": postcssPlugins,
-              "sourceMap": true
+              "sourceMap": false
             }
           },
           {
             "loader": "sass-loader",
             "options": {
-              "sourceMap": true,
+              "sourceMap": false,
               "precision": 8,
               "includePaths": []
             }
@@ -258,13 +279,13 @@ module.exports = {
             "options": {
               "ident": "embedded",
               "plugins": postcssPlugins,
-              "sourceMap": true
+              "sourceMap": false
             }
           },
           {
             "loader": "less-loader",
             "options": {
-              "sourceMap": true
+              "sourceMap": false
             }
           }
         ]
@@ -287,13 +308,13 @@ module.exports = {
             "options": {
               "ident": "embedded",
               "plugins": postcssPlugins,
-              "sourceMap": true
+              "sourceMap": false
             }
           },
           {
             "loader": "stylus-loader",
             "options": {
-              "sourceMap": true,
+              "sourceMap": false,
               "paths": []
             }
           }
@@ -308,20 +329,22 @@ module.exports = {
           path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.css$/,
-        "use": [
-          "style-loader",
-          {
-            "loader": "raw-loader"
-          },
-          {
-            "loader": "postcss-loader",
-            "options": {
-              "ident": "embedded",
-              "plugins": postcssPlugins,
-              "sourceMap": true
-            }
-          }
-        ]
+        "loaders": ExtractTextPlugin.extract({
+  "use": [
+    {
+      "loader": "raw-loader"
+    },
+    {
+      "loader": "postcss-loader",
+      "options": {
+        "ident": "extracted",
+        "plugins": postcssPlugins,
+        "sourceMap": false
+      }
+    }
+  ],
+  "publicPath": ""
+})
       },
       {
         "include": [
@@ -332,28 +355,30 @@ module.exports = {
           path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.scss$|\.sass$/,
-        "use": [
-          "style-loader",
-          {
-            "loader": "raw-loader"
-          },
-          {
-            "loader": "postcss-loader",
-            "options": {
-              "ident": "embedded",
-              "plugins": postcssPlugins,
-              "sourceMap": true
-            }
-          },
-          {
-            "loader": "sass-loader",
-            "options": {
-              "sourceMap": true,
-              "precision": 8,
-              "includePaths": []
-            }
-          }
-        ]
+        "loaders": ExtractTextPlugin.extract({
+  "use": [
+    {
+      "loader": "raw-loader"
+    },
+    {
+      "loader": "postcss-loader",
+      "options": {
+        "ident": "extracted",
+        "plugins": postcssPlugins,
+        "sourceMap": false
+      }
+    },
+    {
+      "loader": "sass-loader",
+      "options": {
+        "sourceMap": false,
+        "precision": 8,
+        "includePaths": []
+      }
+    }
+  ],
+  "publicPath": ""
+})
       },
       {
         "include": [
@@ -364,26 +389,28 @@ module.exports = {
           path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.less$/,
-        "use": [
-          "style-loader",
-          {
-            "loader": "raw-loader"
-          },
-          {
-            "loader": "postcss-loader",
-            "options": {
-              "ident": "embedded",
-              "plugins": postcssPlugins,
-              "sourceMap": true
-            }
-          },
-          {
-            "loader": "less-loader",
-            "options": {
-              "sourceMap": true
-            }
-          }
-        ]
+        "loaders": ExtractTextPlugin.extract({
+  "use": [
+    {
+      "loader": "raw-loader"
+    },
+    {
+      "loader": "postcss-loader",
+      "options": {
+        "ident": "extracted",
+        "plugins": postcssPlugins,
+        "sourceMap": false
+      }
+    },
+    {
+      "loader": "less-loader",
+      "options": {
+        "sourceMap": false
+      }
+    }
+  ],
+  "publicPath": ""
+})
       },
       {
         "include": [
@@ -394,31 +421,41 @@ module.exports = {
           path.join(process.cwd(), "assets\\fonts\\material-icons\\material-icons.css")
         ],
         "test": /\.styl$/,
-        "use": [
-          "style-loader",
-          {
-            "loader": "raw-loader"
-          },
-          {
-            "loader": "postcss-loader",
-            "options": {
-              "ident": "embedded",
-              "plugins": postcssPlugins,
-              "sourceMap": true
-            }
-          },
-          {
-            "loader": "stylus-loader",
-            "options": {
-              "sourceMap": true,
-              "paths": []
-            }
-          }
-        ]
+        "loaders": ExtractTextPlugin.extract({
+  "use": [
+    {
+      "loader": "raw-loader"
+    },
+    {
+      "loader": "postcss-loader",
+      "options": {
+        "ident": "extracted",
+        "plugins": postcssPlugins,
+        "sourceMap": false
+      }
+    },
+    {
+      "loader": "stylus-loader",
+      "options": {
+        "sourceMap": false,
+        "paths": []
+      }
+    }
+  ],
+  "publicPath": ""
+})
       },
       {
-        "test": /\.ts$/,
-        "loader": "@ngtools/webpack"
+        "test": /(?:\.ngfactory\.js|\.ngstyle\.js|\.ts)$/,
+        "use": [
+          {
+            "loader": "@angular-devkit/build-optimizer/webpack-loader",
+            "options": {
+              "sourceMap": false
+            }
+          },
+          "@ngtools/webpack"
+        ]
       }
     ]
   },
@@ -472,7 +509,6 @@ module.exports = {
       "onDetected": false,
       "cwd": projectRoot
     }),
-    new NamedLazyChunksWebpackPlugin(),
     new HtmlWebpackPlugin({
       "template": "./src\\index.html",
       "filename": "./index.html",
@@ -480,7 +516,11 @@ module.exports = {
       "inject": true,
       "compile": true,
       "favicon": false,
-      "minify": false,
+      "minify": {
+        "caseSensitive": true,
+        "collapseWhitespace": true,
+        "keepClosingSlash": true
+      },
       "cache": true,
       "showErrors": true,
       "chunks": "all",
@@ -510,41 +550,86 @@ module.exports = {
     }),
     new CommonsChunkPlugin({
       "name": [
-        "vendor"
-      ],
-      "minChunks": (module) => {
-                return module.resource
-                    && (module.resource.startsWith(nodeModules)
-                        || module.resource.startsWith(genDirNodeModules)
-                        || module.resource.startsWith(realNodeModules));
-            },
-      "chunks": [
-        "main"
-      ]
-    }),
-    new SourceMapDevToolPlugin({
-      "filename": "[file].map[query]",
-      "moduleFilenameTemplate": "[resource-path]",
-      "fallbackModuleFilenameTemplate": "[resource-path]?[hash]",
-      "sourceRoot": "webpack:///"
-    }),
-    new CommonsChunkPlugin({
-      "name": [
         "main"
       ],
       "minChunks": 2,
       "async": "common"
     }),
-    new NamedModulesPlugin({}),
+    new ExtractTextPlugin({
+      "filename": "[name].[contenthash:20].bundle.css"
+    }),
+    new SuppressExtractedTextChunksWebpackPlugin(),
+    new CleanCssWebpackPlugin(),
+    new EnvironmentPlugin({
+      "NODE_ENV": "production"
+    }),
+    new HashedModuleIdsPlugin({
+      "hashFunction": "md5",
+      "hashDigest": "base64",
+      "hashDigestLength": 4
+    }),
+    new ModuleConcatenationPlugin({}),
+    new BundleBudgetPlugin({}),
+    new LicenseWebpackPlugin({
+      "licenseFilenames": [
+        "LICENSE",
+        "LICENSE.md",
+        "LICENSE.txt",
+        "license",
+        "license.md",
+        "license.txt"
+      ],
+      "perChunkOutput": false,
+      "outputTemplate": path.join(process.cwd(), "node_modules\\license-webpack-plugin\\output.template.ejs"),
+      "outputFilename": "3rdpartylicenses.txt",
+      "suppressErrors": true,
+      "includePackagesWithoutLicense": false,
+      "abortOnUnacceptableLicense": false,
+      "addBanner": false,
+      "bannerTemplate": "/*! 3rd party license information is available at <%- filename %> */",
+      "includedChunks": [],
+      "excludedChunks": [],
+      "additionalPackages": [],
+      "modulesDirectories": [
+        "node_modules"
+      ],
+      "pattern": /^(MIT|ISC|BSD.*)$/
+    }),
+    new PurifyPlugin(),
+    new UglifyJsPlugin({
+      "test": /\.js(\?.*)?$/i,
+      "extractComments": false,
+      "sourceMap": false,
+      "cache": true,
+      "parallel": true,
+      "uglifyOptions": {
+        "output": {
+          "ascii_only": true,
+          "comments": false,
+          "webkit": true
+        },
+        "ecma": 5,
+        "warnings": false,
+        "ie8": false,
+        "mangle": {
+          "safari10": true
+        },
+        "compress": {
+          "typeofs": false,
+          "inline": 3,
+          "pure_getters": true,
+          "passes": 3
+        }
+      }
+    }),
     new AngularCompilerPlugin({
       "mainPath": "main.ts",
       "platform": 0,
       "hostReplacementPaths": {
-        "environments\\environment.ts": "environments\\environment.ts"
+        "environments\\environment.ts": "environments\\environment.prod.ts"
       },
-      "sourceMap": true,
+      "sourceMap": false,
       "tsConfigPath": "src\\tsconfig.app.json",
-      "skipCodeGeneration": true,
       "compilerOptions": {}
     })
   ],
