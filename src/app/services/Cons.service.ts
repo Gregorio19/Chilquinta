@@ -417,9 +417,7 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                if (this.enableUrg) {
-                    this.settings.btURG.disable.next(true);
-                }
+                this.settings.btURG.disable.next(!this.enableUrg);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.dOfi.value.next("");
@@ -444,7 +442,7 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                this.settings.btURG.disable.next(false);
+                this.settings.btURG.disable.next(!this.enableUrg);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.dLet.value.next("");
@@ -461,7 +459,7 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
-                this.settings.btURG.disable.next(false);
+                this.settings.btURG.disable.next(!this.enableUrg);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
                 this.settings.dLet.value.next("");
@@ -481,8 +479,8 @@ export class ConsService extends WebsocketService {
 
                 if (this.client.ForceMotUrg) {
                     this.settings.btURG.disable.next(false);
-                } else if (this.enableUrg) {
-                    this.settings.btURG.disable.next(true);
+                } else {
+                    this.settings.btURG.disable.next(!this.enableUrg);
                 }
 
                 this.settings.btDRV.disable.next(true);
@@ -501,8 +499,8 @@ export class ConsService extends WebsocketService {
 
                 if (this.client.ForceMotUrg) {
                     this.settings.btURG.disable.next(false);
-                } else if (this.enableUrg) {
-                    this.settings.btURG.disable.next(true);
+                } else {
+                    this.settings.btURG.disable.next(!this.enableUrg);
                 }
 
 
@@ -516,7 +514,7 @@ export class ConsService extends WebsocketService {
                 this.settings.contenedorFin.show.next(true);
                 let hiFHini: string = this.settings.hiFHini;
 
-                if (hiFHini != "") { // && moment(hiFHini).isValid()) {
+                if (hiFHini != '') { // && moment(hiFHini).isValid()) {
                     //this.settings.dAte = moment(hiFHini);
                     this.settings.dAte = new Date(
                         parseInt(hiFHini.substring(0, 4)),
@@ -955,14 +953,26 @@ export class ConsService extends WebsocketService {
         this.settings.user = new BehaviorSubject<UserModel>(userModel);
         this.settings.dOfi.value.next(m.Oficina);
         this.settings.dEsc.value.next(m.Escritorio);
-        this.settings.dEje.value.next(m.Ejecutivo);
 
+        this.enableUrg = true; // by default
+        const urg = m.Ejecutivo.split(';');
+        console.log("fuck urg", urg);
+        if(urg !== 'undefined' && urg.length > 1) { // case chilquinta
+            this.settings.dEje.value.next(urg[0]);
+            if(urg[1].toUpperCase() === 'B') {
+                this.enableUrg = false;
+            } else if (urg[1].toUpperCase() === 'A') {
+                this.enableUrg = true;
+            }
+        } else {
+            this.settings.dEje.value.next(m.Ejecutivo);
+        }
         // SAVE SESSION
-        //this.setCookie(this.settings.hiEsc + "," + this.settings.hiUsr);
+        // this.setCookie(this.settings.hiEsc + "," + this.settings.hiUsr);
 
-        //set enableUrg
-        //this.enableUrg = m.Urg;
-        if (this.enableUrg) { //first moment
+        console.log("fuck enable ", this.enableUrg);
+
+        if (this.enableUrg) { // first moment
             this.settings.btURG.disable.next(true);
         } else {
             this.settings.btURG.disable.next(false);

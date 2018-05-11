@@ -156,7 +156,7 @@ export class HomeComponent implements OnInit {
               this.MotivosService.processMotivos();
               if (this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) {
 
-                this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '530px' })
+                this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '530px' });
 
               } else {
                 this.consService.fnAccion(AccEnum.FINTUR);
@@ -164,7 +164,7 @@ export class HomeComponent implements OnInit {
 
             } else {
 
-              this.dialogRef = this.dialog.open(MotivosComponent)
+              this.dialogRef = this.dialog.open(MotivosComponent, { width: '480px' });
 
             }
             break;

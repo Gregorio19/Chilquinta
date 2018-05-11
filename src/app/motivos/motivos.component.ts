@@ -76,7 +76,7 @@ export class MotivosComponent implements OnInit, OnDestroy {
     if (this.data) {
       this.data.unsubscribe();
     }
-    if(this.isErrorSub) {
+    if (this.isErrorSub) {
       this.isErrorSub.unsubscribe();
     }
 
@@ -141,8 +141,8 @@ export class MotivosComponent implements OnInit, OnDestroy {
   }
 
   openModal(template: TemplateRef<any>, templateForceMot: TemplateRef<any>) {
-    if (this.MotCierre == 'S') {
-      if (this.rows.length == 0) {
+    if (this.MotCierre === 'S') {
+      if (this.selected.length === 0) {
         this.dialogRef = this.dialog.open(templateForceMot, { data: { class: 'modal-sm' } });
       } else {
         this.fnAccion();
@@ -154,21 +154,27 @@ export class MotivosComponent implements OnInit, OnDestroy {
   }
 
   confirm() {
-    this.dialogRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
     this.fnAccion();
   }
 
   decline() {
-    this.dialogRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 
   ngOnDestroy(): void {
-    this.dialogRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
 
   confirmMotForce() {
-
-    this.dialogRef.close();
+    if (this.dialogRef) {
+      this.dialogRef.close();
+    }
   }
-
 }

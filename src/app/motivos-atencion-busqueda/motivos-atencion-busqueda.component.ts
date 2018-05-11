@@ -149,6 +149,8 @@ export class MotivosAtencionBusquedaComponent implements OnInit {
   Enviar() {
     this.dialogRef.close(this.selected[0]);
 
+
+
   }
 
   updateFilterTMateria(event) {
