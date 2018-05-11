@@ -94,7 +94,6 @@ export class ConsService extends WebsocketService {
                 if (typeof name != 'undefined' && name) {
                     let tmp = name.split(",");
 
-                    console.log("name", name, tmp[0], tmp[1]);
                     this.settings.hiEsc = tmp[0];
                     this.settings.hiUsr = tmp[1];
                     this.fnAccion(AccEnum.EDB);
@@ -956,8 +955,7 @@ export class ConsService extends WebsocketService {
 
         this.enableUrg = true; // by default
         const urg = m.Ejecutivo.split(';');
-        console.log("fuck urg", urg);
-        if(urg !== 'undefined' && urg.length > 1) { // case chilquinta
+        if(urg.length > 1) { // case chilquinta
             this.settings.dEje.value.next(urg[0]);
             if(urg[1].toUpperCase() === 'B') {
                 this.enableUrg = false;
@@ -969,8 +967,6 @@ export class ConsService extends WebsocketService {
         }
         // SAVE SESSION
         // this.setCookie(this.settings.hiEsc + "," + this.settings.hiUsr);
-
-        console.log("fuck enable ", this.enableUrg);
 
         if (this.enableUrg) { // first moment
             this.settings.btURG.disable.next(true);
@@ -1196,12 +1192,10 @@ export class ConsService extends WebsocketService {
         this.settings.dTur.value.next(m.Turno);
         this.settings.dRut.value.next(m.Rut);
         let fono = m.Fono.split(',');
-        let Nombre
-        let Mail
-        if (fono.length > 0) {
+        if (fono.length > 1) {
             this.settings.dTer.value.next(fono[1]);
-            Mail = fono[2];
-            Nombre = fono[1];
+            const Mail = fono[2];
+            const Nombre = fono[1];
             fono = fono[0];
 
             if (Nombre != 0) {
