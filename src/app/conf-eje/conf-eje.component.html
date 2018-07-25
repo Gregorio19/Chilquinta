@@ -1,0 +1,85 @@
+<div class="container">
+    <div class="row">
+      <div class="col-10">
+        <div class="row">
+          <h5 mat-dialog-title class="mb-0">Datos Sistema</h5>
+        </div>
+        <div class="row">
+          <div>Usted "NO" se encuentra en el Sistema de Atención de publico <p>Favor Ingrese sus datos</p></div>
+        </div>
+  
+      </div>
+      <div class="col-2">
+        <button mat-icon-button (click)="closed()" class="float-right">
+          <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+        </button>
+      </div>
+    </div>
+  </div>
+  <mat-dialog-content [formGroup]="confEjeForm" novalidate class="mt-4">  
+  <div class="form-group row" [ngClass]="{'has-error':!confEjeForm.controls['txRut'].valid}">
+    <label for="txEsc" class="col-sm-4 col-form-label">Rut</label>
+    <div class="col-sm-8">
+        <div class="col-sm-4 pl-0">
+        <input type="text" class="form-control" id="txRut"            
+          [(ngModel)]="model.txRut" 
+          (ngModelChange)="onChanges($event)" 
+          formControlName="txRut"             
+          placeholder="111111-k"
+          autofocus
+          validateRut
+          required
+          minlength="9"
+          maxlength="10"
+        >
+        </div>
+        <div class="form-control-feedback" *ngIf="confEjeForm.controls['txRut'].errors && (confEjeForm.controls['txRut'].dirty || confEjeForm.controls['txRut'].touched)">
+            <p class="alert alert-danger" *ngIf="confEjeForm.controls['txRut'].hasError('required')">El RUT es requerido</p>
+          <p class="alert alert-danger" *ngIf="confEjeForm.controls['txRut'].hasError('validateRut')">RUT formato no válido</p>
+            <p class="alert alert-danger" *ngIf="!confEjeForm.controls['txRut'].hasError('validateRut') && (confEjeForm.controls['txRut'].hasError('minlength') || confEjeForm.controls['txRut'].hasError('maxlength'))">RUT número de caracteres no válido</p>
+    </div>
+    </div>       
+  </div>
+    
+    <div class="form-group row" [ngClass]="{'has-error':!confEjeForm.controls['txNombre'].valid}">
+      <label for="txNombre" class="col-sm-4 col-form-label">Ingrese tu Nombre</label>
+      <div class="col-sm-8">
+          <div class="col-sm-6 pl-0">
+              <input type="text" class="form-control" id="txNombre" value="" [(ngModel)]="model.txNombre" maxlength="50" formControlName="txNombre" (ngModelChange)="onChanges($event)">
+          </div>
+        
+      
+        <div class="form-control-feedback" *ngIf="confEjeForm.controls['txNombre'].errors && (confEjeForm.controls['txNombre'].dirty || confEjeForm.controls['txNombre'].touched)">
+        <p class="alert alert-danger" *ngIf="confEjeForm.controls['txNombre'].hasError('maxlength')">USER debe ser máximo 15 caracteres</p>
+        <p class="alert alert-danger" *ngIf="confEjeForm.controls['txNombre'].hasError('required')">USER es requerido</p>
+      </div>
+        
+      </div>
+    </div>      
+    
+    <div class="form-group row" *ngIf="settings.lastError.isError |async">
+      <div class="col">
+        <div class=" alert alert-danger text-center">
+            {{ settings.lastError.DescError }}
+        </div>
+          
+      </div>
+    </div>
+  
+  </mat-dialog-content>
+  <mat-dialog-actions>
+      <mat-divider></mat-divider>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-3 d-flex justify-content-end">
+          <button type="button" mat-raised-button color="primary" (click)="confirmBtn()" [disabled]="!confEjeForm.valid">Ingresar</button>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="warn" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>

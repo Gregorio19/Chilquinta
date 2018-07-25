@@ -1,0 +1,75 @@
+<div class="container">
+    <div class="row">
+        <div class="col-10">
+            <div class="row">
+                <h5 mat-dialog-title class="mb-0">Motivos de Atención</h5>
+            </div>
+            <div class="row" *ngIf="motivoModel.Mot?.Motivo">
+                > {{ motivoModel.Mot?.Motivo }}
+            </div>
+            <div class="row" *ngIf="motivoModel.SMot?.SubMotivo">
+                > {{ motivoModel.SMot?.SubMotivo }}
+            </div>
+            <div class="row" *ngIf="motivoModel.SSMot?.SSubMotivo">
+                > {{ motivoModel.SSMot?.SSubMotivo }}
+            </div>
+
+        </div>
+        <div class="col-2">
+            <button mat-icon-button (click)="closed()" class="float-right">
+                <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+            </button>
+        </div>
+    </div>
+</div>
+<mat-dialog-content>
+    <div class="row">
+        <div class="col" *ngIf="isVisibleTipoMateria()">
+            <label for="tipoMateriaFilter">Tipo de Materia</label>
+            <input type='text' class="form-control" id="tipoMateriaFilter" placeholder='Tipo de Materia' (keyup)='updateFilterTMateria($event)'
+            />
+        </div>
+        <div class="col" *ngIf="isVisibleTemas()">
+            <label for="temasFilter">Temas</label>
+            <input type='text' class="form-control" id="temasFilter" placeholder='Temas' (keyup)='updateFilterTemas($event)' />
+        </div>
+        <div class="col" *ngIf="isVisibleTramite()">
+            <label for="temasFilter">Trámite</label>
+            <input type='text' class="form-control" id="temasFilter" placeholder='Trámite' (keyup)='updateFilterTramite($event)' />
+        </div>
+    </div>
+
+
+    <ngx-datatable #table class='material fullscreen' [rows]="rows" [columns]="columns" [columnMode]="'force'" [headerHeight]="50"
+        [footerHeight]="50" [rowHeight]="'auto'" [limit]="5" [messages]="messages" [loadingIndicator]="loadingIndicator" [selected]="selected"
+        [selectionType]="'single'" (select)='onSelect($event)'>
+
+
+    </ngx-datatable>
+
+    <div class="row" *ngIf="settings.lastErrorMot.isError | async">
+        <div class="col">
+            <div class="alert alert-danger text-center">
+                {{ settings.lastErrorMot.DescError }}
+            </div>
+
+        </div>
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+    <mat-divider></mat-divider>
+    <div class="container">
+        <div class="row flex-row justify-content-center">
+            <div class="col-md-3 d-flex justify-content-end">
+
+                <button type="button" mat-raised-button color="primary" [disabled]="!selected.length" (click)="Enviar()">Enviar</button>
+            </div>
+            <div class="col-md-3 d-flex justify-content-end">
+                <button type="button" mat-raised-button color="warn" (click)="closed()">Salir</button>
+            </div>
+            <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+                <div> [{{ settings.iTOw }}] </div>
+            </div>
+        </div>
+    </div>
+</mat-dialog-actions>

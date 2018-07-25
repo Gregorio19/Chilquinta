@@ -1,0 +1,78 @@
+<div class="container">
+  <div class="row">
+    <div class="col-10">
+      <div class="row">
+        <h5 mat-dialog-title class="mb-0">URGENCIA</h5>
+      </div>
+      <div class="row">
+        <div>Seleccione Turno y Serie</div>
+      </div>
+
+    </div>
+    <div class="col-2">
+      <button mat-icon-button (click)="closed()" class="float-right">
+        <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content [formGroup]="TurnoySerieForm" novalidate class="mt-4">
+  <div>
+    <label for="urgTur" class="col-sm-4 col-form-label">Turno</label>
+    <div class="col-sm-8">
+      <input type="number" class="form-control col-sm-3" id="urgTur" size="2" (ngValue)="urgTur" placeholder="1" formControlName="urgTur"
+        [(ngModel)]="model.urgTur" (ngModelChange)="onChanges($event)" [min]="0" min="0" [max]="999" number>      
+        <p class="help-block">0 = sin Turno</p>
+    </div>
+    
+    <div class="form-control-feedback" *ngIf="TurnoySerieForm.controls['urgTur'].errors && (TurnoySerieForm.controls['urgTur'].dirty || TurnoySerieForm.controls['urgTur'].touched)">
+      <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('number')">Turno debe ser solo números</p>
+      <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('min')">Turno debe ser mayor a cero</p>
+      <p class="alert alert-danger" *ngIf="TurnoySerieForm.controls['urgTur'].hasError('max')">Turno debe tener máximo 3 caracteres</p>
+    </div>
+  </div>
+
+  <div class="col-sm-8" *ngFor="let serie of settings.Series | async">
+    <input type="radio" id="rbSer" [value]="serie.IdSerie" formControlName="rbSer" [(ngModel)]="model.rbSer" (ngModelChange)="onChanges($event)">
+    <label class="form-check-label" for="rbSer">
+      {{ serie.Serie }}
+    </label>
+  </div>
+  <div class="form-group row" *ngIf="settings.lastError.isError  |async">
+    <div class="col">
+      <div class=" alert alert-danger text-center">
+        {{ settings.lastError.DescError }}
+      </div>
+
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <mat-divider></mat-divider>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-4 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="primary" (click)="openQuestion(Question)" [disabled]="!TurnoySerieForm.valid">
+          Seleccionar</button>
+      </div>
+      <div class="col-md-4 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="warn" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-4 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>
+
+<ng-template #Question>
+  <h2 mat-dialog-title>Atención sin Turno</h2>
+  <mat-dialog-content>
+    <p>¿Desea atender Turno No Emitido?</p>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <mat-divider></mat-divider>
+    <button type="button" mat-raised-button color="primary" (click)="confirm()">Si</button>
+    <button type="button" mat-raised-button color="warn" (click)="decline()">No</button>
+  </mat-dialog-actions>
+</ng-template>

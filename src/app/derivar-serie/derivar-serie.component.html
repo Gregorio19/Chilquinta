@@ -1,0 +1,77 @@
+<div class="container">
+  <div class="row">
+    <div class="col-10">
+      <div class="row">
+        <h5 mat-dialog-title class="mb-0">DERIVACION</h5>
+      </div>
+      <div class="row">
+        <div>Seleccione Serie de destino</div>
+      </div>
+
+    </div>
+    <div class="col-2">
+      <button mat-icon-button (click)="closed()" class="float-right">
+        <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content [formGroup]="derivarSerieForm" novalidate class="mt-4">
+  <div class="col-sm-8" *ngFor="let serie of settings.Series | async">
+
+    <input *ngIf="showRbSer(serie.IdSerie)" type="radio" id="rbSer" [value]="serie.IdSerie" formControlName="rbSer" [(ngModel)]="model.rbSer"
+      (ngModelChange)="onChanges($event)">
+    <label class="form-check-label" for="rbSer" [ngClass]="showRbSer(serie.IdSerie) ? '': 'text-danger'">
+      {{ serie.Serie }}
+    </label>
+  </div>
+
+  <div class="col-sm-8">
+    <div class="form-check form-check-inline">
+      Luego de Derivar, continuar ...
+    </div>
+  </div>
+  <div class="col-sm-12">
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" formControlName="rbDrv" [value]="'N'" [(ngModel)]="model.rbDrv" (ngModelChange)="onChanges($event)"
+      [checked]="true" id="rbDrv1">
+      <label class="form-check-label" for="rbDrv1">Normal</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" formControlName="rbDrv" value="U" [(ngModel)]="model.rbDrv" (ngModelChange)="onChanges($event)"
+        id="rbDrv2">
+      <label class="form-check-label" for="rbDrv2">Urgencia</label>
+    </div>
+    <div class="form-check form-check-inline">
+      <input class="form-check-input" type="radio" formControlName="rbDrv" value="P" [(ngModel)]="model.rbDrv" (ngModelChange)="onChanges($event)"
+        id="rbDrv3">
+      <label class="form-check-label" for="rbDrv3">Pausa</label>
+    </div>
+  </div>
+
+  <div class="form-group row" *ngIf="settings.lastError.isError | async">
+    <div class="col">
+      <div class=" alert alert-danger text-center">
+        {{ settings.lastError.DescError }}
+      </div>
+
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <mat-divider></mat-divider>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-4 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="primary" (click)="fnAccion('DRVSET')" [disabled]="!derivarSerieForm.valid">
+          Seleccionar</button>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="warn" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-5 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>

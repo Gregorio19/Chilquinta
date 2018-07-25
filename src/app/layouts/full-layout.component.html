@@ -1,0 +1,41 @@
+<header>
+<header-section></header-section>
+</header>
+
+<div class="app-body">
+  <!--
+  <div class="sidebar">
+    <sidebar-section></sidebar-section>
+    </div>-->
+   <!-- Main content -->
+   <main class="main">
+      <ol class="breadcrumb">
+          <li class="breadcrumb-item"><span id="dOfi">{{ settings.dOfi.value | async }}</span></li>
+          <li class="breadcrumb-item"> <span class="text-primary">Escritorio <span id="dEsc">{{ settings.dEsc.value | async }}</span> </span>
+          </li>
+        </ol>
+
+      <!-- Breadcrumb -->
+      <!--<ol class="breadcrumb">
+        <app-breadcrumbs></app-breadcrumbs>-->
+        <!-- Breadcrumb Menu-->
+        <!--<li class="breadcrumb-menu d-md-down-none">
+          <div class="btn-group" role="group" aria-label="Button group with nested dropdown">
+            <a class="btn" href="#"><i class="icon-speech"></i></a>
+            <a class="btn" [routerLink]="['/dashboard']"><i class="icon-graph"></i> &nbsp;Dashboard</a>
+            <a class="btn" href="#"><i class="icon-settings"></i> &nbsp;Settings</a>
+          </div>
+        </li>
+      </ol>-->
+  
+      <div class="container-fluid">
+        <router-outlet></router-outlet>
+      </div><!-- /.conainer-fluid -->
+    </main>
+    <!--<aside class="aside-menu">
+        <aside-section></aside-section>
+    </aside>-->
+    
+</div>
+
+<footer-section></footer-section>

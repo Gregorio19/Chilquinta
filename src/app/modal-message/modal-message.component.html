@@ -1,0 +1,31 @@
+<div class="container">
+  <div class="row">
+    <div class="col-10">
+      <h5 mat-dialog-title class="mb-0">{{ title }}</h5>
+
+    </div>
+    <div class="col-2">
+      <button mat-icon-button (click)="closed()" class="float-right" *ngIf="isClose">
+        <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content class="mt-4">
+
+  <p>{{ message | async }}</p>
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <mat-divider></mat-divider>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
+  </div>
+</mat-dialog-actions>

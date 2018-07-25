@@ -1,0 +1,133 @@
+<div class="container">
+  <div class="row">
+    <div class="col-10">
+      <div class="row">
+        <h5 mat-dialog-title class="mb-0">CIERRE DE ATENCION</h5>
+      </div>
+      <div class="row">
+        <div>Seleccione Motivo y Cantidad</div>
+      </div>
+
+    </div>
+    <div class="col-2">
+      <button mat-icon-button (click)="closed()" class="float-right">
+        <mat-icon aria-label="Cerrar dialog">close</mat-icon>
+      </button>
+    </div>
+  </div>
+</div>
+<mat-dialog-content [formGroup]="MotivosForm" novalidate class="mt-4">
+
+  <ngx-datatable class="material expandable" [rows]="rows" [columnMode]="'force'" [headerHeight]="50" [footerHeight]="50" [rowHeight]="'50'"
+    [limit]="5" [messages]="messages" [loadingIndicator]="loadingIndicator" [selected]="selected" [selectionType]="'checkbox'"
+    (select)='onSelect($event)'>
+
+    <ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+      <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+        <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)" />
+      </ng-template>
+      <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+        <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)" />
+      </ng-template>
+    </ngx-datatable-column>
+
+    <!--<ngx-datatable-column [width]="30" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+          <ng-template ngx-datatable-header-template let-value="value" let-allRowsSelected="allRowsSelected" let-selectFn="selectFn">
+            <input type="checkbox" [checked]="allRowsSelected" (change)="selectFn(!allRowsSelected)"/>
+          </ng-template>
+          <ng-template ngx-datatable-cell-template let-value="value" let-isSelected="isSelected" let-onCheckboxChangeFn="onCheckboxChangeFn">
+            <input type="checkbox" [checked]="isSelected" (change)="onCheckboxChangeFn($event)"/>
+          </ng-template>
+      </ngx-datatable-column>
+    -->
+
+    <ngx-datatable-column prop="cbMot" name="" [width]="90" [sortable]="false" [canAutoResize]="false" [draggable]="false" [resizeable]="false">
+      <ng-template ngx-datatable-cell-template let-rowIndex="rowIndex" let-value="value" let-row="row">
+        <input autofocus (blur)="updateValue($event, 'cbMot', rowIndex)" type="text" [value]="value" size="2" number formControlName="txMot"
+          [min]="1" [max]="999" />
+
+      </ng-template>
+    </ngx-datatable-column>
+    <ngx-datatable-column prop="Motivo" name="Motivos"></ngx-datatable-column>
+  </ngx-datatable>
+
+  <div class="form-group row" *ngIf="MotCierre == 'S' && rows.length == 0">
+    <div class="col">
+      <div class=" alert alert-danger text-center">
+
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="form-group row" *ngIf="settings.lastError.isError |async">
+    <div class="col">
+      <div class=" alert alert-danger text-center">
+        {{ settings.lastError.DescError }}
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row" *ngIf="MotivosForm.controls['txMot'].errors && (MotivosForm.controls['txMot'].dirty || MotivosForm.controls['txMot'].touched)">
+    <p class="alert alert-danger" *ngIf="MotivosForm.controls['txMot'].hasError('number')">La cantidad debe ser solo números</p>
+    <p class="alert alert-danger" *ngIf="MotivosForm.controls['txMot'].hasError('min')">La cantidad debe ser mayor a cero</p>
+    <p class="alert alert-danger" *ngIf="MotivosForm.controls['txMot'].hasError('required')">La cantidad es requerido</p>
+    <p class="alert alert-danger" *ngIf="MotivosForm.controls['txMot'].hasError('max')">La cantidad debe tener máximo 3 caracteres</p>
+  </div>
+
+
+</mat-dialog-content>
+<mat-dialog-actions>
+  <mat-divider></mat-divider>
+  <div class="container" *ngIf="!isError; else anotherButtons">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-4 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="primary" (click)="openModal(Question, QuestionForceMot)">
+          Seleccionar</button>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="warn" (click)="closed()">Cerrar</button>
+      </div>
+      <div class="col-md-5 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
+        <div> [{{ settings.iTOw }}] </div>
+      </div>
+    </div>
+    </div>
+</mat-dialog-actions>
+
+
+<ng-template #anotherButtons>
+  <div class="container">
+    <div class="row flex-row justify-content-center">
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="primary" [disabled]="selected.length == 0" (click)="fnAccion('FINTUR')">
+          Si</button>
+      </div>
+      <div class="col-md-3 d-flex justify-content-end">
+        <button type="button" mat-raised-button color="warn" (click)="Clear()">No</button>
+      </div>
+    </div>
+  </div>
+
+</ng-template>
+
+
+<ng-template #Question>
+  <div class="modal-body text-center">
+    <p>Esta seguro de no incluir</p>
+    <p>Motivos de Atención ?</p>
+    <button type="button" mat-raised-button color="primary" (click)="confirm()">Si</button>
+    <button type="button" mat-raised-button color="warn" (click)="decline()">No</button>
+  </div>
+</ng-template>
+
+
+<ng-template #QuestionForceMot>
+  <div class="modal-body text-center">
+    <p>Debe incluir al menos un</p>
+    <p>Motivo de Atención !</p>
+    <button type="button" mat-raised-button color="primary" (click)="confirmMotForce()">Aceptar</button>
+  </div>
+</ng-template>
