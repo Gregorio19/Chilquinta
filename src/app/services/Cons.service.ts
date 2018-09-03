@@ -17,6 +17,9 @@ import { AppConfig } from '../app.config';
 import { isPlatformBrowser } from '@angular/common';
 import { EmptyObservable } from 'rxjs/observable/EmptyObservable';
 import { Action } from 'rxjs/scheduler/Action';
+import { ChilquintaService } from './chilquinta.service';
+import { Turno } from '../Models/chilquintaturno';
+import { RespuestaLog } from '../Models/RespuestaLog';
 
 @Injectable()
 export class ConsService extends WebsocketService {
@@ -32,10 +35,14 @@ export class ConsService extends WebsocketService {
     private client: any;
     private bEncCurso: boolean = false;
     private iTAte: number = 0;
+    errorMessage: String;
+    public datos_message: Array<any>;
 
     private enableUrg: boolean = true;
 
     private messageTurn: BehaviorSubject<string> = new BehaviorSubject<string>("");
+    private stateUrg: boolean = false;
+    private statePausa: boolean = false;
 
     constructor(
         //private socket: WebsocketService,        
@@ -44,6 +51,7 @@ export class ConsService extends WebsocketService {
         private config: AppConfig,
         @Inject(PLATFORM_ID) platformId: string,
         private injector: Injector,
+        private ChilquintaService: ChilquintaService,
     ) {
         super();
         this.loginModel = new LoginModel();
@@ -65,7 +73,9 @@ export class ConsService extends WebsocketService {
     }
 
     private start() {
-        console.log("start again");
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "Inicio de Consultora");
         this.settings.init();
 
         this.connect(this.config.get('socket').url);
@@ -88,7 +98,9 @@ export class ConsService extends WebsocketService {
 
         this.open.subscribe((open: boolean) => {
             if (open) {
-                console.log("connection open");
+                var d = new Date();
+                //console.log(d);
+                console.log(d, "connection open");
                 this.settings.bCnxOK = true;
                 let name = this.cookieService.get(this.sCookie);
                 if (typeof name != 'undefined' && name) {
@@ -110,7 +122,11 @@ export class ConsService extends WebsocketService {
 
         this.socketSubscription = this.messages.subscribe((message: string) => {
             var m = JSON.parse(message);
-            console.log("rsp = %s", message);
+            var d = new Date();
+            this.datos_message = m;
+            //console.log("Deberia imprimir cliente" + this.config.get('clients').client);
+            //console.log(d);
+            console.log(d, "rsp = %s", message);
             if (m.CodError != "0") {
                 //this.settings.iTOcnx = 2;
 
@@ -120,8 +136,8 @@ export class ConsService extends WebsocketService {
                         this.settings.isLogged.next(false);
                         this.cookieService.delete(this.sCookie);
                         this.fnAccion(AccEnum.LGI);
-                        return;     
-                    }           
+                        return;
+                    }
                 }
 
                 this.settings.accion = AccEnum.UNKNOW;
@@ -157,19 +173,27 @@ export class ConsService extends WebsocketService {
                 return;
             }
 
+            this.stateUrg = false;
+            this.statePausa = false;
             //this.clearError();
 
             switch (m.MsgType) {
                 case ActionEnum.LOGIN:
-                    console.log("R : LOGIN");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : LOGIN");
                     this.LOGIN(m);
                     break;
                 case ActionEnum.LOGOFF:
-                    console.log("R : LOGOFF");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : LOGOFF");
                     this.LOGOFF(m);
                     break;
                 case ActionEnum.GETEDOBASE:
-                    console.log("R : GETEDOBASE");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : GETEDOBASE");
                     if (!this.GETEDOBASE(m)) {
                         if (!this.settings.isLogged.getValue()) {
                             this.clearError();
@@ -180,36 +204,63 @@ export class ConsService extends WebsocketService {
                     }
                     break;
                 case ActionEnum.GETEDOSESION:
-                    console.log("R : GETEDOSESION  acc =", this.settings.accion);
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : GETEDOSESION  acc =", this.settings.accion);
                     this.GETEDOSESION(m);
                     break;
                 case ActionEnum.GETPAUSAS:
-                    console.log("R : GETPAUSAS");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : GETPAUSAS");
                     this.GETPAUSAS(m);
                     break;
                 case ActionEnum.SETPAUSA:
-                    console.log("R : SETPAUSA");
+                    this.statePausa = true;
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : SETPAUSA");
                     this.settings.subacc = AccEnum.UNKNOW;
                     break;
                 case ActionEnum.GETSERIES:
-                    console.log("R : GETSERIES");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : GETSERIES");
                     this.GETSERIES(m);
                     break;
                 case ActionEnum.GETMOTIVOS:
-                    console.log("R : GETMOTIVOS");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : GETMOTIVOS");
                     this.GETMOTIVOS(m);
                     break;
                 case ActionEnum.PIDOTURNO:
-                    console.log("R : PIDOTURNO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : PIDOTURNO");
                     return this.PIDOTURNO(m);
                 case ActionEnum.RELLAMO:
-                    console.log("R : RELLAMO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : RELLAMO");
                     break;
                 case ActionEnum.ANULO:
-                    console.log("R : ANULO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : ANULO");
+                    break;
+                case ActionEnum.FINTURNOPAUSA:
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : FINTURNOPAUSA");
+                    if (!this.FINTURNOPAUSA(m)) {
+                        return false;
+                    }
                     break;
                 case ActionEnum.PROCESOTURNO:
-                    console.log("R : PROCESOTURNO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : PROCESOTURNO");
                     this.settings.sEncRpt = "";
                     this.settings.bEncFin = false;
                     this.settings.bTurnoSet = true;
@@ -220,23 +271,32 @@ export class ConsService extends WebsocketService {
                     this.settings.imgid.disable.next(false);
                     break;
                 case ActionEnum.FINTURNO:
-                    console.log("R : FINTURNO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : FINTURNO");
                     if (!this.FINTURNO(m)) {
                         return false;
                     }
                     break;
                 case ActionEnum.DERIVOTURNO:
-                    console.log("R : DERIVOTURNO");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : DERIVOTURNO");
                     if (!this.DERIVOTURNO(m)) {
                         return false;
                     }
                     break;
                 case ActionEnum.URGENCIA:
-                    console.log("R : URGENCIA");
+                    var d = new Date();
+                    //console.log(d);
+                    this.stateUrg = true;
+                    console.log(d, "R : URGENCIA");
                     this.URGENCIA(m);
                     break;
                 case ActionEnum.SETIDC:
-                    console.log("R : SETIDC");
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R : SETIDC");
                     this.closeModal(ModalEnum.IDEDIT);
                     break;
             }
@@ -270,7 +330,9 @@ export class ConsService extends WebsocketService {
 
     clearError() {
         // CLEAR error
-        console.log("clearError");
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "clearError");
         this.settings.lastError.MsgType = null;
         this.settings.lastError.CodError = null;
         this.settings.lastError.DescError = null;
@@ -280,17 +342,24 @@ export class ConsService extends WebsocketService {
     }
 
     public fnAccion(accion: AccEnum, ...args: any[]) {
-        console.log("fnAccion", accion);
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "fnAccion", accion);
 
         this.clearError();
 
         let name = "0";
         let ch = "";
         this.settings.accion = accion;
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "valor accion settings: ", this.settings.accion);
         if (this.settings.accion == AccEnum.LOG) {
             if (typeof this.settings.sLogEdo != 'undefined' && this.settings.sLogEdo) {
                 this.settings.accion = this.settings.sLogEdo == "Login" ? AccEnum.LGI : AccEnum.LGO;
+                //console.log("valor accion settings AccEnumLOG: ", this.settings.accion);
             } else {
+                //console.log("valor accion settings AccEnumLOG(else): ", this.settings.accion);
                 this.settings.accion = AccEnum.LGI;
             }
         }
@@ -305,17 +374,25 @@ export class ConsService extends WebsocketService {
                 //fnEnc_Start();
                 //fnEnc_Wait();                
                 this.settings.sEncAcc = accion;
+                //console.log("valor accion sEncACC: ", this.settings.sEncAcc);
                 return false;
             } else {
 
                 if (this.config.get('poll').EncOK && (this.settings.oEncQ.length > 0 && !this.settings.bEncFin)) {
                     //fnEnc_Wait();
                     this.settings.sEncAcc = accion;
+                    //console.log("valor accion sEncACC en el if poll: ", this.settings.sEncAcc);
                     return false;
                 } else {
                     if (accion != AccEnum.FIN) {
                         this.settings.subacc = accion;
                         this.settings.accion = AccEnum.FIN;
+                        var d = new Date();
+                        /*
+                        //console.log(d);
+                        //console.log("valor subaccion en else del poll: ", this.settings.subacc);
+                        //console.log("valor accion en else del poll: ", this.settings.accion);
+                        */
                     }
                 }
             }
@@ -323,15 +400,22 @@ export class ConsService extends WebsocketService {
             if (this.settings.sEscEdo == AccEnum.LLAMANDO && this.settings.accion == AccEnum.PAUGET) {
                 this.settings.subacc = accion;
                 this.settings.accion = AccEnum.NUL;
+                // console.log("valor subaccion llamando y pauget: ", this.settings.subacc);
+                //console.log("valor accion llamando y pauget: ", this.settings.accion);
             } else if (this.settings.sEscEdo == AccEnum.ATENDIENDO &&
                 (this.settings.accion == AccEnum.DRVSET)) {
                 this.settings.subacc = accion;
                 this.settings.accion = AccEnum.FIN;
+                //console.log("valor else subaccion llamando y pauget: ", this.settings.subacc);
+                //console.log("valor else accion llamando y pauget: ", this.settings.accion);
             }
         }
 
         //this.settings.lastError = new MsgError();
-        console.log("accion: ", this.settings.accion);
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "Accion Case: ", this.settings.accion);
+        console.log(d, "Sub-Accion Case: ", this.settings.subacc);
         switch (this.settings.accion) {
             case AccEnum.EDB:
                 this.AccEDB();
@@ -360,12 +444,25 @@ export class ConsService extends WebsocketService {
                 this.AccINI();
                 break;
             case AccEnum.FIN:
+                var d = new Date();
+                //console.log(d);
+                //console.log("accion al entrar a FIN: ", this.settings.accion);
                 this.AccFIN();
                 break;
             case AccEnum.FINTUR:
                 this.AccFINTUR();
                 break;
+            case AccEnum.FINTURPAUSA:
+                if (this.settings.CliInt == "FALASACBOD" && args[1] != undefined) {
+                    name = arguments[1];
+                }
+                this.AccFINTURPAUSA(name);
+                break;
             case AccEnum.PAUGET:
+                var d = new Date();
+                //console.log(d);            
+                //console.log("idPausaFin pauget: ", this.settings.IdPausaFin);                                              
+                //console.log("accion al entrar a pauget: ", this.settings.accion);
                 this.AccPAUGET();
                 break;
             case AccEnum.PAUSET:
@@ -402,7 +499,9 @@ export class ConsService extends WebsocketService {
     }
 
     private fnView(xhtml: AccEnum) {
-        console.log("fnView", xhtml, this.settings.sEscEdo);
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "Vista: ", xhtml, this.settings.sEscEdo);
         if (this.settings.sEscEdo == xhtml) {
             return false;
         }
@@ -548,7 +647,9 @@ export class ConsService extends WebsocketService {
     }
 
     restart() {
-        console.log("re connection");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("re connection");
         this.open = null;
         this.messages = null;
         this.start();
@@ -599,8 +700,21 @@ export class ConsService extends WebsocketService {
                 this.fnAccion(this.settings.subacc);
             }
         } else {
-            if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0)) {
+            var d = new Date();
+            //console.log(d);
+            console.log(d, 'Valor sEscEdo: ', this.settings.sEscEdo);
+            console.log(d, 'Valor PAUSET : ', AccEnum.PAUSET);
+            console.log(d, 'Valor Accion : ', this.settings.accion);
+            if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0) && this.settings.accion != AccEnum.PAUSET && !this.stateUrg && !this.statePausa) {
+                var d = new Date();
+                //console.log(d);
+                //console.log('Pedir turno: en doTimer');
+
                 if (!this.settings.Modal.show) {
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, 'accion INI por timer para pedir turno');
+
                     this.fnAccion(AccEnum.INI);
                 }
 
@@ -613,7 +727,11 @@ export class ConsService extends WebsocketService {
                     }
                     this.settings.dMsgEsp.value.next("Anulación en " + this.settings.iTOw + " [seg]");
                     if (this.settings.iTOw-- == 0) {
-                        this.fnAccion(AccEnum.NUL);
+                        if (this.client.ConsTimeOut == false) {
+                            this.settings.iTOw = parseInt(this.settings.hiTEspC);
+                        } else {
+                            this.fnAccion(AccEnum.NUL);
+                        }
                     }
                     setTimeout(() => {
                         if (!this.settings.Modal.show) {
@@ -656,7 +774,9 @@ export class ConsService extends WebsocketService {
 
 
     public AccEDB() {
-        console.log("acc = EDB");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("acc = EDB");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.GETEDOBASE;
         proto.ClienteInterno = this.settings.CliInt;
@@ -667,7 +787,9 @@ export class ConsService extends WebsocketService {
     }
 
     public AccLGISET(login: LoginModel) {
-        console.log("acc = LOGIN");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("acc = LOGIN");
 
         if (typeof login.IdEscritorio === 'undefined') {
             return;
@@ -699,6 +821,10 @@ export class ConsService extends WebsocketService {
     }
 
     public AccINI() {
+        this.settings.IdPausaFin = 0;
+        //var d = new Date();
+        //console.log(d);
+        //console.log("valor idpausafin accInicioAtencion:", this.settings.IdPausaFin);
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.PIDOTURNO;
         proto.ClienteInterno = this.settings.CliInt;
@@ -757,15 +883,15 @@ export class ConsService extends WebsocketService {
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
         proto.IdPausa = name;
-
         this.send(proto.PAUSETtoJson(), this.settings.accion);
     }
 
     private AccFINTUR() {
         //this.settings.Modal.show.next(false);
         //this.closeModal(ModalEnum.GETMOTIVOS);
-
-        console.log("2");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("2");
         this.closeModal(this.settings.Modal.self.getValue());
 
         let proto = new ProtoModel();
@@ -792,6 +918,32 @@ export class ConsService extends WebsocketService {
         }
         this.send(JSON.stringify(proto), this.settings.accion);
     }
+
+    private AccFINTURPAUSA(name: string) {
+        if (this.settings.CliInt != "FALASACBOD") {
+            let bMotEx = false;
+            let i = 0;
+            if (this.settings.rbPau.checked.getValue()) {
+                bMotEx = true;
+                name = this.settings.rbPau.value.getValue();
+            }
+
+            if (bMotEx && name == "0") {
+                //swapDiv("1", 0);
+                return false;
+            }
+            //this.settings.Modal.show = true;
+        }
+        let proto = new ProtoModel();
+        proto.MsgType = ActionEnum.SETPAUSA;
+        proto.ClienteInterno = this.settings.CliInt;
+        proto.Id = "1";
+        proto.IdEscritorio = this.settings.hiEsc;
+        proto.IdPausa = name;
+
+        this.send(proto.PAUSETtoJson(), this.settings.accion);
+    }
+
 
     public AccURGSER() {
         let proto = new ProtoModel();
@@ -822,6 +974,53 @@ export class ConsService extends WebsocketService {
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
 
+        if (this.config.get('clients').client == "Chilquinta") {
+
+            console.log("LLAMADA DE SERVICIO");
+            // console.log(proto);
+            // console.log(this.settings);
+            // console.log(this.settings.user);
+            // console.log(this.settings.dOfi.value.getValue());
+            // console.log(this.settings.hiUsr);
+            // console.log(this.client);
+            // console.log(this.datos_message);
+            var turno: Turno = { login: this.settings.hiUsr, num_atencion: parseInt(this.datos_message['Turno']) };
+            var Resplog: RespuestaLog;
+            Resplog = // Creacion de Objeto de respuesta en Log 
+                {
+                    NombreOficina: this.settings.dOfi.value.getValue(),
+                    IdSerie: this.datos_message['IdSerie'],
+                    IdEscritorio: parseInt(proto.IdEscritorio),
+                    UserEjecutivo: this.settings.hiUsr,
+                    RutCliente: this.datos_message['Rut'],
+                    NumeroTurnoCliente: turno.num_atencion,
+                    FechadeAgregado: this.datos_message['HNow'],
+                    Respuesta: "nope"
+                };
+
+
+            this.ChilquintaService.addchilquintaServ(turno, this.datos_message['Rut']).subscribe(response => {
+                console.log("Respuesta Positiva Chilquinta");
+                console.log(response);
+            },
+                error => {
+                    this.errorMessage = <any>error;
+                    console.log("aqui hace algo error");
+                    Resplog.Respuesta = this.errorMessage["message"];
+                    //-------------------------Agregar Datos al Localstorage-----------------------------------
+                    if (this.config.get('clients')["Default"].Addlocal) {
+                        this.ChilquintaService.addLocalResp(Resplog);
+                    }
+                    //-------------------------Agregar Datos al Localstorage-----------------------------------
+                    //--------------------------Crear Archivo en descargas------------------------------
+                    if (this.config.get('clients')["Default"].PrintLog) {
+                        this.ChilquintaService.getLocalResp();
+                    }
+                    //-------------------------Crear Archivo en descargas-----------------------------------
+                    console.log(this.errorMessage["message"]);
+                });
+        }
+
         this.send(JSON.stringify(proto), this.settings.accion);
     }
 
@@ -847,7 +1046,9 @@ export class ConsService extends WebsocketService {
     }
 
     public AccURGSET(name: string) {
-        console.log("URGSET", this.settings.rbSer.checked.getValue());
+        //var d = new Date();
+        //console.log(d);
+        //console.log("URGSET", this.settings.rbSer.checked.getValue());
         if (!this.settings.rbSer.checked.getValue()) {
             return;
         }
@@ -877,7 +1078,9 @@ export class ConsService extends WebsocketService {
 
     public AccDRVSET(name: string, ch: string) {
         //this.settings.Modal.show = false;
-        console.log("3");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("3");
         this.closeModal(this.settings.Modal.self.getValue());
 
         if (this.settings.rbSer.checked.getValue()) {
@@ -891,7 +1094,9 @@ export class ConsService extends WebsocketService {
             return false;
         }
 
-        console.log("drvset ", name, ch);
+        var d = new Date();
+        //console.log(d);
+        //console.log("drvset ", name, ch);
 
         this.settings.sDrvAcc = ch;
 
@@ -955,9 +1160,9 @@ export class ConsService extends WebsocketService {
 
         this.enableUrg = true; // by default
         const urg = m.Ejecutivo.split(';');
-        if(urg.length > 1) { // case chilquinta
+        if (urg.length > 1) { // case chilquinta
             this.settings.dEje.value.next(urg[0]);
-            if(urg[1].toUpperCase() === 'B') {
+            if (urg[1].toUpperCase() === 'B') {
                 this.enableUrg = false;
             } else if (urg[1].toUpperCase() === 'A') {
                 this.enableUrg = true;
@@ -1052,6 +1257,9 @@ export class ConsService extends WebsocketService {
         }
 
         if (m.Estado == AccEnum.LLAMANDO || m.Estado == AccEnum.ATENDIENDO) {
+            /* if(this.settings.subacc == AccEnum.PAUGET){ //modificado
+                 this.cleanElement();
+             }*/
             this.setLlamandoAtendiendo(m);
         } else {
             this.cleanElement();
@@ -1070,8 +1278,10 @@ export class ConsService extends WebsocketService {
 
     private GETSERIES(m) {
         this.settings.Series = new BehaviorSubject(m.Series);
-        //this.settings.Modal.show.next(true); 
-        console.log("GETSERIES", this.settings.accion);
+        //this.settings.Modal.show.next(true);
+        var d = new Date();
+        //console.log(d); 
+        //console.log("GETSERIES", this.settings.accion);
         if (this.settings.accion == AccEnum.URGSER) {
             this.openModal(ModalEnum.GETSERIES_URGSER);
             //this.settings.Modal.self.next(ModalEnum.GETSERIES_URGSER);
@@ -1107,7 +1317,28 @@ export class ConsService extends WebsocketService {
     private FINTURNO(m) {
         //this.fnIDimd("N");
         //this.settings.subacc = AccEnum.UNKNOW;
-        console.log("4");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("4");
+        //console.log("idPausaFin finturno: ", this.settings.IdPausaFin);
+        this.closeModal(this.settings.Modal.self.getValue());
+        this.settings.data = new EmptyObservable();
+        this.settings.imgid.show.next(true);
+        this.settings.imgid.disable.next(true);
+        if (this.settings.IdPausaFin > 0 && this.settings.subacc == AccEnum.UNKNOW) {
+            this.fnAccion(AccEnum.PAUSET, this.settings.IdPausaFin.toString());
+            return false;
+        }
+
+        return true;
+    }
+
+    private FINTURNOPAUSA(m) {
+        //this.fnIDimd("N");
+        //this.settings.subacc = AccEnum.UNKNOW;
+        //var d = new Date();
+        //console.log(d);
+        //console.log("4 FINTURNOPAUSA");
         this.closeModal(this.settings.Modal.self.getValue());
         this.settings.data = new EmptyObservable();
         this.settings.imgid.show.next(true);
@@ -1181,11 +1412,17 @@ export class ConsService extends WebsocketService {
         /*let date = new Date(1E3 * m.TEsp);
         this.settings.dTEsp.value.next(date.toISOString().substr(11, 8));
         this.settings.dTEsp.data.next(m.TEsp);*/
+        //var d = new Date();
+        //console.log(d);
+        console.log('se ejecuta el metodo llamando y esto es M');
+        console.log(m);
 
         this.s_2_hms(this.settings.dTEsp, m.TEsp, this.settings.hiTEspA);
 
-
+        var cleintesplit = m.Cliente.split(";");
         this.settings.hiIdS = m.IdSerie;
+        //modificado
+        this.settings.hiIdSD = m.IdSerieD;
         this.settings.hiTEspC = m.TEspC;
         this.settings.dLet.value.next(m.Letra);
         this.settings.dSer.value.next(m.Serie);
@@ -1205,9 +1442,46 @@ export class ConsService extends WebsocketService {
 
             this.settings.dMail.value.next(Mail);
         } else {
+            console.log("llega " + m.Fono);
+            console.log(m);
+
             fono = m.Fono;
 
-            this.settings.dCli.value.next(m.Cliente);
+            if (cleintesplit.length > 1) {
+                this.settings.dCli.value.next(cleintesplit[0]);
+                this.settings.dNom.value.next(cleintesplit[0]);
+                if (cleintesplit[1] == "undefined" || cleintesplit[1] == undefined || !cleintesplit[1]) {
+                    this.settings.dMail.value.next(" ");
+                }
+                else {
+                    this.settings.dMail.value.next(cleintesplit[1]);
+                }
+
+            }
+            else {
+
+                if (cleintesplit[0] == "undefined" || cleintesplit[0] == undefined || !cleintesplit[0]) {
+                    this.settings.dNom.value.next(" ");
+                    this.settings.dCli.value.next(" ");
+                }
+                else{
+                    this.settings.dNom.value.next(m.Cliente);
+                    this.settings.dCli.value.next(cleintesplit[0]);
+                }
+                if (cleintesplit[1] == "undefined" || cleintesplit[1] == undefined || !cleintesplit[1]) {
+                    this.settings.dMail.value.next(" ");
+                }
+                else{
+                    this.settings.dMail.value.next(cleintesplit[1]);
+                }
+            }
+
+            //this.settings.dCli.value.next(cleintesplit[0]);
+            //this.settings.dCli.value.next(m.Cliente);
+            console.log(this.settings.dCli);
+            console.log(this.settings.dNom);
+            console.log(this.settings.dMail);
+
         }
 
         this.settings.dFon.value.next(fono);
@@ -1245,7 +1519,7 @@ export class ConsService extends WebsocketService {
         if (this.settings.bTurnoSet) {
             this.settings.bTurnoSet = false;
 
-            if (this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) {
+            if ((this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) && (!this.config.get('socket').IdSerieNoConfirmaDatos.includes(this.settings.hiIdS.toString()))) {
                 this.openModal(ModalEnum.IDEDIT);
             } else {
                 if (this.settings.bOfertaSet) {
@@ -1259,7 +1533,12 @@ export class ConsService extends WebsocketService {
     }
 
     private cleanElement() {
+        //var d = new Date();
+        //console.log(d);
+        //console.log('se ejecuta el metodo cleanElement');
+
         this.settings.hiIdS = "";
+        this.settings.hiIdSD = "";
         this.settings.dTEsp.value.next("");
         this.settings.dLet.value.next("");
         this.settings.dSer.value.next("");
@@ -1275,11 +1554,29 @@ export class ConsService extends WebsocketService {
 
 
     public openModal(modal: ModalEnum) {
-        console.log("open modal", modal);
+        //var d = new Date();
+        //console.log(d);
+        //console.log(d, "Modal Abierto: ", modal);
         if (this.settings.Modal.show) {
-            console.log("is open");
+            var d = new Date();
+            //console.log(d);
+            console.log(d, "Modal Abierto: ", modal);
             return;
         }
+        if(this.settings.lastError.CodError == "13029" && this.settings.lastError.DescError == "Turno previamente atendido"){
+            this.settings.Modal.show = false;
+            this.settings.bIdCliSet = false;
+            this.settings.Modal.self.next(modal);
+            this.fnAccion(AccEnum.URGSER);
+        }
+
+        if(this.settings.lastError.CodError == "13028" && this.settings.lastError.DescError == "Turno no ha sido emitido"){
+            this.settings.Modal.show = false;
+            this.settings.bIdCliSet = false;
+            this.settings.Modal.self.next(modal);
+            this.fnAccion(AccEnum.URGSER);
+        }
+
         this.settings.Modal.show = true;
         this.settings.Modal.self.next(modal);
         this.settings.iTOw = this.config.get('socket').TOwin;
@@ -1287,10 +1584,14 @@ export class ConsService extends WebsocketService {
     }
 
     public closeModal(modal: ModalEnum) {
-        console.log("close modal", modal);
+        //var d = new Date();
+        //console.log(d);
+        //console.log("close modal", modal);
 
         if (!this.settings.Modal.show) {
-            console.log("close modal false");
+            //var d = new Date();
+            //console.log(d);
+            //console.log("close modal false");
             return;
         }
 

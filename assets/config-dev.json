@@ -1,7 +1,7 @@
 {
   "socket": {   
-    "url": "ws://172.16.32.151:8181/",
-    "MotivosUrl": "ws://172.16.32.151:8190/",
+    "url": "ws://TS099:8181/",
+    "MotivosUrl": "ws://TS099:8190/",
     "TOwin": 30,
     "TOenc": 10,
     "ConfirmaID": "S",
@@ -35,7 +35,7 @@
       "Motivos_QMax": 3,
       "IdEditarForzar": true,
       "LoginWithUserPass": false,
-      "UseTimeout": false,
+      "UseTimeout": true,
       "ForceMotUrg": true,
       "IdEdit": []
     },
@@ -47,7 +47,8 @@
       "LoginWithUserPass": true,
       "UseTimeout": true,
       "ForceMotUrg": false,
-      "IdEdit": ["txNom","txMail"]
+      "IdEdit": ["txNom","txMail"],
+      "UrlapiContact": "http://10.135.34.75:8080/chilquinta.contact/api/empresa/99/atencion/"
     }
   }
 }

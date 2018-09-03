@@ -20,11 +20,11 @@
         <button class="navbar-toggler d-md-down-none" type="button" appsidebartoggler=""> <span class="navbar-toggler-icon text-white"></span> </button>
 -->
         <ul class="navbar-nav text-left col-md-10">
-          <li class="nav-item pl-5">
+          <li *ngIf="pausaEnable" class="nav-item pl-5">
             <button class="nav-link text-white btn btn-outline-secondary"  id="btPAU" [disabled]="settings.btPAU.disable |async" (click)="fnAccion('PAUGET');"> <i class="icon-control-pause icons font-2xl d-block"></i> Pausa </button>
           </li>
           <li class="nav-item pl-5">
-            <button class="nav-link text-white btn btn-outline-secondary" id="btINI" [disabled]="settings.btINI.disable | async" (click)="fnAccion('INI');"> <i class="icon-control-play icons font-2xl d-block"></i> Inico Atención </button>
+            <button class="nav-link text-white btn btn-outline-secondary" id="btINI" [disabled]="settings.btINI.disable | async" (click)="fnAccion('INI');"> <i class="icon-control-play icons font-2xl d-block"></i> Inicio Atención </button>
           </li>
           
         </ul>        

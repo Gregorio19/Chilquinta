@@ -7,7 +7,7 @@ import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
 import 'hammerjs';
 import { LoginComponent } from './login/login.component';
-
+import { ChilquintaService } from './services/chilquinta.service';
 import { SettingsService } from './services/settings.service';
 import { AppRoutingModule } from './app.routing';
 import { WebsocketService } from './services/Websocket.service';
@@ -116,6 +116,7 @@ import {MatDialogModule, MatIconModule, MatButtonModule, MatCardModule, MatDivid
       },
     CookieService,
     SettingsService,
+    ChilquintaService,
     //WebsocketService,    
     ConsService,
     MotivosService,

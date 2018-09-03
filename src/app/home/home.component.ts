@@ -28,7 +28,7 @@ export class HomeComponent implements OnInit {
   //public dialog: BsModalRef = null;
   public dialogRef: MatDialogRef<any>;
   public letter: boolean = false;
-
+  public showTimer: boolean = false;
   public number: number = 0;
   public observable: Observable<boolean>;
   private observer: Observer<boolean>;
@@ -50,7 +50,7 @@ export class HomeComponent implements OnInit {
     private config: AppConfig,
     public dialog: MatDialog
   ) {
-
+   
     this.observable = new Observable<boolean>((observer: any) => this.observer = observer).share();
 
     this.settings.dTur.value.subscribe(value => {
@@ -80,11 +80,13 @@ export class HomeComponent implements OnInit {
 
     });
 
+    this.showTimer = this.client.ConsTimeOut;
+
   }
 
 
   ngOnInit() {
-
+    console.log("Version: 2018 - V-30-07-2018-idedit.")
     this.consService.IsError().subscribe(value => {
       if (value) {
 
@@ -94,11 +96,15 @@ export class HomeComponent implements OnInit {
       }
     },
       err => {
-        console.log(err);
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "Error: ", err);
       });
 
     this.settings.Modal.self.subscribe((modalEnum: ModalEnum) => {
-      console.log("home modal", modalEnum);
+      var d = new Date();
+      //console.log(d);
+      console.log(d, "Modal Actual: ", modalEnum);
       if (modalEnum == null) {
         return;
       }
@@ -156,7 +162,7 @@ export class HomeComponent implements OnInit {
               this.MotivosService.processMotivos();
               if (this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) {
 
-                this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '530px' });
+                this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '1400px' });
 
               } else {
                 this.consService.fnAccion(AccEnum.FINTUR);
@@ -192,14 +198,16 @@ export class HomeComponent implements OnInit {
             break;
 
         }
-        /*
-        this.dialogRef.afterClosed().subscribe(result => {
-          console.log("close dialog event", result, modalEnum);
-          //this.dialogRef = null;
-        })*/
+        
+        //this.dialogRef.afterClosed().subscribe(result => {
+        //console.log("close dialog event", result, modalEnum);
+        //this.dialogRef = null;
+        //})
 
       } else {
-        console.log("close dialog", this.lastModal, modalEnum, this.dialogRef);
+        var d = new Date();
+        //console.log(d);
+        console.log(d, "Modal Cerrado: ", this.lastModal, modalEnum, this.dialogRef);
         if (this.dialogRef) {
           //this.dialogRef.close(modalEnum);
           this.dialog.closeAll();
@@ -214,7 +222,7 @@ export class HomeComponent implements OnInit {
 
 
     /*this.settings.Modal.show.subscribe((value: boolean) => {
-      console.log("close modal", value);
+      //console.log("close modal", value);
       if(!value && this.dialog && this.settings.Modal.self.getValue() == this.lastModal) {
         // close dialog
         this.dialog.hide();

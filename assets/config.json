@@ -1,14 +1,16 @@
 {
   "socket": {   
-    "url": "ws://172.16.32.151:8181/",
-    "MotivosUrl": "ws://172.16.32.151:8190/",
+    "url": "ws://172.16.32.155:8181/",
+    "MotivosUrl": "ws://172.16.32.155:8190/",
     "TOwin": 30,
     "TOenc": 10,
     "ConfirmaID": "S",
+    "IdSerieNoConfirmaDatos": [""],
     "ConfirmaTipo": "RNM",
     "MotCierre": "S",
     "RutManMin": 1000000,
-    "RutExcs": ""
+    "RutExcs": "",
+    "ActivarPausa":"S"
   },
   "poll": {
     "EncOK": false,
@@ -18,8 +20,9 @@
     "EncHeight": 480
   },
   "clients": {
-    "client": "Default",
-    "Default": {
+    "client": "Chilquinta",
+    "Default": {     
+      "ConsTimeOut": true,
       "MotivosExt": false,
       "MotivosBusqueda": false,
       "Motivos_QMax": 1,
@@ -27,9 +30,12 @@
       "LoginWithUserPass": true,
       "UseTimeout": true,
       "ForceMotUrg": false,
-      "IdEdit": []
+      "IdEdit": [],
+      "PrintLog": false,
+      "Addlocal": false
     },
     "Tesoreria": {
+      "ConsTimeOut": false,
       "MotivosExt": true,
       "MotivosBusqueda": true,
       "Motivos_QMax": 3,
@@ -40,14 +46,16 @@
       "IdEdit": []
     },
     "Chilquinta": {
+      "ConsTimeOut": false,
       "MotivosExt": false,
       "MotivosBusqueda": false,
       "Motivos_QMax": 1,
       "IdEditarForzar": false,
       "LoginWithUserPass": true,
-      "UseTimeout": true,
+      "UseTimeout": false,
       "ForceMotUrg": false,
-      "IdEdit": ["txNom","txMail"]
+      "IdEdit": ["txNom","txMail"],
+      "UrlapiContact": "http://10.135.34.75:8080/chilquinta.contact/api/empresa/99/atencion/"
     }
   }
 }

@@ -96,13 +96,12 @@ export class LoginComponent implements OnInit {
     this.loginModel.IdEscritorio = this.loginModel.IdEscritorio.toString();
     if (!this.client.LoginWithUserPass) {
       /*if (this.config.get('clients').client == "Tesoreria") {
-        this.loginModel.User = 'luiggino';
+        this.loginModel.User = "virginia";//ecruz
         this.loginModel.Pass = "1234";
+        console.log("logueo luiggino");
       } else {*/
         this.loginModel.User = this.settings.hiUsr;
       //}
-
-
     }
 
     this.consService.AccLGISET(this.loginModel);

@@ -152,7 +152,7 @@
                     <i class="fa fa-clock-o texto22"></i>
                     <span id="dTEsp" class="font-weight-bold" [class]="settings.dTEsp.class | async" [innerHTML]="settings.dTEsp.value | async"></span>
                   </div>
-                  <div id="dMsgEsp" class="text-danger font-weight-bold" [innerHTML]="settings.dMsgEsp.value | async" [class]="settings.dMsgEsp.class|async"></div>
+                  <div id="dMsgEsp" class="text-danger font-weight-bold" *ngIf="showTimer" [innerHTML]="settings.dMsgEsp.value | async" [class]="settings.dMsgEsp.class|async"></div>
                   <div class="h5"> Tiempo atención </div>
                   <div>
                     <i class="fa fa-clock-o"></i>

@@ -63,9 +63,20 @@ export class DerivarSerieComponent implements OnInit {
   }
 
   showRbSer(idSerie): boolean {
-    if (this.settings.hiIdSDRV != idSerie) {
+        
+    let serieBloqueada;                                           
+    if(this.settings.hiIdSD == "0"){
+      serieBloqueada = this.settings.hiIdS;
+    }else{
+      serieBloqueada = this.settings.hiIdSD;
+    }
+        
+    //console.log("serieBloqueada: ", serieBloqueada , "hiIdS: ", this.settings.hiIdS, "hiIdSD: ", this.settings.hiIdSD, "idSerie: ", idSerie);
+    if (serieBloqueada != idSerie) {
+      //console.log("retorne true");
       return true;
     }
+    
     return false;
   }
 

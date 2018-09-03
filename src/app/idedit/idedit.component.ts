@@ -120,6 +120,9 @@ export class IdeditComponent implements OnInit {
 
   fnSet_ID() {
     this.settings.Rut = this.model.txRut;
+    /*var d = new Date();
+        //console.log(d);
+    //console.log(this.settings.Rut);*/
     if (this.client.IdEditarForzar) {
       this.settings.FonoTmp = this.model.txFon + "," + (this.model.txTer ? "1" : "0");
     } else {
@@ -140,6 +143,28 @@ export class IdeditComponent implements OnInit {
     this.isChange = true;
 
     this.consService.clearError();
+  }
+
+  rutFormat(key){
+    let rut;
+    let dv;
+    let mantisa;
+
+    if((this.model.txRut.substr(this.model.txRut.length - 1) == "-" )){
+      //console.log("entro aca");
+      rut = this.model.txRut.replace(/-/g,"");
+      dv = rut.substr(rut.length - 1);
+      mantisa = rut.substring(0,rut.length - 1);
+     this.model.txRut = mantisa + "-" + dv;
+    }else
+    if(this.model.txRut.length > 1){
+       rut = this.model.txRut.replace("-","");
+       dv = rut.substr(rut.length - 1);
+       mantisa = rut.substring(0,rut.length - 1);
+      this.model.txRut = mantisa + "-" + dv;
+    }else{
+      this.model.txRut = this.model.txRut.replace("-","");
+    }
   }
 
   get txRut() {
