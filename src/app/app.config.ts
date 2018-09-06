@@ -19,7 +19,8 @@ export class AppConfig {
         return new Promise((resolve, reject) => {
             this.http.get(environment.configJson)
             .catch((error: any):any => {
-                console.log('Configuración no encontrada');
+                var d = new Date();              
+                console.log(d, ' Configuración no encontrada');
                 resolve(true);
                 return Observable.throw(error.json().error || 'Server error');
             }).subscribe( (responseData) => {                

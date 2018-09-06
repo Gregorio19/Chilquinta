@@ -9,11 +9,11 @@
       </div>
 
     </div>
-    <div class="col-2">
+    <!-- <div class="col-2">
       <button mat-icon-button (click)="closed()" class="float-right" *ngIf="enableClosed |async">
         <mat-icon aria-label="Cerrar dialog">close</mat-icon>
       </button>
-    </div>
+    </div> -->
   </div>
 </div>
 <mat-dialog-content [formGroup]="IdEditForm" novalidate class="mt-4">
@@ -22,10 +22,10 @@
     <div class="col-sm-8">
       <div class="col-sm-8 pl-0">
         <input type="text" class="form-control" id="txRut" [(ngModel)]="model.txRut" (ngModelChange)="onChanges($event)" formControlName="txRut"
-          placeholder="111111-k" autofocus validateRut required minlength="9" maxlength="10">
+          placeholder="" autofocus validateRut required minlength="8" maxlength="10" (keyup)="rutFormat($event)">
       </div>
       <div class="form-control-feedback" *ngIf="ConfirmaRut && IdEditForm.controls['txRut'].errors && IdEditForm.controls['txRut'].touched">
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('required')">El RUT es requerido</p>
+        <!-- <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('required')">El RUT es requerido</p> -->
         <p class="alert alert-danger" *ngIf="IdEditForm.controls['txRut'].hasError('validateRut')">Formato del RUT no válido</p>
         <p class="alert alert-danger" *ngIf="!IdEditForm.controls['txRut'].hasError('validateRut') && (IdEditForm.controls['txRut'].hasError('minlength') || IdEditForm.controls['txRut'].hasError('maxlength'))">RUT número de caracteres no válido</p>
       </div>
@@ -36,17 +36,17 @@
     <label for="txUsr" class="col-sm-4 col-form-label">Teléfono</label>
     <div class="col-sm-8">
       <div class="col-sm-8 pl-0" [ngSwitch]="ConfirmaFono">
-        <input type="text" *ngSwitchCase="true" class="form-control" id="txFon" [(ngModel)]="model.txFon" formControlName="txFon"
-          (ngModelChange)="onChanges($event)" number [min]="getFonMin()" [max]="getFonMax()" [maxlength]="settings.CliInt == 'FALASACBOD' ? 10 : 9"
-          [placeholder]="getFonMin()">
+        <input type="text" *ngSwitchCase="true" minlength="9" maxlength="9" class="form-control" id="txFon" [(ngModel)]="model.txFon"
+          formControlName="txFon" (ngModelChange)="onChanges($event)" number [min]="getFonMin()" [max]="getFonMax()" [maxlength]="settings.CliInt == 'FALASACBOD' ? 10 : 9"
+          [placeholder]="">
 
-        <input type="text" *ngSwitchDefault class="form-control" id="txFon" [(ngModel)]="model.txFon" formControlName="txFon" (ngModelChange)="onChanges($event)"
-          [placeholder]="getFonMin()">
+        <input type="text" number minlength="9" maxlength="9" *ngSwitchDefault class="form-control" id="txFon" [(ngModel)]="model.txFon"
+          formControlName="txFon" (ngModelChange)="onChanges($event)" [placeholder]="">
       </div>
 
       <div class="form-control-feedback" *ngIf="ConfirmaFono && IdEditForm.controls['txFon'].errors && IdEditForm.controls['txFon'].touched">
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('required')">El Teléfono es requerido</p>
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('maxlength')">El Teléfono debe tener 10 caracteres</p>
+        <!-- <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('required')">El Teléfono es requerido</p> -->
+        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('maxlength')">El Teléfono debe tener 9 caracteres</p>
         <p class="alert alert-danger" *ngIf="IdEditForm.controls['txFon'].hasError('max') || IdEditForm.controls['txFon'].hasError('min')">El Teléfono con mal formato</p>
       </div>
 
@@ -58,11 +58,11 @@
     <div class="col-sm-8">
       <div class="col-sm-8 pl-0">
         <input type="text" class="form-control" id="txNom" [(ngModel)]="model.txNom" formControlName="txNom" (ngModelChange)="onChanges($event)"
-          [maxlength]="50" placeholder="Nombre Apellidos">
+          [maxlength]="200" placeholder="">
       </div>
       <div class="form-control-feedback" *ngIf="IdEditForm.controls['txNom'].errors && IdEditForm.controls['txNom'].touched">
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txNom'].hasError('required')">El Nombre del cliente es requerido</p>
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txNom'].hasError('maxlength')">El Nombre no puede tener mas de 50 caracteres</p>
+        <!-- <p class="alert alert-danger" *ngIf="IdEditForm.controls['txNom'].hasError('required')">El Nombre del cliente es requerido</p> -->
+        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txNom'].hasError('maxlength')">El Nombre no puede tener mas de 200 caracteres</p>
       </div>
     </div>
   </div>
@@ -72,11 +72,11 @@
     <div class="col-sm-8">
       <div class="col-sm-8 pl-0">
         <input type="text" class="form-control" id="txMail" [(ngModel)]="model.txMail" formControlName="txMail" (ngModelChange)="onChanges($event)"
-          [maxlength]="50" placeholder="abc@def.cl">
+          [maxlength]="100" placeholder="">
       </div>
       <div class="form-control-feedback" *ngIf="IdEditForm.controls['txMail'].errors && IdEditForm.controls['txMail'].touched">
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txMail'].hasError('required')">El Correo es requerido</p>
-        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txMail'].hasError('maxlength')">El Correo no puede tener mas de 50 caracteres</p>
+        <!-- <p class="alert alert-danger" *ngIf="IdEditForm.controls['txMail'].hasError('required')">El Correo es requerido</p> -->
+        <p class="alert alert-danger" *ngIf="IdEditForm.controls['txMail'].hasError('maxlength')">El Correo no puede tener mas de 100 caracteres</p>
       </div>
     </div>
   </div>
@@ -104,11 +104,12 @@
   <div class="container">
     <div class="row flex-row justify-content-center">
       <div class="col-md-3 d-flex justify-content-end">
-        <button type="button" mat-raised-button color="primary" (click)="fnSet_ID()" [disabled]="!IdEditForm.valid">Confirmar</button>
+        <!-- <button type="button" mat-raised-button color="primary" (click)="fnSet_ID()" [disabled]="!IdEditForm.valid">Confirmar</button> -->
+        <button type="button" mat-raised-button color="primary" (click)="fnSet_ID()">Confirmar</button>
       </div>
-      <div class="col-md-3 d-flex justify-content-end">
+      <!-- <div class="col-md-3 d-flex justify-content-end">
         <button type="button" mat-raised-button color="warn" (click)="closed()" *ngIf="enableClosed | async">Cerrar</button>
-      </div>
+      </div> -->
       <div class="col-md-6 d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
         <div> [{{ settings.iTOw }}] </div>
       </div>

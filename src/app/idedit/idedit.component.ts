@@ -34,12 +34,6 @@ export class IdeditComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.model.txRut = "";
-    this.model.txFon = "";
-    this.model.txNom = "";
-    this.model.txMail = "";
-    console.log("LLamada desde el inicio del confirmar datos");
-    
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
     if (this.settings.dRut.value.getValue() && this.settings.dRut.value.getValue() != "") {
@@ -63,11 +57,6 @@ export class IdeditComponent implements OnInit {
       }
     }
 
-    console.log("Aqui desppppues de consultar la base de datos rut " + this.model.txRut
-     + " fono " + this.model.txFon
-     + " nombre "+ this.model.txNom
-     + " txMail "+ this.model.txMail);
-    
     this.createEditForm();
 
   }
@@ -112,10 +101,7 @@ export class IdeditComponent implements OnInit {
     if (this.client.IdEditarForzar) {
       valida["txTer"] = [null];
     }
-    console.log("Aqui desppppues de crear el form " + this.model.txRut
-    + " fono " + this.model.txFon
-    + " nombre "+ this.model.txNom
-    + " txMail "+ this.model.txMail);
+
     this.IdEditForm = this.fb.group(valida);
 
   }
@@ -134,6 +120,9 @@ export class IdeditComponent implements OnInit {
 
   fnSet_ID() {
     this.settings.Rut = this.model.txRut;
+    /*var d = new Date();
+        //console.log(d);
+    //console.log(this.settings.Rut);*/
     if (this.client.IdEditarForzar) {
       this.settings.FonoTmp = this.model.txFon + "," + (this.model.txTer ? "1" : "0");
     } else {
@@ -146,6 +135,7 @@ export class IdeditComponent implements OnInit {
       }
     }
     this.consService.fnAccion(AccEnum.SID);
+
   }
 
   onChanges(val) {
@@ -153,6 +143,28 @@ export class IdeditComponent implements OnInit {
     this.isChange = true;
 
     this.consService.clearError();
+  }
+
+  rutFormat(key){
+    let rut;
+    let dv;
+    let mantisa;
+
+    if((this.model.txRut.substr(this.model.txRut.length - 1) == "-" )){
+      //console.log("entro aca");
+      rut = this.model.txRut.replace(/-/g,"");
+      dv = rut.substr(rut.length - 1);
+      mantisa = rut.substring(0,rut.length - 1);
+     this.model.txRut = mantisa + "-" + dv;
+    }else
+    if(this.model.txRut.length > 1){
+       rut = this.model.txRut.replace("-","");
+       dv = rut.substr(rut.length - 1);
+       mantisa = rut.substring(0,rut.length - 1);
+      this.model.txRut = mantisa + "-" + dv;
+    }else{
+      this.model.txRut = this.model.txRut.replace("-","");
+    }
   }
 
   get txRut() {

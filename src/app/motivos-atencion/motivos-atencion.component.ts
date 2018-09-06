@@ -338,7 +338,12 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
     }
 
     if (this.settings.cbMot.length > 0) {
+      /*if(this.settings.subacc == AccEnum.PAUGET){
+        this.consService.fnAccion(AccEnum.FINTURPAUSA);
+      }else{*/
+        
       this.consService.fnAccion(AccEnum.FINTUR);
+      //}
     }
 
     this.isErrorSub = this.consService.IsError().subscribe(isError => {

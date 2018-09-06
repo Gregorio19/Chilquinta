@@ -36,10 +36,6 @@ export class MotivosService extends WebsocketService {
         super();
 
         this.client = this.config.get('clients')[this.config.get('clients').client];
-        console.log("Impriendo cliente ");
-        
-        console.log(this.client);
-        
 
         this.start();
 
@@ -52,15 +48,19 @@ export class MotivosService extends WebsocketService {
             this.connect(this.config.get('socket').MotivosUrl);
 
             this.open.subscribe((open: boolean) => {
-                if (open) {
-                    console.log("2 connection open");
-                }
+                //if (open) {
+                //var d = new Date();
+                //console.log(d);
+                // console.log("2 connection open");
+                //}
 
             });
 
             this.socketSubscription = this.messages.subscribe((message: string) => {
                 var m = JSON.parse(message);
-                console.log("2 rsp = %s", message);
+                var d = new Date();
+                //console.log(d);
+                console.log(d, "2 rsp = %s", message);
                 if (m.CodError != "0") {
                     // LAUNCH error
                     this.settings.lastErrorMot.MsgType = m.MsgType;
@@ -77,19 +77,27 @@ export class MotivosService extends WebsocketService {
 
                 switch (m.MsgType) {
                     case ActionEnum.LOGIN:
-                        console.log("R2 : LOGIN");
-                        this.LOGIN(m);
-                        break;
+                    var d = new Date();
+                    //console.log(d);
+                    console.log(d, "R2 : LOGIN");
+                    this.LOGIN(m);
+                    break;
                     case ActionEnum.GETUSERNAME:
-                        console.log("R2 : USERNAME");
+                    var d = new Date();
+                    //console.log(d);
+                        console.log(d, "R2 : USERNAME");
                         this.USERNAME(m);
                         break;
                     case ActionEnum.LOGOFF:
-                        console.log("R2 : LOGOFF");
+                    var d = new Date();
+                    //console.log(d);
+                        console.log(d, "R2 : LOGOFF");
                         this.LOGOFF(m);
                         break;
                     case ActionEnum.GETMOTIVOS:
-                        console.log("R2 : GETMOTIVOS s");
+                    var d = new Date();
+                    //console.log(d);
+                        console.log(d, "R2 : GETMOTIVOS s");
                         this.GETMOTIVOS(m);
                         break;
                 }
@@ -132,7 +140,9 @@ export class MotivosService extends WebsocketService {
      */
 
     public AccLGISET(login: LoginModel) {
-        console.log("LOGIN 2");
+        //var d = new Date();
+        //console.log(d);
+        //console.log(d, "LOGIN 2");
         //this.settings.hiEsc = login.IdEscritorio;
         //this.settings.hiUsr= login.User;
         // BUG si hay un error al refrescar aun asi gracias a esta cookie se logea
@@ -145,7 +155,9 @@ export class MotivosService extends WebsocketService {
     }
 
     public AccUSERNAME() {
-        console.log("USERNAME 2");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("USERNAME 2");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.GETUSERNAME;
 
@@ -153,7 +165,9 @@ export class MotivosService extends WebsocketService {
     }
 
     public AccLGO() {
-        console.log("LGO 2");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("LGO 2");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.LOGOFF;
         proto.ClienteInterno = this.settings.CliInt;
@@ -164,7 +178,9 @@ export class MotivosService extends WebsocketService {
     }
 
     public AccMotivos() {
-        console.log("MOTIVOS 2");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("MOTIVOS 2");
         let proto = new ProtoModel();
         proto.MsgType = ActionEnum.GETMOTIVOS;
         proto.ClienteInterno = this.settings.CliInt;
@@ -176,7 +192,9 @@ export class MotivosService extends WebsocketService {
 
 
     public destroy() {
-        console.log("destroy motivos");
+        //var d = new Date();
+        //console.log(d);
+        //console.log("destroy motivos");
         this.socketSubscription.unsubscribe();
     }
 
@@ -222,7 +240,14 @@ export class MotivosService extends WebsocketService {
             let Mot: Array<MotivosAtencion> = [];
             this.motivos.Traf = [];
             for (let mot of value.Mot) {
-                let serieId = parseInt(this.settings.hiIdS);
+                //modificado
+                let serieId; 
+                if(parseInt(this.settings.hiIdSD) != 0){
+                    serieId = parseInt(this.settings.hiIdSD);
+                }else{
+                    serieId = parseInt(this.settings.hiIdS);
+                }
+
                 let exists: boolean = mot.Series.some(x => x == serieId);
                 if (exists) {
                     Mot.push(mot);

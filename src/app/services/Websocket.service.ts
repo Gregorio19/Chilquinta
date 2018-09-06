@@ -19,8 +19,9 @@ export class WebsocketService {
   public connect(url: string) {
     if (this.messages)
       return
-
-    console.log("connecting to server [%s] ...", url);
+      //var d = new Date();
+      //console.log(d);
+      //console.log("connecting to server [%s] ...", url);
 
     // Using share() causes a single websocket to be created when the first
     // observer subscribes. This socket is shared with subsequent observers
@@ -42,8 +43,10 @@ export class WebsocketService {
     // that messages are queued and delivered when the websocket reconnects.
     // A regular Subject can be used to discard messages sent when the websocket
     // is disconnected.
-    console.log("acc =", accion);
-    console.log("req 2=", message);
+    var d = new Date();
+    //console.log(d);
+    console.log(d, "acc =", accion);
+    console.log(d, "req =", message);
     this.inputStream.next(message)
   }
 }

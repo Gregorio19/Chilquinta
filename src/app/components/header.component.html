@@ -20,7 +20,7 @@
         <button class="navbar-toggler d-md-down-none" type="button" appsidebartoggler=""> <span class="navbar-toggler-icon text-white"></span> </button>
 -->
         <ul class="navbar-nav text-left col-md-10">
-          <li class="nav-item pl-5">
+          <li *ngIf="pausaEnable" class="nav-item pl-5">
             <button class="nav-link text-white btn btn-outline-secondary"  id="btPAU" [disabled]="settings.btPAU.disable |async" (click)="fnAccion('PAUGET');"> <i class="icon-control-pause icons font-2xl d-block"></i> Pausa </button>
           </li>
           <li class="nav-item pl-5">
@@ -45,7 +45,6 @@
         </ul>
 
         <ng-template #login >
-          <!-- <div class="btn btn-success" (click)="probar_servicio();"> hola q ase</div>}}} -->
             <ul class="navbar-nav col-md-2">
                 <li class="nav-item pl-5">
                     <button class="nav-link text-white btn btn-outline-secondary" (click)="fnAccion('LOG')"><i class="fa fa-user-circle-o font-2xl d-block"></i> Login</button>

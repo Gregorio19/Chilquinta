@@ -65,6 +65,7 @@ export class SettingsService {
   public hiEsc: string = "";
   public hiUsr: string = "";
   public hiIdS: string = "";
+  public hiIdSD: string = "";
   public hiIdSDRV: string = "";
   public hiTEspAO: string = "";
   public hiTEspAE: string = "";

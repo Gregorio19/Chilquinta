@@ -58,7 +58,9 @@ export default function connect(
     }
 
     socket.onmessage = (message: MessageEvent) => {
-      console.log("onmessage", message.data);
+      var d = new Date();
+      //console.log(d);
+      console.log(d, "onmessage: ", message.data);
       observer.next(message.data)
     }
 

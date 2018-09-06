@@ -23,10 +23,11 @@ export class HttpFormEncodingCodec implements HttpParameterCodec {
 export class ChilquintaService {
 
   RespuestaLogs: RespuestaLog[];
-  domain: string = 'http://10.135.34.75:8080/chilquinta.contact';
+  domain: string;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private config: AppConfig) {
     this.RespuestaLogs = [];
+    this.domain = this.config.get('clients')["Chilquinta"].UrlapiContact;
   }
 
   extractData(res: Response) {// Manejadoresd de Errores o Procesos correctos
@@ -40,16 +41,7 @@ export class ChilquintaService {
 
   addchilquintaServ(newTask: Turno, dataurl) {// Enviar Datos de Consulta de turno al Servicio.
 
-    // this.http.post(url, body, { headers: headers }).subscribe(response => {
-    //   console.log("hola ");
-    //   console.log(response);
-    // },
-    //   error => {
-    //     console.log("hola error");
-    //     console.log(error);
-    //   });
-
-    let url: string = this.domain + "/api/empresa/99/atencion/" + dataurl + "/";
+    let url: string = this.domain  + dataurl + "/";
     console.log(url);
 
     var headers: HttpHeaders = new HttpHeaders().append('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
@@ -60,10 +52,6 @@ export class ChilquintaService {
     return this.http.post(url, body, { headers: headers })
   }
 
-  // creararchivo() {
-  //   console.log("llamda del servidor ");
-  //   return this.http.get("http://localhost:4200/assets/img/CrearDocumentos.php");
-  // }
 
   getLocalResp(): RespuestaLog[] {// Obtener Datos del Local Storage (Cokkies)
     if (localStorage.getItem('LocalLogResps') === null) {
