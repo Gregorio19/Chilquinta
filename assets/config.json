@@ -1,11 +1,11 @@
 {
-  "socket": {   
-    "url": "ws://172.16.32.155:8181/",
-    "MotivosUrl": "ws://172.16.32.155:8190/",
+  "socket": {
+    "url": "ws://172.16.32.5:8181/",
+    "MotivosUrl": "ws://172.16.32.5:8190/",
     "TOwin": 30,
     "TOenc": 10,
     "ConfirmaID": "S",
-    "IdSerieNoConfirmaDatos": [""],
+    "IdSerieNoConfirmaDatos": ["7"],
     "ConfirmaTipo": "RNM",
     "MotCierre": "S",
     "RutManMin": 1000000,
@@ -20,8 +20,8 @@
     "EncHeight": 480
   },
   "clients": {
-    "client": "Chilquinta",
-    "Default": {     
+    "client": "BcoBCI",
+    "Default": {
       "ConsTimeOut": true,
       "MotivosExt": false,
       "MotivosBusqueda": false,
@@ -30,32 +30,52 @@
       "LoginWithUserPass": true,
       "UseTimeout": true,
       "ForceMotUrg": false,
-      "IdEdit": [],
-      "PrintLog": false,
-      "Addlocal": false
+      "TbloqueoRellamado": 5000,
+      "MaxRellamados": 50,
+      "IdEdit": []
     },
     "Tesoreria": {
-      "ConsTimeOut": false,
+      "ConsTimeOut": true,
       "MotivosExt": true,
       "MotivosBusqueda": true,
       "Motivos_QMax": 3,
       "IdEditarForzar": true,
       "LoginWithUserPass": false,
-      "UseTimeout": false,
+      "UseTimeout": true,
       "ForceMotUrg": true,
+      "TbloqueoRellamado": 5000,
+      "MaxRellamados": 3,
       "IdEdit": []
     },
     "Chilquinta": {
-      "ConsTimeOut": false,
+      "ConsTimeOut": true,
       "MotivosExt": false,
       "MotivosBusqueda": false,
       "Motivos_QMax": 1,
       "IdEditarForzar": false,
       "LoginWithUserPass": true,
-      "UseTimeout": false,
+      "UseTimeout": true,
       "ForceMotUrg": false,
+      "TbloqueoRellamado": 5000,
+      "MaxRellamados": 50,
       "IdEdit": ["txNom","txMail"],
-      "UrlapiContact": "http://10.135.34.75:8080/chilquinta.contact/api/empresa/99/atencion/"
+      "PrintLog": false,
+      "Addlocal": false,
+      "UrlapiContact": ""
+    },
+    "BcoBCI": {
+      "ConsTimeOut": true,
+      "MotivosExt": false,
+      "MotivosBusqueda": false,
+      "Motivos_QMax": 1,
+      "IdEditarForzar": false,
+      "LoginWithUserPass": true,
+      "UseTimeout": true,
+      "ForceMotUrg": false,
+      "TbloqueoRellamado": 5000,
+      "MaxRellamados": 50,
+      "IdEdit": []
     }
+
   }
 }
