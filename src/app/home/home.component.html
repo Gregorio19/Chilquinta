@@ -34,8 +34,8 @@
       <div class="card h-100 text-dark card-gradient-2 border-success" *ngIf="settings.pausa.show | async; else pausa">
         <div class="card-header text-center card-gradient-2-header"> Atención </div>
         <div class="card-body pb-0">
-          <div class="row justify-content-center">
-            <span id="dSer" class="H4 text-dark" [innerHTML]="settings.dSer.value |async"></span>
+          <div class="row justify-content-center tipoAtencion">
+            <span id="dSer" class="h4 text-dark" [innerHTML]="settings.dSer.value |async"></span>
           </div>
           <div class="row">
             <div class="col-md-4">
@@ -69,8 +69,11 @@
               </div>
               <div class="row justify-content-center">
                 <div class="col-sm-auto col-auto">
-                  <div class="float-left">
-                    <i class="icon-user icons font-2xl d-block"> </i>
+                  <div class="float-left" *ngIf="bcoBci">
+                    <div *ngIf="settings.dRut.value  | async" class="img-contenedor">
+                      <img src="assets/images/{{settings.dRut.value | async}}.jpg" class="img-circle" width="100" height="100">
+                  </div>
+
                   </div>
                 </div>
                 <div class="col-sm-auto col-auto">
@@ -141,8 +144,6 @@
 
                 </div>
               </div>
-
-
             </div>
             <div class="col-md-4">
               <div class="row justify-content-center">
@@ -185,7 +186,7 @@
           <div class="row px-1">
             <div class="col-sm-10 col-lg-12 col-md-12 col-xl-12 px-0 mx-0" *ngIf="settings.contenedorFin.show | async">
               <div [matTooltip]="msgFinalizarAtencion">
-                <button type="button" class="btn btn-danger text-white btn-block btn3d" [disabled]="settings.btFIN.disable |async" (click)="fnAccion('FIN');">
+                <button type="button" class="btnatencion btn btn-danger text-white btn-block btn3d" [disabled]="settings.btFIN.disable |async" (click)="fnAccion('FIN');">
                   <i class="fa fa-check d-block"></i>&nbsp; Finalizar atención</button>
               </div>
             </div>
@@ -202,7 +203,7 @@
               </div>
             </div>
           </div>
-          <div class="row pt-3 px-1">
+          <div class="row pt-3 px-1 botonera">
             <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4 px-0 mx-0">
               <div [matTooltip]="msgUrgencia">
                 <button type="button" class="btn btn-danger text-white btn-block btn3d" [disabled]="settings.btURG.disable |async" (click)="fnAccion('URGSER');">
@@ -220,6 +221,13 @@
               <div [matTooltip]="msgDerivar">
                 <button type="button" class="btn btn-default btn-block btn3d" [disabled]="settings.btDRV.disable |async" (click)="fnAccion('DRVSER');">
                   <i class="fa fa-forward d-block"></i>&nbsp; Derivar
+                </button>
+              </div>
+            </div>
+            <div *ngIf="bcoBci" class="col-sm-4 col-md-4 col-lg-4 col-xl-4 px-0 mx-0" >
+              <div [matTooltip]="msgAgenda">
+                <button type="button" class="btn btn-primary text-white btn-block btn3d" [disabled]="settings.btAGEN.disable |async" (click)="fnAccion('AGEN');">
+                  <i class="fa fa-book d-block"></i>&nbsp;Agenda
                 </button>
               </div>
             </div>
