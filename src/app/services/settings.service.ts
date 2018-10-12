@@ -7,6 +7,7 @@ import {BehaviorSubject} from 'rxjs/BehaviorSubject';
 import { tElement, tModalElement, MsgError, AccEnum } from '../Models/Enums';
 import { MotivoModel } from '../Models/MotivoModel';
 
+
 @Injectable()
 export class SettingsService {
   public sidebarImageIndex = 0;
@@ -84,8 +85,12 @@ export class SettingsService {
   public btLLE: tElement = new tElement(); 
   public btRLL: tElement = new tElement(); 
   public btNUL: tElement = new tElement(); 
+
   public btURG: tElement = new tElement(); 
   public btDRV: tElement = new tElement(); 
+    //boton agenda 
+    
+  public btAGEN: tElement = new tElement(); 
   public btEnc: tElement = new tElement(); 
 
   public dOfi: tElement = new tElement();
@@ -145,6 +150,7 @@ export class SettingsService {
 
   public windowOpen: boolean = false;
 
+
   public init() {
     this.btLOG.value.next("Login<i class='fa fa-sign-in' aria-hidden='true'></i>");
     this.btLOG.class.next("btn btn-grey logoff-boton");
@@ -161,7 +167,8 @@ export class SettingsService {
     this.btRLL.disable.next(true);
     this.btNUL.disable.next(true);
     this.btDRV.disable.next(true);
-    this.btURG.disable.next(true);
+    this.btURG.disable.next(true);  
+    this.btAGEN.disable.next(true);
     this.imgid.show.next(false);
     this.dTEsp.value.next("");
     this.btEnc.disable.next(true);
@@ -172,6 +179,6 @@ export class SettingsService {
     this.iTOpido = 0;
 
     this.Modal.show = false;
-   }
+  }
 
 }

@@ -20,16 +20,24 @@ import { Action } from 'rxjs/scheduler/Action';
 import { ChilquintaService } from './chilquinta.service';
 import { Turno } from '../Models/chilquintaturno';
 import { RespuestaLog } from '../Models/RespuestaLog';
+import { TurnoySerie } from '../Models/TurnoySerie';
 
 @Injectable()
 export class ConsService extends WebsocketService {
+    openIdeditModal: boolean = false;
     private sCookie: string = "TPsoftV24consWS2";
     private socketSubscription: Subscription;
     public loginModel: LoginModel;
+    public excepcionModel: TurnoySerie;
     private _pushNotifications: PushNotificationsService
 
     private timer = TimerObservable.create(0, 1000);
     private timerSubscription: Subscription;
+
+    private timerRellamado: any;
+    private timerSubscriptionRellamado: Subscription;
+    private firsTickTimer: Boolean = false;
+    private contRellamados: number = 0;
 
     private bLlamaSet: Boolean = false;
     private client: any;
@@ -39,6 +47,8 @@ export class ConsService extends WebsocketService {
     public datos_message: Array<any>;
 
     private enableUrg: boolean = true;
+
+    private bActivarRellamado: boolean = true;
 
     private messageTurn: BehaviorSubject<string> = new BehaviorSubject<string>("");
     private stateUrg: boolean = false;
@@ -57,6 +67,8 @@ export class ConsService extends WebsocketService {
         this.loginModel = new LoginModel();
 
         this.client = this.config.get('clients')[this.config.get('clients').client];
+        console.log( this.config.get('clients').client + "aqui");
+        this.timerRellamado = TimerObservable.create(0, this.client.TbloqueoRellamado);
 
         try {
             //this._pushNotifications.requestPermission();
@@ -124,10 +136,11 @@ export class ConsService extends WebsocketService {
             var m = JSON.parse(message);
             var d = new Date();
             this.datos_message = m;
-            //console.log("Deberia imprimir cliente" + this.config.get('clients').client);
             //console.log(d);
+            console.log(this.config.get('clients').client);
             console.log(d, "rsp = %s", message);
             if (m.CodError != "0") {
+                console.log("entre al codigo error distinto de 0");
                 //this.settings.iTOcnx = 2;
 
                 if (m.CodError == 13022 && m.DescError == "Error en Login") {
@@ -139,6 +152,19 @@ export class ConsService extends WebsocketService {
                         return;
                     }
                 }
+
+                //error en urgencia
+                /* if (m.CodError == "13029" && m.DescError == "Turno previamente atendido") {
+                      console.log("entre al codigo de error de urgencias antes del if setting modal");
+                      this.settings.lastError.MsgType = m.MsgType;
+                      this.settings.lastError.CodError = m.CodError;
+                      this.settings.lastError.DescError = m.DescError;
+                      this.settings.lastError.isError.next(true);
+                      this.openModal(ModalEnum.ERROR);                    
+                      console.log("entre al codigo de error de urgencias");
+                      this.fnAccion(AccEnum.URGSER);
+                      return;                                 
+                  }*/
 
                 this.settings.accion = AccEnum.UNKNOW;
                 this.settings.subacc = AccEnum.UNKNOW;
@@ -164,7 +190,8 @@ export class ConsService extends WebsocketService {
 
                     }
 
-                } /*else if (m.MsgType == ActionEnum.URGENCIA) {
+                }
+                /*else if (m.MsgType == ActionEnum.URGENCIA) {
                     this.messageTurn.next(m.DescError);
                     this.closeModal(this.settings.Modal.self.getValue());
                     this.openModal(ModalEnum.MSGURGTURN);
@@ -235,6 +262,7 @@ export class ConsService extends WebsocketService {
                     this.GETMOTIVOS(m);
                     break;
                 case ActionEnum.PIDOTURNO:
+
                     var d = new Date();
                     //console.log(d);
                     console.log(d, "R : PIDOTURNO");
@@ -302,6 +330,7 @@ export class ConsService extends WebsocketService {
             }
             if (!this.settings.Modal.show) {
                 let dEdo: AccEnum = <AccEnum>AccEnum[this.settings.dEdo.value.getValue()];
+                console.log("cuarto modal show, valor de dEdo ", dEdo);
                 if (dEdo != AccEnum.LOGOFF &&
                     (this.settings.accion != AccEnum.EDS && this.settings.accion != AccEnum.LGO)) {
                     this.fnAccion(AccEnum.EDS);
@@ -475,7 +504,19 @@ export class ConsService extends WebsocketService {
                 this.AccLLE();
                 break;
             case AccEnum.RLL:
+                if (this.bActivarRellamado == false) {
+                    this.bActivarRellamado = false;
+                    this.settings.btRLL.disable.next(true);
+                    return;
+                }
+
+                this.contRellamados++;
+                this.bActivarRellamado = false;
+                this.firsTickTimer = false;
+                this.settings.btRLL.disable.next(true);
+                this.timerSubscriptionRellamado = this.timerRellamado.subscribe(t => this.ActivarRellamado(t));
                 this.AccRLL();
+
                 break;
             case AccEnum.NUL:
                 this.AccNUL();
@@ -515,6 +556,7 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
+                this.settings.btAGEN.disable.next(true);
                 this.settings.btURG.disable.next(!this.enableUrg);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
@@ -540,6 +582,7 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
+                this.settings.btAGEN.disable.next(true);
                 this.settings.btURG.disable.next(!this.enableUrg);
                 this.settings.btDRV.disable.next(true);
                 this.settings.btEnc.disable.next(true);
@@ -572,7 +615,11 @@ export class ConsService extends WebsocketService {
                 this.settings.btFIN.disable.next(true);
                 this.settings.btPAU.disable.next(false);
                 this.settings.btLLE.disable.next(false);
-                this.settings.btRLL.disable.next(false);
+                if (!this.bActivarRellamado) {
+                    this.settings.btRLL.disable.next(true);
+                } else {
+                    this.settings.btRLL.disable.next(false);
+                }
                 this.settings.btNUL.disable.next(false);
 
                 if (this.client.ForceMotUrg) {
@@ -594,6 +641,10 @@ export class ConsService extends WebsocketService {
                 this.settings.btLLE.disable.next(true);
                 this.settings.btRLL.disable.next(true);
                 this.settings.btNUL.disable.next(true);
+
+                this.settings.btAGEN.disable.next(false);
+
+                //if (this.config.get('clients').client == "BcoBCI") { }
 
                 if (this.client.ForceMotUrg) {
                     this.settings.btURG.disable.next(false);
@@ -659,6 +710,23 @@ export class ConsService extends WebsocketService {
      * TIMER
      */
 
+    ActivarRellamado(t) {
+        if (!this.firsTickTimer) {
+            this.firsTickTimer = true;
+            return;
+        } else { //al segunto tick se desbloquea el boton
+            if (this.contRellamados >= this.client.MaxRellamados) {
+                this.bActivarRellamado = false;
+                this.settings.btRLL.disable.next(true);
+                this.timerSubscriptionRellamado.unsubscribe();
+                return;
+            }
+            this.bActivarRellamado = true;
+            this.settings.btRLL.disable.next(false);
+            this.timerSubscriptionRellamado.unsubscribe();
+        }
+    }
+
     DoTimer(t) {
         //let defaultCenturyStart = moment();
         let now = new Date();
@@ -668,8 +736,8 @@ export class ConsService extends WebsocketService {
                 this.restart();
             }
         }*/
-
-        if (this.settings.iTOpido > 0 && !this.client.UseTimeout) {
+        //!this.client.usetimout
+        if (this.settings.iTOpido > 0) {
             this.settings.iTOpido--;
         }
         if (!this.settings.bCnxOK || this.settings.sEscEdo == AccEnum.LOGOFF) {
@@ -697,14 +765,12 @@ export class ConsService extends WebsocketService {
         }
         if (this.settings.sEscEdo == AccEnum.ESPERANDO && this.settings.subacc != AccEnum.UNKNOW) {
             if (this.settings.subacc != AccEnum.X && !this.settings.Modal.show) {
+                console.log("septimo modal show, valor de subacc ", this.settings.subacc);
                 this.fnAccion(this.settings.subacc);
             }
         } else {
             var d = new Date();
             //console.log(d);
-            console.log(d, 'Valor sEscEdo: ', this.settings.sEscEdo);
-            console.log(d, 'Valor PAUSET : ', AccEnum.PAUSET);
-            console.log(d, 'Valor Accion : ', this.settings.accion);
             if (this.settings.sEscEdo == AccEnum.ESPERANDO && (parseInt(this.settings.dQEspE.value.getValue()) > 0 && this.settings.iTOpido == 0) && this.settings.accion != AccEnum.PAUSET && !this.stateUrg && !this.statePausa) {
                 var d = new Date();
                 //console.log(d);
@@ -735,11 +801,13 @@ export class ConsService extends WebsocketService {
                     }
                     setTimeout(() => {
                         if (!this.settings.Modal.show) {
+                            console.log("noveno modal show, se llama a eds ");
                             this.fnAccion(AccEnum.EDS);
                         }
                     }, 3000);
                 } else {
                     if (!this.settings.Modal.show) {
+                        console.log("decimo modal show, se llama a eds");
                         if (!(this.settings.iDT++ % 10)) {
                             this.fnAccion(AccEnum.EDS);
                         }
@@ -748,12 +816,19 @@ export class ConsService extends WebsocketService {
             }
         }
         if (this.settings.Modal.show && this.settings.Modal.self.getValue() != ModalEnum.ERROR) {
+            console.log("11 modal show, ");
             if (this.settings.iTOw-- == 0) {
-
-
+                console.log("11 modal show, valor de itow ", this.settings.iTOw);
                 if (this.settings.Modal.self.getValue() != ModalEnum.LOGIN) {
+                    console.log("11 modal show, pasamos condicion de login");
                     if (this.client.UseTimeout) {
                         this.closeModal(this.settings.Modal.self.getValue());
+                        this.settings.iTOw = -1;//de aqui editado
+                        this.settings.bIdCliSet = false;
+
+                        if (this.settings.subacc == AccEnum.X) {
+                            this.settings.subacc = AccEnum.UNKNOW;
+                        }//aqui editado
                     } else {
                         this.settings.iTOw = -1;
                         this.settings.bIdCliSet = false;
@@ -766,6 +841,14 @@ export class ConsService extends WebsocketService {
                 this.settings.iTOw = this.config.get('socket').TOwin;
             }
         }
+
+        if (this.openIdeditModal) {
+            if ((this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) && (!this.config.get('socket').IdSerieNoConfirmaDatos.includes(this.settings.hiIdS.toString()))) {
+                this.openIdeditModal = false;
+                this.openModal(ModalEnum.IDEDIT);
+            }
+        }
+
     }
 
     /**
@@ -973,7 +1056,6 @@ export class ConsService extends WebsocketService {
         proto.ClienteInterno = this.settings.CliInt;
         proto.Id = "1";
         proto.IdEscritorio = this.settings.hiEsc;
-
         if (this.config.get('clients').client == "Chilquinta") {
 
             console.log("LLAMADA DE SERVICIO");
@@ -1008,12 +1090,12 @@ export class ConsService extends WebsocketService {
                     console.log("aqui hace algo error");
                     Resplog.Respuesta = this.errorMessage["message"];
                     //-------------------------Agregar Datos al Localstorage-----------------------------------
-                    if (this.config.get('clients')["Default"].Addlocal) {
+                    if (this.config.get('clients')["Chilquinta"].Addlocal) {
                         this.ChilquintaService.addLocalResp(Resplog);
                     }
                     //-------------------------Agregar Datos al Localstorage-----------------------------------
                     //--------------------------Crear Archivo en descargas------------------------------
-                    if (this.config.get('clients')["Default"].PrintLog) {
+                    if (this.config.get('clients')["Chilquinta"].PrintLog) {
                         this.ChilquintaService.getLocalResp();
                     }
                     //-------------------------Crear Archivo en descargas-----------------------------------
@@ -1293,17 +1375,24 @@ export class ConsService extends WebsocketService {
     }
 
     private GETMOTIVOS(m) {
+        console.log(m);
         this.settings.hiIdSDRV = this.settings.hiIdS;
         if (m.Motivos.length > 0 || this.client.ForceMotUrg) {
             this.settings.Motivos = new BehaviorSubject(m.Motivos);
-
+            console.log("entre al if de que abre modal motivos");
             this.openModal(ModalEnum.GETMOTIVOS);
         } else if (!this.client.MotivosExt) {
+            console.log("cerre turno directamente");
             this.fnAccion(AccEnum.FINTUR);
         }
     }
 
     private PIDOTURNO(m) {
+        this.contRellamados = 0;
+        this.bActivarRellamado = true;
+        this.settings.btRLL.disable.next(false);
+        this.firsTickTimer = false;
+
         this.settings.subacc = AccEnum.UNKNOW;
         this.settings.sEscEdo = AccEnum.UNKNOW;
         this.settings.iTOw = -1;
@@ -1414,9 +1503,8 @@ export class ConsService extends WebsocketService {
         this.settings.dTEsp.data.next(m.TEsp);*/
         //var d = new Date();
         //console.log(d);
-        console.log('se ejecuta el metodo llamando y esto es M');
-        console.log(m);
 
+        console.log('se ejecuta el metodo llamandoAtendiendo');
         this.s_2_hms(this.settings.dTEsp, m.TEsp, this.settings.hiTEspA);
 
         var cleintesplit = m.Cliente.split(";");
@@ -1428,6 +1516,7 @@ export class ConsService extends WebsocketService {
         this.settings.dSer.value.next(m.Serie);
         this.settings.dTur.value.next(m.Turno);
         this.settings.dRut.value.next(m.Rut);
+
         let fono = m.Fono.split(',');
         if (fono.length > 1) {
             this.settings.dTer.value.next(fono[1]);
@@ -1442,11 +1531,7 @@ export class ConsService extends WebsocketService {
 
             this.settings.dMail.value.next(Mail);
         } else {
-            console.log("llega " + m.Fono);
-            console.log(m);
-
             fono = m.Fono;
-
             if (cleintesplit.length > 1) {
                 this.settings.dCli.value.next(cleintesplit[0]);
                 this.settings.dNom.value.next(cleintesplit[0]);
@@ -1464,30 +1549,20 @@ export class ConsService extends WebsocketService {
                     this.settings.dNom.value.next(" ");
                     this.settings.dCli.value.next(" ");
                 }
-                else{
+                else {
                     this.settings.dNom.value.next(m.Cliente);
                     this.settings.dCli.value.next(cleintesplit[0]);
-                }
-                if (cleintesplit[1] == "undefined" || cleintesplit[1] == undefined || !cleintesplit[1]) {
-                    this.settings.dMail.value.next(" ");
-                }
-                else{
-                    this.settings.dMail.value.next(cleintesplit[1]);
                 }
             }
 
             //this.settings.dCli.value.next(cleintesplit[0]);
             //this.settings.dCli.value.next(m.Cliente);
-            console.log(this.settings.dCli);
-            console.log(this.settings.dNom);
-            console.log(this.settings.dMail);
-
         }
 
         this.settings.dFon.value.next(fono);
 
-
         if (m.Estado == "ATENDIENDO") {
+            console.log("entre al mEstado=atendiendo");
             this.settings.imgid.show.next(true);
             this.settings.imgid.disable.next(false);
         }
@@ -1519,16 +1594,14 @@ export class ConsService extends WebsocketService {
         if (this.settings.bTurnoSet) {
             this.settings.bTurnoSet = false;
 
-            if ((this.config.get('socket').ConfirmaID.toUpperCase().indexOf("S") != -1) && (!this.config.get('socket').IdSerieNoConfirmaDatos.includes(this.settings.hiIdS.toString()))) {
-                this.openModal(ModalEnum.IDEDIT);
-            } else {
-                if (this.settings.bOfertaSet) {
-                    this.settings.bOfertaSet = false;
-                    if (this.settings.sOferta != "") {
-                        this.settings.fnPopOferta.next(true);
-                    }
+            console.log("condicion open modal");
+            if (this.settings.bOfertaSet) {
+                this.settings.bOfertaSet = false;
+                if (this.settings.sOferta != "") {
+                    this.settings.fnPopOferta.next(true);
                 }
             }
+            this.openIdeditModal = true;
         }
     }
 
@@ -1557,26 +1630,13 @@ export class ConsService extends WebsocketService {
         //var d = new Date();
         //console.log(d);
         //console.log(d, "Modal Abierto: ", modal);
+        console.log("modal en openModal ", modal);
         if (this.settings.Modal.show) {
             var d = new Date();
             //console.log(d);
             console.log(d, "Modal Abierto: ", modal);
             return;
         }
-        if(this.settings.lastError.CodError == "13029" && this.settings.lastError.DescError == "Turno previamente atendido"){
-            this.settings.Modal.show = false;
-            this.settings.bIdCliSet = false;
-            this.settings.Modal.self.next(modal);
-            this.fnAccion(AccEnum.URGSER);
-        }
-
-        if(this.settings.lastError.CodError == "13028" && this.settings.lastError.DescError == "Turno no ha sido emitido"){
-            this.settings.Modal.show = false;
-            this.settings.bIdCliSet = false;
-            this.settings.Modal.self.next(modal);
-            this.fnAccion(AccEnum.URGSER);
-        }
-
         this.settings.Modal.show = true;
         this.settings.Modal.self.next(modal);
         this.settings.iTOw = this.config.get('socket').TOwin;
@@ -1593,6 +1653,20 @@ export class ConsService extends WebsocketService {
             //console.log(d);
             //console.log("close modal false");
             return;
+        }
+
+        if (this.settings.lastError.CodError == "13029" && this.settings.lastError.DescError == "Turno previamente atendido") {
+            this.settings.Modal.show = false;
+            this.settings.bIdCliSet = false;
+            this.settings.Modal.self.next(modal);
+            this.fnAccion(AccEnum.URGSER);
+        }
+
+        if (this.settings.lastError.CodError == "13028" && this.settings.lastError.DescError == "Turno no ha sido emitido") {
+            this.settings.Modal.show = false;
+            this.settings.bIdCliSet = false;
+            this.settings.Modal.self.next(modal);
+            this.fnAccion(AccEnum.URGSER);
         }
 
         this.settings.Modal.show = false;

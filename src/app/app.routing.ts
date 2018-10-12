@@ -10,15 +10,15 @@ import { HomeComponent } from './home/home.component';
 import { FullLayoutComponent } from './layouts/full-layout.component';
 import { P404Component } from './404/404.component';
 
-export const routes: Routes = [  
+export const routes: Routes = [
   {
     path: '',
-    component: FullLayoutComponent, 
+    component: FullLayoutComponent,
     children: [
     {
-      path: '', 
+      path: '',
       component: HomeComponent
-    },        
+    },
   ]},
   { path: '**', component: P404Component }
 ];

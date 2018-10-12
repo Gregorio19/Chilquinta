@@ -239,19 +239,25 @@ export class MotivosService extends WebsocketService {
         this.GetMotivoStorage().subscribe((value: any) => {
             let Mot: Array<MotivosAtencion> = [];
             this.motivos.Traf = [];
+            console.log("service de motivos value: ", value);
             for (let mot of value.Mot) {
                 //modificado
+                console.log("valor de motivo, mot: ", mot);
                 let serieId; 
                 if(parseInt(this.settings.hiIdSD) != 0){
+                    console.log("valor hiidsd", this.settings.hiIdSD);
                     serieId = parseInt(this.settings.hiIdSD);
                 }else{
+                    console.log("valor hiids", this.settings.hiIdS);
                     serieId = parseInt(this.settings.hiIdS);
                 }
 
+                console.log("valor serieId ", serieId);
                 let exists: boolean = mot.Series.some(x => x == serieId);
+                console.log("valor exists", exists);
                 if (exists) {
                     Mot.push(mot);
-        
+                    console.log("push mot: ", mot);
                     mot.SMot.map((sm) => {
                         sm.SSMot.map((ssm) => {
                             ssm.SSSMot.map((sssm) => {

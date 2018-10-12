@@ -101,7 +101,7 @@ export class LoginComponent implements OnInit {
         console.log("logueo luiggino");
       } else {*/
         this.loginModel.User = this.settings.hiUsr;
-      //}
+     // }
     }
 
     this.consService.AccLGISET(this.loginModel);

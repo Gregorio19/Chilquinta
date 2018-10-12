@@ -104,7 +104,7 @@ export class TurnoySerieComponent implements OnInit, OnDestroy {
   }
 
   confirm() {
-    this.fnAccion(AccEnum.URGSET); //al parecer este this closed la esta cagando
+    this.fnAccion(AccEnum.URGSET);
 
     //this.closed();
   }

@@ -19,10 +19,9 @@ export class IdeditComponent implements OnInit {
   IdEditForm: FormGroup;
   model = new IdEditModel();
   isChange: boolean = false;
-  public client: any;
-
+  public client: any; 
   enableClosed: BehaviorSubject<boolean> = new BehaviorSubject<boolean>(false);
-
+  chil: boolean = false;
   constructor(
     public settings: SettingsService,
     private consService: ConsService,
@@ -34,6 +33,9 @@ export class IdeditComponent implements OnInit {
   }
 
   ngOnInit() {
+    if (this.config.get('clients').client == "Chilquinta") {
+      this.chil = true;
+    }
     this.client = this.config.get('clients')[this.config.get('clients').client];
 
     if (this.settings.dRut.value.getValue() && this.settings.dRut.value.getValue() != "") {
