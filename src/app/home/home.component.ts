@@ -26,6 +26,7 @@ import { MatDialog, MatDialogRef } from '@angular/material';
 })
 export class HomeComponent implements OnInit {
   //public dialog: BsModalRef = null;
+  public bcoBci: boolean = false;
   public dialogRef: MatDialogRef<any>;
   public letter: boolean = false;
   public showTimer: boolean = false;
@@ -50,7 +51,7 @@ export class HomeComponent implements OnInit {
     private config: AppConfig,
     public dialog: MatDialog
   ) {
-   
+
     this.observable = new Observable<boolean>((observer: any) => this.observer = observer).share();
 
     this.settings.dTur.value.subscribe(value => {
@@ -65,6 +66,7 @@ export class HomeComponent implements OnInit {
     });
 
     this.client = this.config.get('clients')[this.config.get('clients').client];
+    console.log(this.client);
     this.consService.getIsLogged().subscribe((value: boolean) => {
       if (this.client.MotivosExt) {
         if (this.consService.loginModel.IdEscritorio) {
@@ -86,7 +88,11 @@ export class HomeComponent implements OnInit {
 
 
   ngOnInit() {
-    console.log("Version: 2018 - V-30-07-2018-idedit.")
+    if (this.config.get('clients').client == "BcoBCI") {
+      this.bcoBci = true;
+    }
+
+    console.log("Version: 2018 - V-04-09-2018.")
     this.consService.IsError().subscribe(value => {
       if (value) {
 
@@ -112,7 +118,7 @@ export class HomeComponent implements OnInit {
       let initialState = {};
 
       if (this.settings.Modal.show) {
-        
+
         switch (modalEnum) {
           case ModalEnum.GETPAUSAS:
 
@@ -120,7 +126,6 @@ export class HomeComponent implements OnInit {
 
             break;
           case ModalEnum.LOGIN:
-            //
             this.dialogRef = this.dialog.open(LoginComponent, {
               width: '480px'
             })
@@ -158,10 +163,13 @@ export class HomeComponent implements OnInit {
             //
             break;
           case ModalEnum.GETMOTIVOS:
+            console.log("entre al case de modales en getmotivos");
             if (this.client.MotivosExt) {
               this.MotivosService.processMotivos();
+              console.log("getvalue de motivos", this.MotivosService.GetMotivos().Mot.getValue());
+              console.log("getvalue.length de motivos", this.MotivosService.GetMotivos().Mot.getValue().length > 0);
               if (this.MotivosService.GetMotivos().Mot.getValue() && this.MotivosService.GetMotivos().Mot.getValue().length > 0) {
-
+                console.log("se abre el modal de width 1400");
                 this.dialogRef = this.dialog.open(MotivosAtencionComponent, { width: '1400px' });
 
               } else {
@@ -181,7 +189,7 @@ export class HomeComponent implements OnInit {
               message: new BehaviorSubject<string>(this.settings.lastError.DescError),
               Dgltype: ModalEnum.ERROR
             }
-            
+
             this.dialogRef = this.dialog.open(ModalMessageComponent, { width: '480px', data: initialState })
 
             break;
@@ -198,7 +206,7 @@ export class HomeComponent implements OnInit {
             break;
 
         }
-        
+
         //this.dialogRef.afterClosed().subscribe(result => {
         //console.log("close dialog event", result, modalEnum);
         //this.dialogRef = null;
@@ -264,7 +272,7 @@ export class HomeComponent implements OnInit {
 
   get msgDerivar(): string {
     let msg = "";
-    if(this.settings.btDRV.disable.getValue()) {
+    if (this.settings.btDRV.disable.getValue()) {
       msg = "Derivar esta deshabilitada";
     } else {
       //msg = "Derivar";
@@ -274,7 +282,7 @@ export class HomeComponent implements OnInit {
 
   get msgAnular(): string {
     let msg = "";
-    if(this.settings.btNUL.disable.getValue()) {
+    if (this.settings.btNUL.disable.getValue()) {
       msg = "Anular esta deshabilitado";
     } else {
       //msg = "Anular";
@@ -284,7 +292,7 @@ export class HomeComponent implements OnInit {
 
   get msgUrgencia(): string {
     let msg = "";
-    if(this.settings.btURG.disable.getValue()) {
+    if (this.settings.btURG.disable.getValue()) {
       msg = "Urgencia esta deshabilitada";
     } else {
       //msg = "Urgencia";
@@ -292,9 +300,17 @@ export class HomeComponent implements OnInit {
     return msg;
   }
 
+  get msgAgenda(): string {
+    let msg = "";
+    if (this.settings.btAGEN.disable.getValue()) {
+      msg = "Agenda esta deshabilitada";
+    } else { }
+    return msg;
+  }
+
   get msgLLego(): string {
     let msg = "";
-    if(this.settings.btLLE.disable.getValue()) {
+    if (this.settings.btLLE.disable.getValue()) {
       msg = "Llegó esta deshabilitado";
     } else {
       //msg = "Llegó";
@@ -304,7 +320,7 @@ export class HomeComponent implements OnInit {
 
   get msgRellamado(): string {
     let msg = "";
-    if(this.settings.btRLL.disable.getValue()) {
+    if (this.settings.btRLL.disable.getValue()) {
       msg = "Rellamado esta deshabilitado";
     } else {
       //msg = "Rellamado";
@@ -314,7 +330,7 @@ export class HomeComponent implements OnInit {
 
   get msgFinalizarAtencion(): string {
     let msg = "";
-    if(this.settings.btFIN.disable.getValue()) {
+    if (this.settings.btFIN.disable.getValue()) {
       msg = "Finalizar atención esta deshabilitada";
     } else {
       //msg = "Finalizar atención";

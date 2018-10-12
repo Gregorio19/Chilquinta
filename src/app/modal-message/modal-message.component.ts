@@ -40,6 +40,8 @@ export class ModalMessageComponent implements OnInit {
 
   closed() {
     if (this.Dgltype) {
+      //modificado
+      console.log("entre al close del modal de mensages")
       this.consService.closeModal(this.Dgltype);
     }
   }

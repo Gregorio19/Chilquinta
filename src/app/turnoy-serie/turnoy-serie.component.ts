@@ -55,7 +55,7 @@ export class TurnoySerieComponent implements OnInit, OnDestroy {
     this.consService.closeModal(ModalEnum.GETSERIES_URGSER);
   }
 
-  fnAccion(accion: AccEnum) {
+  fnAccion(accion: AccEnum) { //accion: urgset
     this.settings.rbSer.checked.next(true);
     this.settings.rbSer.value.next(this.model.rbSer);
     this.settings.urgTur.value.next(this.model.urgTur.toString());
@@ -106,7 +106,7 @@ export class TurnoySerieComponent implements OnInit, OnDestroy {
   confirm() {
     this.fnAccion(AccEnum.URGSET);
 
-    this.closed();
+    //this.closed();
   }
 
   decline() {

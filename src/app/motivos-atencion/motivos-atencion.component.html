@@ -105,10 +105,8 @@
       <div class="col-md-5 d-flex justify-content-end">
         <button type="button" mat-raised-button color="warn" [disabled]="!cierreAtencion" (click)="CierreAtencion()">Cierre de Atención</button>
       </div>
-
-
       <div class="col-md-auto d-inline-flex justify-content-end align-items-center" *ngIf="client.UseTimeout">
-        <div> [{{ settings.iTOw }}] </div>
+        <div> [{{ time }}] </div>
       </div>
     </div>
   </div>

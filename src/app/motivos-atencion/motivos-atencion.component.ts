@@ -14,6 +14,7 @@ import { Observable } from 'rxjs/Observable';
 import { resolve } from 'url';
 import { reject } from 'q';
 import { MatDialog } from '@angular/material';
+import { TimerObservable } from 'rxjs/observable/TimerObservable';
 
 @Component({
   selector: 'app-motivos-atencion',
@@ -24,6 +25,9 @@ import { MatDialog } from '@angular/material';
 })
 export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
 
+  time: number;
+  private timerSubscription: Subscription;
+  private timer = TimerObservable.create(0, 1000);
   motivoForm: FormGroup;
   public motivos: __MotivoModel = new __MotivoModel();        // motivos cargados con selected
   public _motivos: MotivoModel = new MotivoModel(); // motivos desde gateway
@@ -88,7 +92,7 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
     this._motivos.Mot = this.motivos.Mot.getValue();
     this._motivos.Traf = this.motivos.Traf;
 
-
+    this.timerSubscription = this.timer.subscribe(t => this.DoTimer(t)); 
     this.changeDetectorRefs.detectChanges();
   }
 
@@ -161,11 +165,10 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
   onChange($event) {
     this.settings.iTOw = this.config.get('socket').TOwin;
 
-
     if (this.motivoModel.Traf) {
       this.selectItem($event.SSSMot);
     }
-    //this.consService.clearError();
+    this.consService.clearError();
   }
 
   motivoChange(value: MotivosAtencion) {
@@ -358,10 +361,17 @@ export class MotivosAtencionComponent implements OnInit, OnChanges, OnDestroy {
 
   ngOnDestroy(): void {
     //this.data.unsubscribe();
+    this.timerSubscription.unsubscribe();
     if(this.isErrorSub) {
       this.isErrorSub.unsubscribe();
     }
     
+  }
+
+  DoTimer(t){
+    this.changeDetectorRefs.detectChanges();   
+    this.time = this.settings.iTOw;
+    console.log(this.time)
   }
 
 }
